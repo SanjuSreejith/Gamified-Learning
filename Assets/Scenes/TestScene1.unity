@@ -353,6 +353,7 @@ GameObject:
   - component: {fileID: 912803489}
   - component: {fileID: 912803488}
   - component: {fileID: 912803493}
+  - component: {fileID: 912803494}
   m_Layer: 0
   m_Name: Bot
   m_TagString: Untagged
@@ -505,6 +506,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 840f8deb572f6534b948934e797b01b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BotFollower
+--- !u!114 &912803494
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 912803487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80deaacebbd145f4c815ee8ed73cc354, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BotFollowerHorizontal
+  player: {fileID: 1376576882}
+  smoothTime: 0.3
+  maxSpeed: 10
+  minStopDistance: 1.5
+  maxStopDistance: 3.5
+  recheckDistance: 4.5
 --- !u!1 &1173647007
 GameObject:
   m_ObjectHideFlags: 0
@@ -748,7 +767,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: -4402419442927228044, guid: 4e8b855318c618b4a91608337d230514, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
