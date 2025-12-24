@@ -10,22 +10,32 @@ public class BotFollowerHorizontal : MonoBehaviour
     public float maxSpeed = 10f;
 
     [Header("Distance Control")]
-    public float minStopDistance = 1.5f;  // Bot will stop anywhere between
-    public float maxStopDistance = 3.5f;  // these distances
-    public float recheckDistance = 4.5f;  // If player goes farther than this → bot follows again
+    public float minStopDistance = 1.5f;
+    public float maxStopDistance = 3.5f;
+    public float recheckDistance = 4.5f;
+
+    [Header("Grass Walk Particles")]
+    public ParticleSystem grassParticles;
+    public Transform footPoint;
+    public float minMoveSpeedForDust = 0.2f;
 
     private float currentVelocityX;
-    private float desiredStopOffset;      // Where bot WANTS to stand
+    private float desiredStopOffset;
     private Animator animator;
     private SpriteRenderer spriteRenderer;
 
     private Vector2 lastPlayerPos;
     private bool playerIsMoving = false;
 
+    ParticleSystem.EmissionModule emission;
+
     void Start()
     {
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (grassParticles != null)
+            emission = grassParticles.emission;
 
         PickNewStopOffset();
         lastPlayerPos = player.position;
@@ -40,58 +50,40 @@ public class BotFollowerHorizontal : MonoBehaviour
         MoveBot();
         HandleAnimation();
         HandleSpriteFlip();
+        HandleGrassParticles();
     }
 
-    // ---------------------------------------------------------
-    //  PLAYER MOVEMENT CHECK
     // ---------------------------------------------------------
     void DetectPlayerMovement()
     {
         float movement = Mathf.Abs(player.position.x - lastPlayerPos.x);
-
         playerIsMoving = movement > 0.05f;
-
         lastPlayerPos = player.position;
     }
 
-    // ---------------------------------------------------------
-    // LOGIC FOR WHEN BOT SHOULD FOLLOW
     // ---------------------------------------------------------
     void UpdateDesiredStopDistance()
     {
         float distanceToPlayer = Mathf.Abs(transform.position.x - player.position.x);
 
-        // If player is far → bot must follow
         if (distanceToPlayer > recheckDistance)
-        {
             PickNewStopOffset();
-        }
 
-        // If player moves → we update offset but not too often
         if (playerIsMoving && distanceToPlayer > maxStopDistance)
-        {
             PickNewStopOffset();
-        }
     }
 
     void PickNewStopOffset()
     {
-        // Decide left or right based on current position
         float direction = transform.position.x < player.position.x ? -1f : 1f;
-
-        // Random comfortable stop range
         float randomDist = Random.Range(minStopDistance, maxStopDistance);
-
         desiredStopOffset = randomDist * direction;
     }
 
     // ---------------------------------------------------------
-    // MOVEMENT
-    // ---------------------------------------------------------
     void MoveBot()
     {
         float targetX = player.position.x + desiredStopOffset;
-        float targetY = transform.position.y;
 
         float newX = Mathf.SmoothDamp(
             transform.position.x,
@@ -101,25 +93,50 @@ public class BotFollowerHorizontal : MonoBehaviour
             maxSpeed
         );
 
-        transform.position = new Vector2(newX, targetY);
+        transform.position = new Vector2(newX, transform.position.y);
     }
 
-    // ---------------------------------------------------------
-    // ANIMATION SPEED
     // ---------------------------------------------------------
     void HandleAnimation()
     {
         float speed = Mathf.Abs(currentVelocityX);
-
         if (animator != null)
             animator.SetFloat("Speed", speed);
     }
 
     // ---------------------------------------------------------
-    // FACE PLAYER
-    // ---------------------------------------------------------
     void HandleSpriteFlip()
     {
         spriteRenderer.flipX = player.position.x < transform.position.x;
+    }
+
+    // ---------------------------------------------------------
+    // 🌱 REALISTIC GRASS WALK EFFECT
+    // ---------------------------------------------------------
+    void HandleGrassParticles()
+    {
+        if (grassParticles == null) return;
+
+        float speed = Mathf.Abs(currentVelocityX);
+
+        // Position particles at feet
+        if (footPoint != null)
+            grassParticles.transform.position = footPoint.position;
+
+        if (speed > minMoveSpeedForDust)
+        {
+            emission.rateOverTime = Mathf.Lerp(5f, 25f, speed / maxSpeed);
+
+            // Direction-based burst feel
+            var main = grassParticles.main;
+            main.startSpeed = new ParticleSystem.MinMaxCurve(0.4f, 1.2f);
+
+            if (!grassParticles.isPlaying)
+                grassParticles.Play();
+        }
+        else
+        {
+            emission.rateOverTime = 0f;
+        }
     }
 }
