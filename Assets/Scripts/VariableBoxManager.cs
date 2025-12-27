@@ -30,6 +30,7 @@ public class VariableInteractionBox : MonoBehaviour
     bool boxActivated;
     bool nameSet;
     bool valueSet;
+    int interactionStep = 0; // 0: inactive, 1: change layer, 2: name input, 3: value input
 
     void Start()
     {
@@ -42,21 +43,20 @@ public class VariableInteractionBox : MonoBehaviour
     {
         DetectPlayer();
 
-        // E is only for interaction switching
+        // E key cycles through interaction steps
         if (playerNear && Input.GetKeyDown(KeyCode.E))
         {
-            if (!boxActivated)
-                ActivateBox();
+            HandleInteractionStep();
         }
 
         // ENTER = submit name
-        if (boxActivated && !nameSet && Input.GetKeyDown(KeyCode.Return))
+        if (interactionStep == 2 && !nameSet && Input.GetKeyDown(KeyCode.Return))
         {
             SetVariableName();
         }
 
         // ENTER = submit value
-        else if (nameSet && !valueSet && Input.GetKeyDown(KeyCode.Return))
+        else if (interactionStep == 3 && nameSet && !valueSet && Input.GetKeyDown(KeyCode.Return))
         {
             SetVariableValue();
         }
@@ -74,27 +74,70 @@ public class VariableInteractionBox : MonoBehaviour
         playerNear = hit != null;
     }
 
-    // ================= STEP 1 : ACTIVATE =================
-    void ActivateBox()
+    // ================= HANDLE INTERACTION STEPS =================
+    void HandleInteractionStep()
     {
-        boxActivated = true;
+        interactionStep++;
 
-        // 🔥 Change layer to 2
-        gameObject.layer = 2;
+        switch (interactionStep)
+        {
+            case 1: // First E press - Change layer and show particles
+                ChangeSortingLayer();
+                break;
 
+            case 2: // Second E press - Show name input
+                ShowNameInput();
+                break;
+
+            case 3: // Third E press - Show value input
+                if (nameSet)
+                {
+                    ShowValueInput();
+                }
+                else
+                {
+                    interactionStep = 2; // Stay on name input until name is set
+                }
+                break;
+
+            default:
+                interactionStep = 0; // Reset
+                ResetBox();
+                break;
+        }
+    }
+
+    // ================= STEP 1 : CHANGE SORTING LAYER =================
+    void ChangeSortingLayer()
+    {
+        // Change sorting order in layer
+        boxSprite.sortingOrder = 2;
+
+        // Activate particles
         variableParticles.Play();
-        StartCoroutine(StopParticlesSlowly());
+        StartCoroutine(StopParticlesAfterDelay(1.5f)); // Hide particles after delay
 
         boxSprite.color = activeColor;
+        boxActivated = true;
 
+        // No UI panel shown yet
+        inputPanel.SetActive(false);
+    }
+
+    // ================= STEP 2 : SHOW NAME INPUT =================
+    void ShowNameInput()
+    {
         inputPanel.SetActive(true);
         nameInput.gameObject.SetActive(true);
         valueInput.gameObject.SetActive(false);
 
+        nameInput.text = "";
         nameInput.ActivateInputField();
+
+        boxText.text = "Enter Variable Name";
     }
 
-    // ================= STEP 2 : NAME =================
+    // ================= STEP 3 : SET VARIABLE NAME =================
     void SetVariableName()
     {
         if (string.IsNullOrEmpty(nameInput.text))
@@ -103,14 +146,55 @@ public class VariableInteractionBox : MonoBehaviour
         variableName = nameInput.text;
         nameSet = true;
 
-        nameInput.gameObject.SetActive(false);
-        valueInput.gameObject.SetActive(true);
-        valueInput.ActivateInputField();
+        inputPanel.SetActive(false); // Close panel after name entry
 
+        // Show name on box
         StopAllCoroutines();
         StartCoroutine(WriteNameAnimation(variableName));
+
+        // Show instruction for next step
+        StartCoroutine(ShowNextInstruction());
     }
 
+    IEnumerator ShowNextInstruction()
+    {
+        yield return new WaitForSeconds(1f);
+        boxText.text = "Press E to set value";
+    }
+
+    // ================= STEP 4 : SHOW VALUE INPUT =================
+    void ShowValueInput()
+    {
+        inputPanel.SetActive(true);
+        nameInput.gameObject.SetActive(false);
+        valueInput.gameObject.SetActive(true);
+
+        valueInput.text = "";
+        valueInput.ActivateInputField();
+
+        boxText.text = "Enter Value";
+    }
+
+    // ================= STEP 5 : SET VARIABLE VALUE =================
+    void SetVariableValue()
+    {
+        if (string.IsNullOrEmpty(valueInput.text))
+            return;
+
+        int.TryParse(valueInput.text, out variableValue);
+        valueSet = true;
+
+        inputPanel.SetActive(false); // Close panel after value entry
+
+        // Show final result
+        StopAllCoroutines();
+        StartCoroutine(ShowValueAnimation(variableValue));
+
+        // Reset interaction for next time
+        interactionStep = 0;
+    }
+
+    // ================= ANIMATIONS =================
     IEnumerator WriteNameAnimation(string text)
     {
         boxText.text = "";
@@ -120,21 +204,6 @@ public class VariableInteractionBox : MonoBehaviour
             boxText.text += c;
             yield return new WaitForSeconds(writeSpeed);
         }
-    }
-
-    // ================= STEP 3 : VALUE =================
-    void SetVariableValue()
-    {
-        if (string.IsNullOrEmpty(valueInput.text))
-            return;
-
-        int.TryParse(valueInput.text, out variableValue);
-        valueSet = true;
-
-        inputPanel.SetActive(false);
-
-        StopAllCoroutines();
-        StartCoroutine(ShowValueAnimation(variableValue));
     }
 
     IEnumerator ShowValueAnimation(int value)
@@ -149,9 +218,11 @@ public class VariableInteractionBox : MonoBehaviour
         }
     }
 
-    // ================= PARTICLE SLOW STOP =================
-    IEnumerator StopParticlesSlowly()
+    // ================= PARTICLE SYSTEM CONTROL =================
+    IEnumerator StopParticlesAfterDelay(float delay)
     {
+        yield return new WaitForSeconds(delay);
+
         var emission = variableParticles.emission;
         float rate = emission.rateOverTime.constant;
 
@@ -162,6 +233,19 @@ public class VariableInteractionBox : MonoBehaviour
             yield return null;
         }
 
+        variableParticles.Stop();
+    }
+
+    // ================= RESET BOX =================
+    void ResetBox()
+    {
+        boxSprite.sortingOrder = 0;
+        boxSprite.color = Color.white;
+        boxActivated = false;
+        nameSet = false;
+        valueSet = false;
+        inputPanel.SetActive(false);
+        boxText.text = "";
         variableParticles.Stop();
     }
 
