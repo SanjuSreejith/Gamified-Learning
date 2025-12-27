@@ -9,9 +9,11 @@ public class VariableInteractionBox : MonoBehaviour
     public LayerMask playerLayer;
 
     [Header("Visuals")]
-    public ParticleSystem variableParticles;
+    public MagicParticleEffect magicParticles; // Connect your magic particle effect here
     public SpriteRenderer boxSprite;
     public Color activeColor = Color.cyan;
+    public int defaultSortingOrder = 0;
+    public int activeSortingOrder = 2;
 
     [Header("Text On Box")]
     public TextMeshPro boxText;
@@ -26,16 +28,43 @@ public class VariableInteractionBox : MonoBehaviour
     public string variableName;
     public int variableValue;
 
+    [Header("Magic Effects")]
+    public bool useMagicEffects = true;
+    public float magicEffectDuration = 1.5f;
+    public bool hideParticlesAfterEffect = true;
+
     bool playerNear;
     bool boxActivated;
     bool nameSet;
     bool valueSet;
     int interactionStep = 0; // 0: inactive, 1: change layer, 2: name input, 3: value input
+    int originalSortingOrder;
 
     void Start()
     {
         inputPanel.SetActive(false);
-        variableParticles.Stop();
+
+        // Store original sorting order
+        originalSortingOrder = boxSprite.sortingOrder;
+
+        // Initialize particles
+        if (useMagicEffects && magicParticles != null)
+        {
+            // Particles are hidden by default, will show when magic happens
+        }
+        else
+        {
+            // Fallback to old particle system
+            var oldParticles = GetComponent<ParticleSystem>();
+            if (oldParticles != null)
+            {
+                oldParticles.Stop();
+                var renderer = oldParticles.GetComponent<ParticleSystemRenderer>();
+                if (renderer != null)
+                    renderer.enabled = false;
+            }
+        }
+
         boxText.text = "";
     }
 
@@ -60,6 +89,9 @@ public class VariableInteractionBox : MonoBehaviour
         {
             SetVariableValue();
         }
+
+        // Update visual feedback
+        UpdateVisualFeedback();
     }
 
     // ================= PLAYER CHECK =================
@@ -81,8 +113,8 @@ public class VariableInteractionBox : MonoBehaviour
 
         switch (interactionStep)
         {
-            case 1: // First E press - Change layer and show particles
-                ChangeSortingLayer();
+            case 1: // First E press - Change layer and show magic effect
+                ChangeSortingLayerWithMagic();
                 break;
 
             case 2: // Second E press - Show name input
@@ -107,21 +139,88 @@ public class VariableInteractionBox : MonoBehaviour
         }
     }
 
-    // ================= STEP 1 : CHANGE SORTING LAYER =================
-    void ChangeSortingLayer()
+    // ================= STEP 1 : CHANGE SORTING LAYER WITH MAGIC =================
+    void ChangeSortingLayerWithMagic()
     {
-        // Change sorting order in layer
-        boxSprite.sortingOrder = 2;
+        // Play magical particle effect BEFORE changing layer
+        if (useMagicEffects && magicParticles != null)
+        {
+            // Show and play the magic effect
+            magicParticles.PlayMagicEffect();
 
-        // Activate particles
-        variableParticles.Play();
-        StartCoroutine(StopParticlesAfterDelay(1.5f)); // Hide particles after delay
+            // Wait a moment before changing layer for dramatic effect
+            StartCoroutine(ChangeLayerAfterDelay(0.3f));
+        }
+        else
+        {
+            // Immediate layer change without magic
+            ChangeLayerImmediate();
+        }
 
         boxSprite.color = activeColor;
         boxActivated = true;
 
         // No UI panel shown yet
         inputPanel.SetActive(false);
+    }
+
+    IEnumerator ChangeLayerAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // Change sorting order in layer with magical flourish
+        boxSprite.sortingOrder = activeSortingOrder;
+
+        // Optional: Add a scale animation for more magical feel
+        StartCoroutine(ScaleAnimation());
+    }
+
+    void ChangeLayerImmediate()
+    {
+        // Change sorting order in layer
+        boxSprite.sortingOrder = activeSortingOrder;
+
+        // Fallback to old particle system
+        var oldParticles = GetComponent<ParticleSystem>();
+        if (oldParticles != null)
+        {
+            var renderer = oldParticles.GetComponent<ParticleSystemRenderer>();
+            if (renderer != null)
+                renderer.enabled = true;
+
+            oldParticles.Play();
+            StartCoroutine(StopParticlesAfterDelay(magicEffectDuration));
+        }
+    }
+
+    IEnumerator ScaleAnimation()
+    {
+        Vector3 originalScale = transform.localScale;
+        Vector3 targetScale = originalScale * 1.1f;
+
+        float duration = 0.2f;
+        float timer = 0f;
+
+        // Scale up
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / duration;
+            transform.localScale = Vector3.Lerp(originalScale, targetScale, progress);
+            yield return null;
+        }
+
+        // Scale back down
+        timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / duration;
+            transform.localScale = Vector3.Lerp(targetScale, originalScale, progress);
+            yield return null;
+        }
+
+        transform.localScale = originalScale;
     }
 
     // ================= STEP 2 : SHOW NAME INPUT =================
@@ -154,12 +253,43 @@ public class VariableInteractionBox : MonoBehaviour
 
         // Show instruction for next step
         StartCoroutine(ShowNextInstruction());
+
+        // Optional: Play a small magical sparkle when name is set
+        if (useMagicEffects && magicParticles != null)
+        {
+            StartCoroutine(PlayQuickSparkle());
+        }
     }
 
     IEnumerator ShowNextInstruction()
     {
         yield return new WaitForSeconds(1f);
         boxText.text = "Press E to set value";
+    }
+
+    IEnumerator PlayQuickSparkle()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        // Play a quick, small magical effect
+        if (magicParticles != null)
+        {
+            // Store original settings
+            int originalBurst = magicParticles.burstCount;
+            float originalDuration = magicParticles.effectDuration;
+
+            // Configure for quick sparkle
+            magicParticles.burstCount = 20;
+            magicParticles.effectDuration = 0.5f;
+
+            // Play effect
+            magicParticles.PlayMagicEffect();
+
+            // Restore original settings
+            yield return new WaitForSeconds(0.6f);
+            magicParticles.burstCount = originalBurst;
+            magicParticles.effectDuration = originalDuration;
+        }
     }
 
     // ================= STEP 4 : SHOW VALUE INPUT =================
@@ -186,9 +316,12 @@ public class VariableInteractionBox : MonoBehaviour
 
         inputPanel.SetActive(false); // Close panel after value entry
 
-        // Show final result
+        // Show final result with magical flourish
         StopAllCoroutines();
         StartCoroutine(ShowValueAnimation(variableValue));
+
+        // Play completion magic effect
+        StartCoroutine(PlayCompletionEffect());
 
         // Reset interaction for next time
         interactionStep = 0;
@@ -202,7 +335,25 @@ public class VariableInteractionBox : MonoBehaviour
         foreach (char c in text)
         {
             boxText.text += c;
+            // Add a small magical sparkle for each character
+            if (useMagicEffects && magicParticles != null && Random.value > 0.7f)
+            {
+                PlayCharacterSparkle();
+            }
             yield return new WaitForSeconds(writeSpeed);
+        }
+    }
+
+    void PlayCharacterSparkle()
+    {
+        // Create a quick sparkle at the text position
+        if (magicParticles != null)
+        {
+            // Small effect for typing
+            var originalBurst = magicParticles.burstCount;
+            magicParticles.burstCount = 5;
+            magicParticles.PlayMagicEffect();
+            magicParticles.burstCount = originalBurst;
         }
     }
 
@@ -218,35 +369,109 @@ public class VariableInteractionBox : MonoBehaviour
         }
     }
 
+    IEnumerator PlayCompletionEffect()
+    {
+        yield return new WaitForSeconds(0.5f);
+
+        // Play a grand magical completion effect
+        if (useMagicEffects && magicParticles != null)
+        {
+            // Configure for completion effect
+            var originalBurst = magicParticles.burstCount;
+            var originalSize = magicParticles.endSize;
+
+            magicParticles.burstCount = 100;
+            magicParticles.endSize = 2f;
+            magicParticles.PlayMagicEffect();
+
+            // Change box color briefly
+            Color originalColor = boxSprite.color;
+            boxSprite.color = Color.green;
+
+            yield return new WaitForSeconds(0.5f);
+
+            boxSprite.color = originalColor;
+
+            // Restore original settings
+            magicParticles.burstCount = originalBurst;
+            magicParticles.endSize = originalSize;
+        }
+    }
+
     // ================= PARTICLE SYSTEM CONTROL =================
     IEnumerator StopParticlesAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
 
-        var emission = variableParticles.emission;
-        float rate = emission.rateOverTime.constant;
-
-        while (rate > 0)
+        var oldParticles = GetComponent<ParticleSystem>();
+        if (oldParticles != null)
         {
-            rate -= Time.deltaTime * 10f;
-            emission.rateOverTime = rate;
-            yield return null;
-        }
+            var emission = oldParticles.emission;
+            float rate = emission.rateOverTime.constant;
 
-        variableParticles.Stop();
+            while (rate > 0)
+            {
+                rate -= Time.deltaTime * 10f;
+                emission.rateOverTime = rate;
+                yield return null;
+            }
+
+            oldParticles.Stop();
+
+            // Hide renderer
+            var renderer = oldParticles.GetComponent<ParticleSystemRenderer>();
+            if (renderer != null)
+                renderer.enabled = false;
+        }
     }
 
     // ================= RESET BOX =================
     void ResetBox()
     {
-        boxSprite.sortingOrder = 0;
+        // Reset sorting order
+        boxSprite.sortingOrder = originalSortingOrder;
         boxSprite.color = Color.white;
         boxActivated = false;
         nameSet = false;
         valueSet = false;
         inputPanel.SetActive(false);
         boxText.text = "";
-        variableParticles.Stop();
+
+        // Stop and hide particle effects
+        if (useMagicEffects && magicParticles != null)
+        {
+            magicParticles.StopEffect();
+            magicParticles.HideImmediate();
+        }
+        else
+        {
+            var oldParticles = GetComponent<ParticleSystem>();
+            if (oldParticles != null)
+            {
+                oldParticles.Stop();
+                var renderer = oldParticles.GetComponent<ParticleSystemRenderer>();
+                if (renderer != null)
+                    renderer.enabled = false;
+            }
+        }
+
+        // Reset scale
+        transform.localScale = Vector3.one;
+    }
+
+    // ================= VISUAL FEEDBACK =================
+    void UpdateVisualFeedback()
+    {
+        // Pulse the box when player is near and not activated
+        if (playerNear && !boxActivated)
+        {
+            float pulse = Mathf.Sin(Time.time * 3f) * 0.1f + 0.9f;
+            boxSprite.color = Color.Lerp(Color.white, activeColor * 0.3f, pulse);
+        }
+        else if (!boxActivated)
+        {
+            boxSprite.color = Color.white;
+        }
     }
 
     // ================= DEBUG =================

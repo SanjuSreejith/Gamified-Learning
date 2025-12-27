@@ -704,9 +704,11 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 128
-  variableParticles: {fileID: 872550707}
+  magicParticles: {fileID: 0}
   boxSprite: {fileID: 499678539}
   activeColor: {r: 0, g: 1, b: 1, a: 1}
+  defaultSortingOrder: 0
+  activeSortingOrder: 2
   boxText: {fileID: 1092716511}
   writeSpeed: 0.05
   inputPanel: {fileID: 367646754}
@@ -714,6 +716,9 @@ MonoBehaviour:
   valueInput: {fileID: 676631435}
   variableName: 
   variableValue: 0
+  useMagicEffects: 1
+  magicEffectDuration: 1.5
+  hideParticlesAfterEffect: 1
 --- !u!61 &499678542
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1888,7 +1893,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0, g: 0, b: 0, a: 1}
+      maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
