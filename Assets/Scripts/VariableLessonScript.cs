@@ -23,27 +23,36 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
 
     [Header("Dialogue Settings")]
     public float dialogueSpeed = 0.035f;
-    public bool autoSkipDialogue = true;
+
+    [Header("Dialogue Control (DEV OPTION)")]
+    public bool autoAdvanceDialogue = true;
+    public KeyCode advanceKey = KeyCode.Return;
 
     string currentInput = "";
     bool inputEnabled;
     bool cursorVisible = true;
-
     Coroutine cursorRoutine;
 
     string playerName;
     int playerAge;
 
     int step = 0;
+
+    // Dialogue flow
+    bool waitingForAdvance;
     bool skipRequested;
-    bool dialogueFinished;
+
+    // Boolean flow
+    bool waitingForConfirmation;
+    bool waitingForCorrectionChoice;
+
+    public TerminalVariableExercise exerciseScript;
 
     void Start()
     {
         terminalText.text = "";
         dialogueText.text = "";
         SetFace(idleFace);
-
         StartCoroutine(TerminalBoot());
     }
 
@@ -55,21 +64,17 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
 
         foreach (char c in Input.inputString)
         {
-            if (c == '\b')
-            {
-                if (currentInput.Length > 0)
-                    currentInput = currentInput.Substring(0, currentInput.Length - 1);
-            }
+            if (c == '\b' && currentInput.Length > 0)
+                currentInput = currentInput.Substring(0, currentInput.Length - 1);
             else if (c == '\n' || c == '\r')
-            {
                 SubmitInput();
-            }
             else
             {
                 if (step == 1 && (char.IsLetterOrDigit(c) || c == '_'))
                     currentInput += c;
-
                 else if (step == 2 && char.IsDigit(c))
+                    currentInput += c;
+                else if (step == 3 && char.IsLetter(c))
                     currentInput += c;
             }
         }
@@ -77,23 +82,22 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
         RefreshInputLine();
     }
 
-    // ================= TERMINAL BOOT =================
+    // ================= BOOT =================
     IEnumerator TerminalBoot()
     {
         yield return AddSystemLine(">>> MEMORY OS v0.1 <<<");
         yield return AddSystemLine("Booting core modules...");
-        yield return AddSystemLine("Loading language engine...");
-        yield return AddSystemLine("System status: STABLE");
-        yield return AddSystemLine("-----------------------");
+        yield return AddSystemLine("C language layer active");
+        yield return AddSystemLine("----------------------------");
 
         SetFace(thinkingFace);
-        yield return StartDialogue("Oh… someone’s here?");
-        yield return StartDialogue("Hi. I’m glad you found this place.");
-        yield return StartDialogue("Before we fix anything, I should know who I’m talking to.");
+        yield return Speak("Oh… hey.");
+        yield return Speak("I don’t get visitors often.");
+        yield return Speak("But I’m glad you’re here.");
+        yield return Speak("Let’s start simple.");
 
         SetFace(idleFace);
-        yield return StartDialogue("Type your name below. I’ll wait.");
-
+        yield return Speak("What’s your name?");
         EnableInput();
         step = 1;
     }
@@ -102,7 +106,6 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
     void SubmitInput()
     {
         if (string.IsNullOrWhiteSpace(currentInput)) return;
-
         AppendLine($"> {currentInput}");
 
         if (step == 1)
@@ -115,109 +118,174 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
         {
             if (!int.TryParse(currentInput, out playerAge))
             {
-                AppendLine("! SYSTEM: Invalid numeric input");
+                SetFace(warningFace);
+                AppendLine("! SYSTEM: I need a whole number 🙂");
                 currentInput = "";
                 return;
             }
-
             DisableInput();
             StartCoroutine(HandleAge());
+        }
+        else if (step == 3 && waitingForConfirmation)
+        {
+            string ans = currentInput.ToLower();
+            DisableInput();
+
+            if (ans == "yes" || ans == "true")
+                StartCoroutine(HandleConfirmationYes());
+            else if (ans == "no" || ans == "false")
+                StartCoroutine(HandleConfirmationNo());
+            else
+            {
+                AppendLine("! SYSTEM: Type yes or no");
+                EnableInput();
+                waitingForConfirmation = true;
+            }
+        }
+        else if (waitingForCorrectionChoice)
+        {
+            string choice = currentInput.ToLower();
+            DisableInput();
+
+            if (choice == "name") StartCoroutine(ReenterName());
+            else if (choice == "age") StartCoroutine(ReenterAge());
+            else
+            {
+                AppendLine("! SYSTEM: Type name or age");
+                EnableInput();
+                waitingForCorrectionChoice = true;
+            }
         }
 
         currentInput = "";
     }
 
-    // ================= NAME =================
+    // ================= STRING =================
     IEnumerator HandleName()
     {
         SetFace(happyFace);
-        yield return StartDialogue($"Nice to meet you, {playerName}.");
-        yield return StartDialogue("I’ll store that carefully.");
+        yield return Speak($"Nice to meet you, {playerName}!");
+        yield return Speak("Names matter. Let’s store it.");
 
         SetFace(thinkingFace);
-        yield return AddSystemLine("Allocating memory block...");
-        yield return AddSystemLine("Type detected: string");
-        yield return AddSystemLine($"string name = \"{playerName}\"");
+        yield return Speak("In pure C, text is stored as characters.");
+        yield return AddSystemLine($"char name[] = \"{playerName}\";");
 
-        yield return StartDialogue("A variable is just a labeled memory box.");
-        yield return StartDialogue("The label is the variable name.");
-        yield return StartDialogue("The content inside is the value.");
+        yield return Speak("That works… but it’s heavy for beginners.");
+        yield return Speak("So we use a learning shortcut.");
+
+        yield return AddSystemLine($"string name = \"{playerName}\";");
+        yield return Speak("Notice the semicolon?");
+        yield return Speak("It marks the end of an instruction.");
 
         yield return TerminalRefresh();
 
         SetFace(idleFace);
-        yield return StartDialogue("Alright. Name saved.");
-        yield return StartDialogue("Now tell me your age.");
-        yield return StartDialogue("Only numbers this time.");
-
+        yield return Speak("Now tell me your age.");
         EnableInput();
         step = 2;
     }
 
-    // ================= AGE =================
+    // ================= INT + BOOL =================
     IEnumerator HandleAge()
     {
         SetFace(thinkingFace);
 
-        if (playerAge < 0)
+        if (playerAge < 0 || playerAge > 150)
         {
             SetFace(warningFace);
-            yield return StartDialogue("Hmm… that doesn’t look right.");
-            yield return StartDialogue("Negative age would break time itself.");
-            yield return AddSystemLine("ERROR: Invalid age range");
+            yield return Speak("That doesn’t seem realistic 😅");
             EnableInput();
             yield break;
         }
 
-        if (playerAge > 150)
-        {
-            SetFace(warningFace);
-            yield return StartDialogue("That age exceeds human limits.");
-            yield return StartDialogue("Are you a legend… or something else?");
-            yield return AddSystemLine("WARNING: Age value unrealistic");
-            EnableInput();
-            yield break;
-        }
+        yield return AddSystemLine($"int age = {playerAge};");
+        yield return Speak("Whole numbers use the int type.");
 
-        yield return AddSystemLine("Validating numeric value...");
-        yield return AddSystemLine("Type detected: int");
-        yield return AddSystemLine($"int age = {playerAge}");
+        yield return TerminalRefresh();
 
-        if (playerAge <= 12)
-            yield return StartDialogue("That’s very young. Curiosity starts early.");
+        yield return Speak("Before I lock this in…");
+        yield return Speak("Are you sure these details are correct?");
+        yield return Speak("Type yes or no.");
 
-        else if (playerAge <= 19)
-            yield return StartDialogue("Perfect age to understand how systems work.");
+        EnableInput();
+        step = 3;
+        waitingForConfirmation = true;
+    }
 
-        else if (playerAge <= 59)
-            yield return StartDialogue("Experience and logic go well together.");
+    IEnumerator HandleConfirmationYes()
+    {
+        waitingForConfirmation = false;
+        SetFace(happyFace);
 
-        else
-            yield return StartDialogue("That’s a lot of wisdom.");
+        yield return AddSystemLine("bool detailsConfirmed = true;");
+        yield return Speak("Got it 🙂");
+        yield return Speak("true means continue.");
 
-        yield return StartDialogue("Numbers use the keyword 'int'.");
-        yield return StartDialogue("Keywords tell me how to treat data.");
+        StartCoroutine(ContinueWithFloat());
+    }
+
+    IEnumerator HandleConfirmationNo()
+    {
+        waitingForConfirmation = false;
+        SetFace(thinkingFace);
+
+        yield return AddSystemLine("bool detailsConfirmed = false;");
+        yield return Speak("Good choice.");
+        yield return Speak("Questioning data is smart.");
+
+        yield return Speak("What would you like to change?");
+        yield return Speak("Type: name or age");
+
+        waitingForCorrectionChoice = true;
+        EnableInput();
+    }
+
+    IEnumerator ReenterName()
+    {
+        yield return Speak("Alright, let’s fix your name.");
+        EnableInput();
+        step = 1;
+    }
+
+    IEnumerator ReenterAge()
+    {
+        yield return Speak("Okay, let’s fix your age.");
+        EnableInput();
+        step = 2;
+    }
+
+    // ================= FLOAT =================
+    IEnumerator ContinueWithFloat()
+    {
+        SetFace(thinkingFace);
+        yield return Speak("This world isn’t perfectly stable.");
+
+        yield return AddSystemLine("float stability = 0.85;");
+        yield return Speak("Decimals use the float type.");
+        yield return Speak("Used for health, speed, energy.");
 
         yield return TerminalRefresh();
 
         yield return AddSystemLine("FINAL MEMORY STATE");
-        yield return AddSystemLine("------------------");
-        yield return AddSystemLine($"string name = \"{playerName}\"");
-        yield return AddSystemLine($"int age = {playerAge}");
+        yield return AddSystemLine($"char name[] = \"{playerName}\";");
+        yield return AddSystemLine($"int age = {playerAge};");
+        yield return AddSystemLine("bool detailsConfirmed = true;");
+        yield return AddSystemLine("float stability = 0.85;");
 
         SetFace(proudFace);
-        yield return StartDialogue("Well done.");
-        yield return StartDialogue("You didn’t just enter data.");
-        yield return StartDialogue("You taught me how to remember you.");
+        yield return Speak("That was real programming.");
+        yield return Speak("Now let’s practice.");
 
-        DisableInput();
+        if (exerciseScript != null)
+            exerciseScript.StartExercise();
     }
 
     // ================= TERMINAL =================
     IEnumerator TerminalRefresh()
     {
         yield return AddSystemLine("Syncing memory...");
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.3f);
         terminalText.text = "";
         yield return AddSystemLine("Terminal ready.");
     }
@@ -249,32 +317,32 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
     void RefreshInputLine()
     {
         string[] lines = terminalText.text.Split('\n');
-        string cursor = cursorVisible ? "_" : "";
-        lines[lines.Length - 1] = $"> {currentInput}{cursor}";
+        lines[lines.Length - 1] = $"> {currentInput}{(cursorVisible ? "_" : "")}";
         terminalText.text = string.Join("\n", lines);
     }
 
     IEnumerator CursorBlink()
     {
-        while (true)
+        while (inputEnabled)
         {
             cursorVisible = !cursorVisible;
+            RefreshInputLine();
             yield return new WaitForSeconds(cursorBlinkRate);
         }
     }
 
     // ================= DIALOGUE =================
-    IEnumerator StartDialogue(string message)
+    IEnumerator Speak(string msg)
     {
-        dialogueFinished = false;
-        skipRequested = false;
         dialogueText.text = "";
+        waitingForAdvance = true;
+        skipRequested = false;
 
-        foreach (char c in message)
+        foreach (char c in msg)
         {
-            if (autoSkipDialogue && skipRequested)
+            if (skipRequested)
             {
-                dialogueText.text = message;
+                dialogueText.text = msg;
                 break;
             }
 
@@ -282,23 +350,24 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        dialogueFinished = true;
-
-        if (!autoSkipDialogue)
-            yield return new WaitUntil(() => skipRequested);
-        else
+        if (autoAdvanceDialogue)
+        {
             yield return new WaitForSeconds(0.4f);
+        }
+        else
+        {
+            yield return new WaitUntil(() => skipRequested);
+        }
+
+        waitingForAdvance = false;
     }
 
     void HandleDialogueAdvance()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            if (autoSkipDialogue && !dialogueFinished)
-                skipRequested = true;
-            else if (!autoSkipDialogue && dialogueFinished)
-                skipRequested = true;
-        }
+        if (!waitingForAdvance) return;
+
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
+            skipRequested = true;
     }
 
     void SetFace(Sprite face)
