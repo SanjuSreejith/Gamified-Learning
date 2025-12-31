@@ -398,8 +398,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: To remember things, I use something called a variable.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 91ce8166fd95d5548a42c63d40af1d49, type: 2}
+  m_sharedMaterial: {fileID: -1896452795305209684, guid: 91ce8166fd95d5548a42c63d40af1d49, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -434,8 +434,8 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
+  m_characterHorizontalScale: 0.8
+  m_wordSpacing: -10
   m_lineSpacing: 0
   m_lineSpacingMax: 0
   m_paragraphSpacing: 0
@@ -882,7 +882,9 @@ MonoBehaviour:
   cursorBlinkRate: 0.5
   systemLineDelay: 0.25
   dialogueSpeed: 0.035
-  autoSkipDialogue: 0
+  autoAdvanceDialogue: 0
+  advanceKey: 13
+  exerciseScript: {fileID: 1168253267}
 --- !u!4 &855939760
 Transform:
   m_ObjectHideFlags: 0
@@ -1004,6 +1006,64 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &1168253266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1168253268}
+  - component: {fileID: 1168253267}
+  m_Layer: 0
+  m_Name: TerminalVariable
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1168253267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1168253266}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b2660c6101a9b4d809d5ef39934efe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TerminalVariableExercise
+  terminalText: {fileID: 263289098}
+  dialogueText: {fileID: 392783656}
+  botFaceImage: {fileID: 1698998067}
+  neutralFace: {fileID: 17426746270384133, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  thinkingFace: {fileID: -4562660738990252088, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  happyFace: {fileID: 214248980452440492, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  proudFace: {fileID: -671068790663490089, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  warningFace: {fileID: -2242048431148052392, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  autoSkipDialogue: 0
+  dialogueSpeed: 0.03
+  autoSkipDelay: 0.4
+  cursorBlinkRate: 0.5
+  maxOutputLines: 5
+  clearDelay: 0.15
+--- !u!4 &1168253268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1168253266}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 663.6865, y: 278.69818, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1202669530
 GameObject:
   m_ObjectHideFlags: 0
@@ -1163,7 +1223,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1481597514}
-  - component: {fileID: 1481597513}
   m_Layer: 0
   m_Name: Dialogue Manage
   m_TagString: Untagged
@@ -1171,21 +1230,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1481597513
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1481597512}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c274e3a690853c84ba48d8da2c342203, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  dialogueText: {fileID: 0}
-  lines: []
-  textSpeed: 0.04
 --- !u!4 &1481597514
 Transform:
   m_ObjectHideFlags: 0
@@ -1360,3 +1404,4 @@ SceneRoots:
   - {fileID: 354612769}
   - {fileID: 1481597514}
   - {fileID: 855939760}
+  - {fileID: 1168253268}
