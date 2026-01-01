@@ -1310,7 +1310,7 @@ MonoBehaviour:
   shakeStrength: 6
   blockPause: 1.2
   nullPause: 2
-  learningCoreScene: VariableLessonScene
+  learningCoreScene: Intro
   fadeDuration: 1.2
   typingSource: {fileID: 1481597516}
   typeKeyClip: {fileID: 8300000, guid: 4c718c5edafe06344a1c52a552950894, type: 3}
