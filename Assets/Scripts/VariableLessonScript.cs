@@ -83,6 +83,7 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
     }
 
     // ================= BOOT =================
+    // ================= BOOT =================
     IEnumerator TerminalBoot()
     {
         yield return AddSystemLine(">>> MEMORY OS v0.1 <<<");
@@ -91,6 +92,26 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
         yield return AddSystemLine("----------------------------");
 
         SetFace(thinkingFace);
+        yield return Speak("That was close…");
+        yield return Speak("He almost noticed you.");
+
+        yield return Speak("The terminal you just saw…");
+        yield return Speak("That world belongs to NULL now.");
+
+        yield return Speak("I can’t exist there.");
+        yield return Speak("He controls everything in that space.");
+
+        yield return Speak("This place is different.");
+        yield return Speak("It’s a learning core.");
+
+        yield return Speak("As long as you’re learning…");
+        yield return Speak("NULL can’t see you.");
+
+        // 🔑 EMOTIONAL TRANSITION
+        yield return Speak("…Okay.");
+        yield return Speak("You’re safe now.");
+
+        // ORIGINAL FRIENDLY INTRO
         yield return Speak("Oh… hey.");
         yield return Speak("I don’t get visitors often.");
         yield return Speak("But I’m glad you’re here.");
@@ -101,6 +122,7 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
         EnableInput();
         step = 1;
     }
+
 
     // ================= INPUT =================
     void SubmitInput()
@@ -219,7 +241,7 @@ public class AdvancedTerminalVariableLesson : MonoBehaviour
         SetFace(happyFace);
 
         yield return AddSystemLine("bool detailsConfirmed = true;");
-        yield return Speak("Got it 🙂");
+        yield return Speak("Got it ");
         yield return Speak("true means continue.");
 
         StartCoroutine(ContinueWithFloat());
