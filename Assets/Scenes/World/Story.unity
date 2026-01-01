@@ -1305,7 +1305,11 @@ MonoBehaviour:
   normalSpeed: 0.04
   slowSpeed: 0.07
   cursorBlinkRate: 0.5
-  scrollLerpSpeed: 8
+  typingSpeedMultiplier: 0.5
+  baseScrollSpeed: 4
+  boostScrollSpeed: 12
+  autoScrollThreshold: 0.9
+  scrollSmoothTime: 0.3
   glitchDuration: 1.5
   shakeStrength: 6
   blockPause: 1.2
@@ -1313,9 +1317,17 @@ MonoBehaviour:
   learningCoreScene: Intro
   fadeDuration: 1.2
   typingSource: {fileID: 1481597516}
-  typeKeyClip: {fileID: 8300000, guid: 4c718c5edafe06344a1c52a552950894, type: 3}
+  typeSoundClip: {fileID: 8300000, guid: 4c718c5edafe06344a1c52a552950894, type: 3}
+  typeSpaceClip: {fileID: 8300000, guid: 4c718c5edafe06344a1c52a552950894, type: 3}
   typeEnterClip: {fileID: 8300000, guid: 4c718c5edafe06344a1c52a552950894, type: 3}
-  typingVolume: 0.4
+  typingVolume: 0.16
+  minPitch: 0.85
+  maxPitch: 1.15
+  minVolumeVariation: 0.2
+  maxVolumeVariation: 0.2
+  letterSoundInterval: 0.04
+  spaceSoundInterval: 0.06
+  enterSoundInterval: 0.1
   voiceSource: {fileID: 1481597516}
   nullVoiceClips:
   - {fileID: 8300000, guid: 64da9e92a5149514f990c6deae8a97f3, type: 3}
