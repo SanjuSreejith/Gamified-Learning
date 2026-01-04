@@ -45,12 +45,6 @@ public class TerminalVariableLesson : MonoBehaviour
     // Boolean flow
     bool waitingForConfirmation;
     bool waitingForCorrectionChoice;
-    [Header("Typing Audio")]
-    public AudioSource typingAudio;
-    public AudioClip typeLetter;
-    public AudioClip typeSpace;
-    public AudioClip typeBackspace;
-
 
     public TerminalVariableExercise exerciseScript;
 
@@ -71,33 +65,19 @@ public class TerminalVariableLesson : MonoBehaviour
         foreach (char c in Input.inputString)
         {
             if (c == '\b' && currentInput.Length > 0)
-            {
                 currentInput = currentInput.Substring(0, currentInput.Length - 1);
-                PlayTypingSound(c);
-            }
             else if (c == '\n' || c == '\r')
-            {
                 SubmitInput();
-            }
             else
             {
-                bool accepted = false;
-
                 if (step == 1 && (char.IsLetterOrDigit(c) || c == '_'))
-                    accepted = true;
-                else if (step == 2 && char.IsDigit(c))
-                    accepted = true;
-                else if (step == 3 && char.IsLetter(c))
-                    accepted = true;
-
-                if (accepted)
-                {
                     currentInput += c;
-                    PlayTypingSound(c);
-                }
+                else if (step == 2 && char.IsDigit(c))
+                    currentInput += c;
+                else if (step == 3 && char.IsLetter(c))
+                    currentInput += c;
             }
         }
-
 
         RefreshInputLine();
     }
@@ -161,7 +141,7 @@ public class TerminalVariableLesson : MonoBehaviour
             if (!int.TryParse(currentInput, out playerAge))
             {
                 SetFace(warningFace);
-                AppendLine("! SYSTEM: I need a whole number ");
+                AppendLine("! SYSTEM: I need a whole number 🙂");
                 currentInput = "";
                 return;
             }
@@ -236,7 +216,7 @@ public class TerminalVariableLesson : MonoBehaviour
         if (playerAge < 0 || playerAge > 150)
         {
             SetFace(warningFace);
-            yield return Speak("That doesn’t seem realistic ");
+            yield return Speak("That doesn’t seem realistic 😅");
             EnableInput();
             yield break;
         }
@@ -417,25 +397,4 @@ public class TerminalVariableLesson : MonoBehaviour
         if (botFaceImage && face)
             botFaceImage.sprite = face;
     }
-    void PlayTypingSound(char c)
-    {
-        if (!typingAudio) return;
-
-        if (c == '\b')
-        {
-            if (typeBackspace)
-                typingAudio.PlayOneShot(typeBackspace);
-        }
-        else if (c == ' ')
-        {
-            if (typeSpace)
-                typingAudio.PlayOneShot(typeSpace);
-        }
-        else
-        {
-            if (typeLetter)
-                typingAudio.PlayOneShot(typeLetter);
-        }
-    }
-
 }
