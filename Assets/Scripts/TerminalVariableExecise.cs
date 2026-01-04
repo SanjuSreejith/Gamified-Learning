@@ -232,7 +232,7 @@ public class TerminalVariableExercise : MonoBehaviour
             1 => "char name[20] = \"Alex\";  OR  string name = \"Alex\";",
             2 => "int age = 25;",
             3 => "bool isReady = true;",
-            4 => "float energy = 0.5;",
+            4 => "float energy = 0.5f;",
             _ => ""
         };
     }
