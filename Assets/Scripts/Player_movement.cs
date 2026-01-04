@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+using System.Collections.Generic;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement2D : MonoBehaviour
 {
     [Header("Movement")]
-    public float moveSpeed = 8f;
+    public float moveSpeed = 3f;
     public float acceleration = 12f;
     public float deceleration = 16f;
 
@@ -18,6 +19,11 @@ public class PlayerMovement2D : MonoBehaviour
     public float groundRadius = 0.2f;
     public LayerMask groundLayer;
 
+    // Collision-based ground detection (works without layers)
+    HashSet<Collider2D> groundContactSet = new HashSet<Collider2D>();
+    [Tooltip("Minimum Y component of a contact normal to count as 'ground' (0..1). Increase to ignore shallow slopes.")]
+    public float groundNormalMinY = 0.65f;
+
     Rigidbody2D rb;
     Animator anim;
 
@@ -25,6 +31,11 @@ public class PlayerMovement2D : MonoBehaviour
     float coyoteCounter;
     float jumpBufferCounter;
     bool isGrounded;
+
+    // When true, jump animation is playing and movement animation should be suppressed.
+    bool isJumpAnimActive = false;
+    // Locks further jumps/clearing until player lands on a collider.
+    bool jumpLocked = false;
 
     void Awake()
     {
@@ -46,11 +57,25 @@ public class PlayerMovement2D : MonoBehaviour
         // GROUND CHECK
         if (groundCheck != null)
         {
+            int mask = groundLayer.value == 0 ? ~0 : groundLayer.value;
             isGrounded = Physics2D.OverlapCircle(
                 groundCheck.position,
                 groundRadius,
-                groundLayer
+                mask
             );
+        }
+        else
+        {
+            // No groundCheck assigned: use collision-contact normals to decide grounded state.
+            // This requires no layer setup and works with moving/floating platforms.
+            isGrounded = groundContactSet.Count > 0;
+        }
+
+        // If we were locked in the jump animation and we've landed, clear the lock
+        if (isGrounded && jumpLocked)
+        {
+            isJumpAnimActive = false;
+            jumpLocked = false;
         }
 
         // COYOTE TIME
@@ -65,15 +90,18 @@ public class PlayerMovement2D : MonoBehaviour
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
             jumpBufferCounter = 0;
             coyoteCounter = 0;
+            isJumpAnimActive = true;
+            jumpLocked = true;
         }
 
         // ✅ ANIMATIONS (FIXED)
         if (anim != null)
         {
-            bool isMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f;
+            // Suppress moving animation while the jump animation is active.
+            bool isMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f && !isJumpAnimActive;
 
             anim.SetBool("IsMoving", isMoving);
-            anim.SetBool("IsJumping", !isGrounded);
+            anim.SetBool("IsJumping", isJumpAnimActive);
         }
     }
 
@@ -95,5 +123,45 @@ public class PlayerMovement2D : MonoBehaviour
         if (!groundCheck) return;
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        EvaluateCollisionContacts(collision);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        EvaluateCollisionContacts(collision);
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        // remove the collider from the contact set when it stops colliding
+        if (collision.collider != null && groundContactSet.Contains(collision.collider))
+            groundContactSet.Remove(collision.collider);
+    }
+
+    void EvaluateCollisionContacts(Collision2D collision)
+    {
+        if (collision == null || collision.contacts == null) return;
+
+        bool added = false;
+        foreach (ContactPoint2D cp in collision.contacts)
+        {
+            if (cp.normal.y >= groundNormalMinY)
+            {
+                if (collision.collider != null && !groundContactSet.Contains(collision.collider))
+                {
+                    groundContactSet.Add(collision.collider);
+                    added = true;
+                }
+                break;
+            }
+        }
+
+        // If no contact met the threshold, ensure collider isn't in the set
+        if (!added && collision.collider != null && groundContactSet.Contains(collision.collider))
+            groundContactSet.Remove(collision.collider);
     }
 }
