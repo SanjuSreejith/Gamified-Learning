@@ -203,7 +203,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 317849021}
-  - component: {fileID: 317849020}
+  - component: {fileID: 317849022}
   m_Layer: 0
   m_Name: Music
   m_TagString: Untagged
@@ -211,23 +211,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &317849020
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317849019}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 088de8fbd476ae54a86636ee83d07e03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  musicClip: {fileID: 8300000, guid: 6b7f0eacadda30b42b230e8a97465b6f, type: 3}
-  playMusicOnStart: 1
-  musicFadeTime: 1
-  sfxClip: {fileID: 8300000, guid: 6b7f0eacadda30b42b230e8a97465b6f, type: 3}
-  sfxVolume: 1
 --- !u!4 &317849021
 Transform:
   m_ObjectHideFlags: 0
@@ -243,6 +226,103 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!82 &317849022
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 317849019}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 8300000, guid: 6b7f0eacadda30b42b230e8a97465b6f, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 0.122
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &354612766
 GameObject:
   m_ObjectHideFlags: 0
@@ -877,6 +957,8 @@ MonoBehaviour:
   targetPoint: {fileID: 727088584}
   walkSpeed: 15
   startAnimationDuration: 0.6
+  walkAudioSource: {fileID: 0}
+  walkClip: {fileID: 0}
 --- !u!95 &844457958
 Animator:
   serializedVersion: 7
@@ -1380,15 +1462,12 @@ MonoBehaviour:
   voiceSource: {fileID: 1481597516}
   nullVoiceClips:
   - {fileID: 8300000, guid: 64da9e92a5149514f990c6deae8a97f3, type: 3}
-  - {fileID: 8300000, guid: cd1a4d04793e9954980b04a940bd9639, type: 3}
   - {fileID: 8300000, guid: f4e831bfcc7c39b43b82b857108f9c4d, type: 3}
   - {fileID: 8300000, guid: 1e1daaf92bd1a394a909d87f5aaa6ffd, type: 3}
-  - {fileID: 8300000, guid: f24e2310e8a64824c87de4cf03abea09, type: 3}
   - {fileID: 8300000, guid: 838630af43a53ef419de5a10d8345ebe, type: 3}
   - {fileID: 8300000, guid: 535cb13c9ea343348b0a730093f06927, type: 3}
-  - {fileID: 8300000, guid: 2a01750176c96c040a3bccfaf08ac631, type: 3}
   - {fileID: 8300000, guid: ba0b57e604498c14f89c23c4927e6111, type: 3}
-  nullVoiceBlockMap: 030000000400000005000000060000000700000008000000090000000a00000010000000
+  nullVoiceBlockMap: 030000000400000006000000070000000900000010000000
   blocks:
   - 'Booting TARKYA Engine v0.1...
 

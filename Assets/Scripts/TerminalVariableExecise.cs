@@ -28,6 +28,15 @@ public class TerminalVariableExercise : MonoBehaviour
     [Header("Terminal Auto Clear")]
     public int maxOutputLines = 10;
     public float clearDelay = 0.15f;
+    [Header("Typing Audio")]
+    public AudioSource typingAudio;
+    public AudioClip typeLetter;
+    public AudioClip typeSpace;
+    public AudioClip typeBackspace;
+    [Header("Feedback Audio")]
+    public AudioSource feedbackAudio;
+    public AudioClip correctSound;
+
 
     // ================= INTERNAL =================
     string input = "";
@@ -92,16 +101,24 @@ public class TerminalVariableExercise : MonoBehaviour
         HandleDialogueAdvance();
 
         if (!inputEnabled || clearing || finished) return;
-
         foreach (char c in Input.inputString)
         {
             if (c == '\b' && input.Length > 0)
+            {
                 input = input[..^1];
+                PlayTypingSound(c);
+            }
             else if (c == '\n' || c == '\r')
+            {
                 Submit();
+            }
             else if (!char.IsControl(c))
+            {
                 input += c;
+                PlayTypingSound(c);
+            }
         }
+
 
         RefreshTerminal();
     }
@@ -129,6 +146,26 @@ public class TerminalVariableExercise : MonoBehaviour
 
         taskBuffer += "\n";
         outputBuffer = "";
+    }
+    void PlayTypingSound(char c)
+    {
+        if (!typingAudio) return;
+
+        if (c == '\b')
+        {
+            if (typeBackspace)
+                typingAudio.PlayOneShot(typeBackspace);
+        }
+        else if (c == ' ')
+        {
+            if (typeSpace)
+                typingAudio.PlayOneShot(typeSpace);
+        }
+        else
+        {
+            if (typeLetter)
+                typingAudio.PlayOneShot(typeLetter);
+        }
     }
 
     // ================= SUBMIT =================
@@ -173,8 +210,12 @@ public class TerminalVariableExercise : MonoBehaviour
         DisableInput();
         mistakes = 0;
 
+        // ▶ Play correct / success sound ONCE
+        if (feedbackAudio && correctSound)
+            feedbackAudio.PlayOneShot(correctSound);
+
         SetFace(happyFace);
-        AppendOutput("✓ Compiled Successfully");
+        AppendOutput("Compiled Successfully");
         yield return Say("Correct.");
 
         step++;
@@ -190,6 +231,7 @@ public class TerminalVariableExercise : MonoBehaviour
         BuildTask();
         EnableInput();
     }
+
 
     // ================= MISTAKE =================
     IEnumerator Mistake()
@@ -363,8 +405,8 @@ public class TerminalVariableExercise : MonoBehaviour
 
         waitingForAdvance = false;
     }
-
-    void HandleDialogueAdvance()
+   
+        void HandleDialogueAdvance()
     {
         if (!waitingForAdvance || autoSkipDialogue) return;
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return))

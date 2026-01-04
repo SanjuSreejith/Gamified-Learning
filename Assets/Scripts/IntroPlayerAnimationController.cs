@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class IntroAutoWalkUI : MonoBehaviour
 {
@@ -8,6 +8,10 @@ public class IntroAutoWalkUI : MonoBehaviour
 
     [Header("Timings")]
     public float startAnimationDuration = 0.6f;
+
+    [Header("Audio")]
+    public AudioSource walkAudioSource;
+    public AudioClip walkClip;
 
     RectTransform rectTransform;
     Animator animator;
@@ -26,6 +30,14 @@ public class IntroAutoWalkUI : MonoBehaviour
     {
         animator.SetBool("isWalking", true);
         canMove = true;
+
+        // ▶ Start walking sound
+        if (walkAudioSource && walkClip)
+        {
+            walkAudioSource.clip = walkClip;
+            walkAudioSource.loop = true;
+            walkAudioSource.Play();
+        }
     }
 
     void Update()
@@ -41,8 +53,13 @@ public class IntroAutoWalkUI : MonoBehaviour
         if (Vector2.Distance(rectTransform.anchoredPosition, targetPoint.anchoredPosition) < 5f)
         {
             canMove = false;
+
             animator.SetBool("isWalking", false);
             animator.SetBool("reachedTarget", true);
+
+            // ⏹ Stop walking sound
+            if (walkAudioSource && walkAudioSource.isPlaying)
+                walkAudioSource.Stop();
         }
     }
 }

@@ -65,6 +65,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     "It reacts to something…",
     "I think it reacts to C programs.",
     "Maybe printing something will unlock it.",
+    "In C, we use printf().",
     "Try printing: Hello World",
     "Press 1 to try."
 };
