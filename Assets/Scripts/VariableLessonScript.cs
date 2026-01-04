@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using System.Collections;
 
-public class AdvancedTerminalVariableLesson : MonoBehaviour
+public class TerminalVariableLesson : MonoBehaviour
 {
     [Header("UI")]
     public TextMeshProUGUI terminalText;
