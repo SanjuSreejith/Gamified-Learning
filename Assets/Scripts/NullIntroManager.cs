@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text;
 using UnityEngine.SceneManagement;
 
-public class TerminalIntro : MonoBehaviour
+public class TerminalIntro_NULL_Final : MonoBehaviour
 {
     // ================= UI =================
     [Header("UI")]
