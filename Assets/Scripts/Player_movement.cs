@@ -36,6 +36,8 @@ public class PlayerMovement2D : MonoBehaviour
     bool isJumpAnimActive = false;
     // Locks further jumps/clearing until player lands on a collider.
     bool jumpLocked = false;
+    // Current facing direction. True when facing right.
+    bool facingRight = true;
 
     void Awake()
     {
@@ -47,6 +49,12 @@ public class PlayerMovement2D : MonoBehaviour
     {
         // INPUT
         moveInput = Input.GetAxisRaw("Horizontal");
+
+        // FLIP: flip sprite when input direction changes
+        if (moveInput > 0.01f && !facingRight)
+            Flip();
+        else if (moveInput < -0.01f && facingRight)
+            Flip();
 
         // JUMP BUFFER
         if (Input.GetButtonDown("Jump"))
@@ -123,6 +131,14 @@ public class PlayerMovement2D : MonoBehaviour
         if (!groundCheck) return;
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 s = transform.localScale;
+        s.x = -s.x;
+        transform.localScale = s;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
