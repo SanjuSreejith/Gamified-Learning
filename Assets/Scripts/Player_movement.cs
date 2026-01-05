@@ -19,9 +19,16 @@ public class PlayerMovement2D : MonoBehaviour
     public float groundRadius = 0.2f;
     public LayerMask groundLayer;
 
-    // Collision-based ground detection (works without layers)
+    [Header("Audio Clips")]
+    public AudioClip walkClip;
+    public AudioClip jumpClip;
+
+    [Header("Audio Sources")]
+    public AudioSource footstepSource;   // looping footsteps
+    public AudioSource actionSource;     // jump, land, etc.
+
+    // Collision based ground detection
     HashSet<Collider2D> groundContactSet = new HashSet<Collider2D>();
-    [Tooltip("Minimum Y component of a contact normal to count as 'ground' (0..1). Increase to ignore shallow slopes.")]
     public float groundNormalMinY = 0.65f;
 
     Rigidbody2D rb;
@@ -32,37 +39,48 @@ public class PlayerMovement2D : MonoBehaviour
     float jumpBufferCounter;
     bool isGrounded;
 
-    // When true, jump animation is playing and movement animation should be suppressed.
-    bool isJumpAnimActive = false;
-    // Locks further jumps/clearing until player lands on a collider.
-    bool jumpLocked = false;
-    // Current facing direction. True when facing right.
+    bool isJumpAnimActive;
+    bool jumpLocked;
     bool facingRight = true;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
+        // Safety checks
+        if (footstepSource != null)
+        {
+            footstepSource.loop = true;
+            footstepSource.playOnAwake = false;
+            footstepSource.volume = 1f;
+            footstepSource.spatialBlend = 0f; // 2D sound
+        }
+
+        if (actionSource != null)
+        {
+            actionSource.loop = false;
+            actionSource.playOnAwake = false;
+            actionSource.volume = 1f;
+            actionSource.spatialBlend = 0f; // 2D sound
+        }
     }
 
     void Update()
     {
-        // INPUT
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // FLIP: flip sprite when input direction changes
-        if (moveInput > 0.01f && !facingRight)
-            Flip();
-        else if (moveInput < -0.01f && facingRight)
-            Flip();
+        // Flip
+        if (moveInput > 0.01f && !facingRight) Flip();
+        else if (moveInput < -0.01f && facingRight) Flip();
 
-        // JUMP BUFFER
+        // Jump buffer
         if (Input.GetButtonDown("Jump"))
             jumpBufferCounter = jumpBufferTime;
         else
             jumpBufferCounter -= Time.deltaTime;
 
-        // GROUND CHECK
+        // Ground check
         if (groundCheck != null)
         {
             int mask = groundLayer.value == 0 ? ~0 : groundLayer.value;
@@ -74,43 +92,45 @@ public class PlayerMovement2D : MonoBehaviour
         }
         else
         {
-            // No groundCheck assigned: use collision-contact normals to decide grounded state.
-            // This requires no layer setup and works with moving/floating platforms.
             isGrounded = groundContactSet.Count > 0;
         }
 
-        // If we were locked in the jump animation and we've landed, clear the lock
+        // Reset jump lock on land
         if (isGrounded && jumpLocked)
         {
             isJumpAnimActive = false;
             jumpLocked = false;
         }
 
-        // COYOTE TIME
+        // Coyote time
         if (isGrounded)
             coyoteCounter = coyoteTime;
         else
             coyoteCounter -= Time.deltaTime;
 
-        // JUMP
+        // Jump
         if (jumpBufferCounter > 0 && coyoteCounter > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+
             jumpBufferCounter = 0;
             coyoteCounter = 0;
+
             isJumpAnimActive = true;
             jumpLocked = true;
+
+            PlayJumpSound();
         }
 
-        // ✅ ANIMATIONS (FIXED)
+        // Animations
         if (anim != null)
         {
-            // Suppress moving animation while the jump animation is active.
             bool isMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f && !isJumpAnimActive;
-
             anim.SetBool("IsMoving", isMoving);
             anim.SetBool("IsJumping", isJumpAnimActive);
         }
+
+        HandleFootstepSound();
     }
 
     void FixedUpdate()
@@ -122,39 +142,49 @@ public class PlayerMovement2D : MonoBehaviour
             ? acceleration
             : deceleration;
 
-        float movement = speedDiff * accelRate;
-        rb.AddForce(Vector2.right * movement, ForceMode2D.Force);
+        rb.AddForce(Vector2.right * speedDiff * accelRate, ForceMode2D.Force);
     }
 
-    void OnDrawGizmosSelected()
+    // ================= SOUND =================
+
+    void HandleFootstepSound()
     {
-        if (!groundCheck) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+        if (footstepSource == null || walkClip == null) return;
+
+        bool shouldPlay =
+            isGrounded &&
+            Mathf.Abs(rb.linearVelocity.x) > 0.1f &&
+            !isJumpAnimActive;
+
+        if (shouldPlay)
+        {
+            if (!footstepSource.isPlaying)
+            {
+                footstepSource.clip = walkClip;
+                footstepSource.Play();
+            }
+        }
+        else
+        {
+            if (footstepSource.isPlaying)
+                footstepSource.Stop();
+        }
     }
 
-    void Flip()
+    void PlayJumpSound()
     {
-        facingRight = !facingRight;
-        Vector3 s = transform.localScale;
-        s.x = -s.x;
-        transform.localScale = s;
+        if (actionSource == null || jumpClip == null) return;
+        actionSource.PlayOneShot(jumpClip, 1f);
     }
 
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        EvaluateCollisionContacts(collision);
-    }
+    // ================= COLLISION =================
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        EvaluateCollisionContacts(collision);
-    }
+    void OnCollisionEnter2D(Collision2D collision) => EvaluateCollisionContacts(collision);
+    void OnCollisionStay2D(Collision2D collision) => EvaluateCollisionContacts(collision);
 
     void OnCollisionExit2D(Collision2D collision)
     {
-        // remove the collider from the contact set when it stops colliding
-        if (collision.collider != null && groundContactSet.Contains(collision.collider))
+        if (collision.collider != null)
             groundContactSet.Remove(collision.collider);
     }
 
@@ -162,22 +192,30 @@ public class PlayerMovement2D : MonoBehaviour
     {
         if (collision == null || collision.contacts == null) return;
 
-        bool added = false;
         foreach (ContactPoint2D cp in collision.contacts)
         {
             if (cp.normal.y >= groundNormalMinY)
             {
-                if (collision.collider != null && !groundContactSet.Contains(collision.collider))
-                {
-                    groundContactSet.Add(collision.collider);
-                    added = true;
-                }
-                break;
+                groundContactSet.Add(collision.collider);
+                return;
             }
         }
 
-        // If no contact met the threshold, ensure collider isn't in the set
-        if (!added && collision.collider != null && groundContactSet.Contains(collision.collider))
-            groundContactSet.Remove(collision.collider);
+        groundContactSet.Remove(collision.collider);
+    }
+
+    void Flip()
+    {
+        facingRight = !facingRight;
+        Vector3 s = transform.localScale;
+        s.x *= -1;
+        transform.localScale = s;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        if (!groundCheck) return;
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
     }
 }

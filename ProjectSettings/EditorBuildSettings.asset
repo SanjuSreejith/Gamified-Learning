@@ -17,6 +17,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/World/Printf.unity
     guid: cbd44e5de04c97948ba42e12829776f8
+  - enabled: 1
+    path: Assets/Scenes/World/World 2C.unity
+    guid: 42a3e5802ae2cfd409bd0b0d2c7b349c
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
