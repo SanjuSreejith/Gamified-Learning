@@ -201,7 +201,7 @@ public class DoorScanfLesson_Trigger : MonoBehaviour
         }
 
         boardPanel.SetActive(true);
-        boardText.text = activeDialogue[dialogueIndex] + "\n\n<Press Enter or Click>";
+        boardText.text = activeDialogue[dialogueIndex];
         Debug.Log("Started dialogue: " + activeDialogue[dialogueIndex]);
     }
 
@@ -221,7 +221,7 @@ public class DoorScanfLesson_Trigger : MonoBehaviour
 
             if (dialogueIndex < activeDialogue.Length)
             {
-                boardText.text = activeDialogue[dialogueIndex] + "\n\n<Press Enter or Click>";
+                boardText.text = activeDialogue[dialogueIndex];
                 Debug.Log("Advanced to dialogue line " + dialogueIndex + ": " + activeDialogue[dialogueIndex]);
             }
             else
@@ -238,7 +238,7 @@ public class DoorScanfLesson_Trigger : MonoBehaviour
                     if (boardPanel != null)
                     {
                         boardPanel.SetActive(true);
-                        boardText.text = "Press 1 to open the terminal.\n\n<Press Enter or Click>";
+                        boardText.text = "Press 1 to open the terminal.";
                     }
                 }
                 else if (state == State.Transition)
@@ -379,9 +379,9 @@ public class DoorScanfLesson_Trigger : MonoBehaviour
         if (audioSource != null && correctSound != null)
             audioSource.PlayOneShot(correctSound);
 
-        terminalText.text += "\n✓ Input read successfully!\n";
-        terminalText.text += "✓ Password = 349\n";
-        terminalText.text += "✓ Door unlocked!\n\n";
+        terminalText.text += "\nInput read successfully!\n";
+        terminalText.text += "Password = 349\n";
+        terminalText.text += "Door unlocked!\n\n";
 
         // Determine which success dialogue to use
         if (attempts == 1)

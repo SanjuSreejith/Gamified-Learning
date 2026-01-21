@@ -32,25 +32,29 @@ public class TerminalVariableLesson : MonoBehaviour
     bool inputEnabled;
     bool cursorVisible = true;
     Coroutine cursorRoutine;
+    [Header("ID Card UI")]
+    public GameObject idCardPanel;
+    public TextMeshProUGUI idNameText;
+    public TextMeshProUGUI idAgeText;
+    public Animator idCardAnimator;
+
 
     string playerName;
     int playerAge;
 
     int step = 0;
 
-    // Dialogue flow
     bool waitingForAdvance;
     bool skipRequested;
 
-    // Boolean flow
     bool waitingForConfirmation;
     bool waitingForCorrectionChoice;
+
     [Header("Typing Audio")]
     public AudioSource typingAudio;
     public AudioClip typeLetter;
     public AudioClip typeSpace;
     public AudioClip typeBackspace;
-
 
     public TerminalVariableExercise exerciseScript;
 
@@ -98,17 +102,15 @@ public class TerminalVariableLesson : MonoBehaviour
             }
         }
 
-
         RefreshInputLine();
     }
 
-    // ================= BOOT =================
     // ================= BOOT =================
     IEnumerator TerminalBoot()
     {
         yield return AddSystemLine(">>> MEMORY OS v0.1 <<<");
         yield return AddSystemLine("Booting core modules...");
-        yield return AddSystemLine("C language layer active");
+        yield return AddSystemLine("Python runtime active");
         yield return AddSystemLine("----------------------------");
 
         SetFace(thinkingFace);
@@ -127,11 +129,9 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("As long as you’re learning…");
         yield return Speak("NULL can’t see you.");
 
-        // 🔑 EMOTIONAL TRANSITION
         yield return Speak("…Okay.");
         yield return Speak("You’re safe now.");
 
-        // ORIGINAL FRIENDLY INTRO
         yield return Speak("Oh… hey.");
         yield return Speak("I don’t get visitors often.");
         yield return Speak("But I’m glad you’re here.");
@@ -142,7 +142,6 @@ public class TerminalVariableLesson : MonoBehaviour
         EnableInput();
         step = 1;
     }
-
 
     // ================= INPUT =================
     void SubmitInput()
@@ -161,7 +160,7 @@ public class TerminalVariableLesson : MonoBehaviour
             if (!int.TryParse(currentInput, out playerAge))
             {
                 SetFace(warningFace);
-                AppendLine("! SYSTEM: I need a whole number ");
+                AppendLine("! SYSTEM: Enter a valid number");
                 currentInput = "";
                 return;
             }
@@ -181,7 +180,6 @@ public class TerminalVariableLesson : MonoBehaviour
             {
                 AppendLine("! SYSTEM: Type yes or no");
                 EnableInput();
-                waitingForConfirmation = true;
             }
         }
         else if (waitingForCorrectionChoice)
@@ -195,40 +193,38 @@ public class TerminalVariableLesson : MonoBehaviour
             {
                 AppendLine("! SYSTEM: Type name or age");
                 EnableInput();
-                waitingForCorrectionChoice = true;
             }
         }
 
         currentInput = "";
     }
 
-    // ================= STRING =================
+    // ================= PYTHON STRING =================
     IEnumerator HandleName()
     {
         SetFace(happyFace);
         yield return Speak($"Nice to meet you, {playerName}!");
-        yield return Speak("Names matter. Let’s store it.");
+        ShowIDCardName(playerName);
+        yield return Speak("In Python, text is easy.");
 
-        SetFace(thinkingFace);
-        yield return Speak("In pure C, text is stored as characters.");
-        yield return AddSystemLine($"char name[] = \"{playerName}\";");
+        yield return Speak("You don’t declare types.");
+        yield return AddSystemLine($"name = \"{playerName}\"");
 
-        yield return Speak("That works… but it’s heavy for beginners.");
-        yield return Speak("So we use a learning shortcut.");
-
-        yield return AddSystemLine($"string name = \"{playerName}\";");
-        yield return Speak("Notice the semicolon?");
-        yield return Speak("It marks the end of an instruction.");
+        yield return Speak("Python understands it automatically.");
+        yield return Speak("Clean. Simple.");
 
         yield return TerminalRefresh();
 
         SetFace(idleFace);
         yield return Speak("Now tell me your age.");
         EnableInput();
+
+    
+
         step = 2;
     }
 
-    // ================= INT + BOOL =================
+    // ================= PYTHON INT + BOOL =================
     IEnumerator HandleAge()
     {
         SetFace(thinkingFace);
@@ -236,47 +232,41 @@ public class TerminalVariableLesson : MonoBehaviour
         if (playerAge < 0 || playerAge > 150)
         {
             SetFace(warningFace);
-            yield return Speak("That doesn’t seem realistic ");
+            yield return Speak("That doesn’t look right.");
             EnableInput();
             yield break;
         }
 
-        yield return AddSystemLine($"int age = {playerAge};");
-        yield return Speak("Whole numbers use the int type.");
+        yield return AddSystemLine($"age = {playerAge}");
+        UpdateIDCardAge(playerAge);
+        yield return Speak("Numbers don’t need a type either.");
 
         yield return TerminalRefresh();
 
-        yield return Speak("Before I lock this in…");
-        yield return Speak("Are you sure these details are correct?");
+        yield return Speak("Are these details correct?");
         yield return Speak("Type yes or no.");
 
         EnableInput();
         step = 3;
         waitingForConfirmation = true;
+     
     }
 
     IEnumerator HandleConfirmationYes()
     {
-        waitingForConfirmation = false;
         SetFace(happyFace);
-
-        yield return AddSystemLine("bool detailsConfirmed = true;");
-        yield return Speak("Got it ");
-        yield return Speak("true means continue.");
-
+        yield return AddSystemLine("details_confirmed = True");
+        yield return Speak("True means proceed.");
         StartCoroutine(ContinueWithFloat());
     }
 
     IEnumerator HandleConfirmationNo()
     {
-        waitingForConfirmation = false;
         SetFace(thinkingFace);
+        yield return AddSystemLine("details_confirmed = False");
+        yield return Speak("Smart move.");
 
-        yield return AddSystemLine("bool detailsConfirmed = false;");
-        yield return Speak("Good choice.");
-        yield return Speak("Questioning data is smart.");
-
-        yield return Speak("What would you like to change?");
+        yield return Speak("What should we change?");
         yield return Speak("Type: name or age");
 
         waitingForCorrectionChoice = true;
@@ -285,38 +275,38 @@ public class TerminalVariableLesson : MonoBehaviour
 
     IEnumerator ReenterName()
     {
-        yield return Speak("Alright, let’s fix your name.");
+        yield return Speak("Alright, enter your name again.");
         EnableInput();
         step = 1;
+
     }
 
     IEnumerator ReenterAge()
     {
-        yield return Speak("Okay, let’s fix your age.");
+        yield return Speak("Okay, enter your age again.");
         EnableInput();
         step = 2;
     }
 
-    // ================= FLOAT =================
+    // ================= PYTHON FLOAT =================
     IEnumerator ContinueWithFloat()
     {
         SetFace(thinkingFace);
-        yield return Speak("This world isn’t perfectly stable.");
+        yield return Speak("Decimals are just numbers too.");
 
-        yield return AddSystemLine("float stability = 0.85;");
-        yield return Speak("Decimals use the float type.");
-        yield return Speak("Used for health, speed, energy.");
+        yield return AddSystemLine("stability = 0.85");
+        yield return Speak("Python treats it as a float.");
 
         yield return TerminalRefresh();
 
         yield return AddSystemLine("FINAL MEMORY STATE");
-        yield return AddSystemLine($"char name[] = \"{playerName}\";");
-        yield return AddSystemLine($"int age = {playerAge};");
-        yield return AddSystemLine("bool detailsConfirmed = true;");
-        yield return AddSystemLine("float stability = 0.85;");
+        yield return AddSystemLine($"name = \"{playerName}\"");
+        yield return AddSystemLine($"age = {playerAge}");
+        yield return AddSystemLine("details_confirmed = True");
+        yield return AddSystemLine("stability = 0.85");
 
         SetFace(proudFace);
-        yield return Speak("That was real programming.");
+        yield return Speak("You just learned Python basics.");
         yield return Speak("Now let’s practice.");
 
         if (exerciseScript != null)
@@ -392,15 +382,7 @@ public class TerminalVariableLesson : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        if (autoAdvanceDialogue)
-        {
-            yield return new WaitForSeconds(0.4f);
-        }
-        else
-        {
-            yield return new WaitUntil(() => skipRequested);
-        }
-
+        yield return new WaitForSeconds(0.4f);
         waitingForAdvance = false;
     }
 
@@ -411,31 +393,38 @@ public class TerminalVariableLesson : MonoBehaviour
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
             skipRequested = true;
     }
+    void ShowIDCardName(string name)
+    {
+      
+        idNameText.text = name;
+        idAgeText.text = "--";
+
+    }
+    void UpdateIDCardAge(int age)
+    {
+     
+
+        idAgeText.text = age.ToString();
+
+   
+    }
+
 
     void SetFace(Sprite face)
     {
         if (botFaceImage && face)
             botFaceImage.sprite = face;
     }
+
     void PlayTypingSound(char c)
     {
         if (!typingAudio) return;
 
-        if (c == '\b')
-        {
-            if (typeBackspace)
-                typingAudio.PlayOneShot(typeBackspace);
-        }
-        else if (c == ' ')
-        {
-            if (typeSpace)
-                typingAudio.PlayOneShot(typeSpace);
-        }
-        else
-        {
-            if (typeLetter)
-                typingAudio.PlayOneShot(typeLetter);
-        }
+        if (c == '\b' && typeBackspace)
+            typingAudio.PlayOneShot(typeBackspace);
+        else if (c == ' ' && typeSpace)
+            typingAudio.PlayOneShot(typeSpace);
+        else if (typeLetter)
+            typingAudio.PlayOneShot(typeLetter);
     }
-
 }

@@ -2,6 +2,7 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DoorPrintf_TerminalSystem : MonoBehaviour
 {
@@ -13,11 +14,11 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     public GameObject boardPanel;
     public TextMeshProUGUI boardText;
 
-    // ================= INPUT TERMINAL (UI) =================
+    // ================= INPUT TERMINAL =================
     public GameObject inputTerminalPanel;
     public TextMeshProUGUI inputText;
 
-    // ================= OUTPUT TERMINAL (3D) =================
+    // ================= OUTPUT TERMINAL =================
     public TextMeshPro outputTerminalText;
 
     // ================= FADE =================
@@ -41,7 +42,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         IntroDialogue,
         TeachingDialogue,
         InputTerminal,
-        WrongDialogue,
+        FeedbackDialogue,
         SuccessDialogue,
         Transition
     }
@@ -52,86 +53,36 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     int dialogueIndex;
     int attemptCount;
     string currentInput = "";
-
-    bool introCompleted = false;
-
-    const string correctAnswer = "printf(\"Hello World\");";
+    bool introCompleted;
+    string[] activeDialogue;
 
     // ================= DIALOGUES =================
-
     string[] introDialogue =
- {
-    "Hmm… this door looks locked.",
-    "It reacts to something…",
-    "I think it reacts to C programs.",
-    "Maybe printing something will unlock it.",
-    "In C, we use printf().",
-    "Try printing: Hello World",
-    "Press 1 to try."
-};
-
+    {
+        "Hmm… this door looks locked.",
+        "It reacts to C programs.",
+        "Maybe printing something will unlock it.",
+        "In C, we use printf().",
+        "Try printing: Hello World",
+        "Press 1 to try."
+    };
 
     string[] teachingDialogue =
     {
-        "In C, we use printf().",
         "printf prints text to the screen.",
-        "Try printing Hello World."
+        "Text must be inside double quotes.",
+        "Statements end with a semicolon."
     };
 
-    string[] retryShortHints =
+    string[] successDialogue =
     {
-        "Let’s try again.",
-        "Give it another try.",
-        "Focus on spelling.",
-        "Press 1 when ready."
-    };
-
-    string[] wrongDialoguePool =
-    {
-        "Hmm… that didn’t work.",
-        "Something feels off.",
-        "That syntax isn’t right.",
-        "The program didn’t run."
-    };
-
-    string[] wrongExplanation =
-    {
-        "C is very strict.",
-        "Even small mistakes matter.",
-        "Computers follow exact rules."
-    };
-
-    string[] successPerfect =
-    {
-        "Excellent!",
-        "First try. Well done.",
-        "That’s perfect C syntax.",
+        "Excellent.",
+        "Your program compiled successfully.",
+        "printf printed the text.",
         "The door accepted your program.",
         "The door is now opened.",
-        "Let’s go .."
+        "Let’s go."
     };
-
-    string[] successGood =
-    {
-        "Good job!",
-        "You figured it out.",
-        "printf printed the text correctly.",
-        "The door accepted your program.",
-        "The door is now opened.",
-        "Let’s go .."
-    };
-
-    string[] successOkay =
-    {
-        "You did it.",
-        "Practice makes you better.",
-        "printf printed the text correctly.",
-        "The door accepted your program.",
-        "The door is now opened.",
-        "Let’s go .."
-    };
-
-    string[] activeDialogue;
 
     // ================= START =================
     void Start()
@@ -157,7 +108,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         if (currentState == GameState.IntroDialogue ||
             currentState == GameState.TeachingDialogue ||
-            currentState == GameState.WrongDialogue ||
+            currentState == GameState.FeedbackDialogue ||
             currentState == GameState.SuccessDialogue)
         {
             HandleDialogueAdvance();
@@ -176,13 +127,11 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             if (!introCompleted)
                 StartDialogue(introDialogue, GameState.IntroDialogue);
             else
-                boardText.text = retryShortHints[Random.Range(0, retryShortHints.Length)];
+                boardText.text = "Press 1 to try again.";
         }
 
         if (dist > interactDistance && currentState == GameState.Idle)
-        {
             boardPanel.SetActive(false);
-        }
 
         if (dist <= interactDistance && Input.GetKeyDown(KeyCode.Alpha1))
         {
@@ -194,36 +143,34 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     }
 
     // ================= DIALOGUE =================
-    void StartDialogue(string[] dialogue, GameState nextState)
+    void StartDialogue(string[] dialogue, GameState state)
     {
         activeDialogue = dialogue;
         dialogueIndex = 0;
-        currentState = nextState;
+        currentState = state;
         boardText.text = activeDialogue[dialogueIndex];
     }
 
     void HandleDialogueAdvance()
     {
-        if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
+        if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0)) return;
+
+        dialogueIndex++;
+
+        if (dialogueIndex < activeDialogue.Length)
         {
-            dialogueIndex++;
+            boardText.text = activeDialogue[dialogueIndex];
+        }
+        else
+        {
+            if (currentState == GameState.IntroDialogue)
+                introCompleted = true;
 
-            if (dialogueIndex < activeDialogue.Length)
-            {
-                boardText.text = activeDialogue[dialogueIndex];
-            }
-            else
-            {
-                if (currentState == GameState.IntroDialogue)
-                    introCompleted = true;
-
-                if (currentState == GameState.TeachingDialogue)
-                    OpenInputTerminal();
-                else if (currentState == GameState.WrongDialogue)
-                    currentState = GameState.Idle;
-                else if (currentState == GameState.SuccessDialogue)
-                    StartCoroutine(FadeAndChangeScene());
-            }
+            if (currentState == GameState.TeachingDialogue ||
+                currentState == GameState.FeedbackDialogue)
+                OpenInputTerminal();
+            else if (currentState == GameState.SuccessDialogue)
+                StartCoroutine(FadeAndChangeScene());
         }
     }
 
@@ -240,13 +187,10 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         foreach (char c in Input.inputString)
         {
-            if (c == '\b')
+            if (c == '\b' && currentInput.Length > 0)
             {
-                if (currentInput.Length > 0)
-                {
-                    currentInput = currentInput.Substring(0, currentInput.Length - 1);
-                    inputText.text = inputText.text.Substring(0, inputText.text.Length - 1);
-                }
+                currentInput = currentInput[..^1];
+                inputText.text = inputText.text[..^1];
             }
             else if (c == '\n' || c == '\r')
             {
@@ -261,43 +205,94 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         }
     }
 
+    // ================= SUBMIT =================
     void SubmitInput()
     {
         inputTerminalPanel.SetActive(false);
         outputTerminalText.text += "> " + currentInput + "\n";
         attemptCount++;
 
-        if (currentInput.Trim() == correctAnswer)
+        List<string> errors = ValidatePrintf(currentInput);
+
+        if (errors.Count == 0)
             HandleSuccess();
         else
-            HandleWrong();
+            ShowErrors(errors);
     }
 
-    void HandleWrong()
+    // ================= VALIDATION (OPTIMIZED + MULTI ERROR) =================
+    List<string> ValidatePrintf(string raw)
     {
-        outputTerminalText.text += "Error\n\n";
+        List<string> errors = new List<string>();
+        string s = raw.Trim();
 
-        string[] combined =
+        // Semicolon
+        if (!s.EndsWith(";"))
+            errors.Add("Missing semicolon `;` at the end.");
+
+        // printf existence & case
+        if (s.StartsWith("Printf") || s.StartsWith("PRINTF"))
+            errors.Add("C is case-sensitive. Use `printf`, not `Printf`.");
+
+        if (!s.ToLower().Contains("printf"))
+            errors.Add("Use the `printf` function to print text.");
+
+        // Parentheses
+        int open = s.IndexOf('(');
+        int close = s.LastIndexOf(')');
+        if (open == -1 || close == -1 || close < open)
+            errors.Add("`printf` must use parentheses `()`.");
+
+        // Quotes
+        int quoteCount = 0;
+        foreach (char c in s)
+            if (c == '"') quoteCount++;
+
+        if (quoteCount == 0)
+            errors.Add("Text must be inside double quotes.");
+        else if (quoteCount == 1)
+            errors.Add("Missing one double quote `\"`.");
+
+        // Content
+        if (quoteCount >= 2)
         {
-            wrongDialoguePool[Random.Range(0, wrongDialoguePool.Length)],
-            wrongExplanation[Random.Range(0, wrongExplanation.Length)],
-            "Press 1 and try again."
+            int q1 = s.IndexOf('"');
+            int q2 = s.LastIndexOf('"');
+            string inside = s.Substring(q1 + 1, q2 - q1 - 1);
+            if (inside != "Hello World")
+                errors.Add("The text must be exactly: Hello World.");
+        }
+
+        return errors;
+    }
+
+    // ================= FEEDBACK =================
+    void ShowErrors(List<string> errors)
+    {
+        outputTerminalText.text += "Compile Errors:\n\n";
+
+        List<string> dialogue = new List<string>
+        {
+            "The program didn’t run.",
+            "Here’s what needs fixing:"
         };
 
-        StartDialogue(combined, GameState.WrongDialogue);
+        foreach (string err in errors)
+            dialogue.Add("• " + err);
+
+        dialogue.Add("Fix them and try again.");
+
+        activeDialogue = dialogue.ToArray();
+        dialogueIndex = 0;
+        currentState = GameState.FeedbackDialogue;
+        boardText.text = activeDialogue[dialogueIndex];
     }
 
     // ================= SUCCESS =================
     void HandleSuccess()
     {
         outputTerminalText.text += "Hello World\n\n";
-
-        if (attemptCount == 1)
-            StartDialogue(successPerfect, GameState.SuccessDialogue);
-        else if (attemptCount == 2)
-            StartDialogue(successGood, GameState.SuccessDialogue);
-        else
-            StartDialogue(successOkay, GameState.SuccessDialogue);
+        StartDialogue(successDialogue, GameState.SuccessDialogue);
     }
 
     // ================= SOUND =================
@@ -327,7 +322,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         audioSource.PlayOneShot(doorOpenSound);
         yield return new WaitForSeconds(0.5f);
-
         SceneManager.LoadScene(nextSceneName);
     }
 }
