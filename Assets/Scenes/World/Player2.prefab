@@ -237,6 +237,10 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  walkClip: {fileID: 0}
+  jumpClip: {fileID: 0}
+  footstepSource: {fileID: 0}
+  actionSource: {fileID: 0}
   groundNormalMinY: 0.65
 --- !u!70 &3498795953453674126
 CapsuleCollider2D:
