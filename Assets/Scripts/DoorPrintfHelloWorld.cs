@@ -56,32 +56,32 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     bool introCompleted;
     string[] activeDialogue;
 
-    // ================= DIALOGUES =================
+    // ================= PYTHON DIALOGUES =================
     string[] introDialogue =
     {
-        "Hmm… this door looks locked.",
-        "It reacts to C programs.",
-        "Maybe printing something will unlock it.",
-        "In C, we use printf().",
-        "Try printing: Hello World",
-        "Press 1 to try."
+        "This door seems locked.",
+        "It reacts to Python programs.",
+        "Python prints text using print().",
+        "Let’s try a basic program.",
+        "Print: Hello World",
+        "Press 1 to begin."
     };
 
     string[] teachingDialogue =
     {
-        "printf prints text to the screen.",
+        "Python uses the print() function.",
         "Text must be inside double quotes.",
-        "Statements end with a semicolon."
+        "Python does NOT use semicolons."
     };
 
     string[] successDialogue =
     {
-        "Excellent.",
-        "Your program compiled successfully.",
-        "printf printed the text.",
+        "Perfect.",
+        "Your Python code executed successfully.",
+        "print() displayed the text.",
         "The door accepted your program.",
-        "The door is now opened.",
-        "Let’s go."
+        "The door is opening.",
+        "Proceed."
     };
 
     // ================= START =================
@@ -94,8 +94,8 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         fadeCanvas.blocksRaycasts = false;
 
         outputTerminalText.text =
-            "C OUTPUT TERMINAL\n" +
-            "-----------------\n\n";
+            "PYTHON OUTPUT TERMINAL\n" +
+            "----------------------\n\n";
     }
 
     // ================= UPDATE =================
@@ -212,7 +212,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         outputTerminalText.text += "> " + currentInput + "\n";
         attemptCount++;
 
-        List<string> errors = ValidatePrintf(currentInput);
+        List<string> errors = ValidatePythonPrint(currentInput);
 
         if (errors.Count == 0)
             HandleSuccess();
@@ -220,28 +220,28 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             ShowErrors(errors);
     }
 
-    // ================= VALIDATION (OPTIMIZED + MULTI ERROR) =================
-    List<string> ValidatePrintf(string raw)
+    // ================= PYTHON VALIDATION =================
+    List<string> ValidatePythonPrint(string raw)
     {
         List<string> errors = new List<string>();
         string s = raw.Trim();
 
-        // Semicolon
-        if (!s.EndsWith(";"))
-            errors.Add("Missing semicolon `;` at the end.");
+        // Semicolon check
+        if (s.EndsWith(";"))
+            errors.Add("Python does not use semicolons.");
 
-        // printf existence & case
-        if (s.StartsWith("Printf") || s.StartsWith("PRINTF"))
-            errors.Add("C is case-sensitive. Use `printf`, not `Printf`.");
+        // print() existence & case
+        if (s.StartsWith("Print") || s.StartsWith("PRINT"))
+            errors.Add("Python is case-sensitive. Use `print`, not `Print`.");
 
-        if (!s.ToLower().Contains("printf"))
-            errors.Add("Use the `printf` function to print text.");
+        if (!s.StartsWith("print"))
+            errors.Add("Use the `print()` function.");
 
         // Parentheses
         int open = s.IndexOf('(');
         int close = s.LastIndexOf(')');
         if (open == -1 || close == -1 || close < open)
-            errors.Add("`printf` must use parentheses `()`.");
+            errors.Add("print must use parentheses `()`.");
 
         // Quotes
         int quoteCount = 0;
@@ -269,12 +269,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     // ================= FEEDBACK =================
     void ShowErrors(List<string> errors)
     {
-        outputTerminalText.text += "Compile Errors:\n\n";
+        outputTerminalText.text += "Runtime Errors:\n\n";
 
         List<string> dialogue = new List<string>
         {
-            "The program didn’t run.",
-            "Here’s what needs fixing:"
+            "The Python program failed.",
+            "Issues detected:"
         };
 
         foreach (string err in errors)
