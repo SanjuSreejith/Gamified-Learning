@@ -2,8 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// 2D smooth following camera for platformer.
-/// Attach to the Camera object and assign the target Transform (player).
-/// Preserves camera Z, supports smoothing and optional bounds.
+/// Supports optional X-axis lock (camera never moves horizontally).
 /// </summary>
 public class followingcamera : MonoBehaviour
 {
@@ -17,24 +16,51 @@ public class followingcamera : MonoBehaviour
     public float smoothTime = 0.15f;
     private Vector3 velocity = Vector3.zero;
 
+    [Header("Axis Locks")]
+    [Tooltip("If true, camera will NOT move on X axis at all.")]
+    public bool lockX = false;
+
     [Header("Bounds (optional)")]
     public bool useBounds = false;
     public Vector2 minBounds;
     public Vector2 maxBounds;
 
+    float lockedX;
+
+    void Awake()
+    {
+        // Store initial X so it never changes
+        lockedX = transform.position.x;
+    }
+
     void LateUpdate()
     {
         if (target == null) return;
 
-        Vector3 desired = new Vector3(target.position.x + offset.x, target.position.y + offset.y, transform.position.z);
+        Vector3 desired = new Vector3(
+            lockX ? lockedX : target.position.x + offset.x,
+            target.position.y + offset.y,
+            transform.position.z
+        );
 
-        Vector3 smoothed = Vector3.SmoothDamp(transform.position, desired, ref velocity, smoothTime);
+        Vector3 smoothed = Vector3.SmoothDamp(
+            transform.position,
+            desired,
+            ref velocity,
+            smoothTime
+        );
 
         if (useBounds)
         {
-            smoothed.x = Mathf.Clamp(smoothed.x, minBounds.x, maxBounds.x);
+            if (!lockX)
+                smoothed.x = Mathf.Clamp(smoothed.x, minBounds.x, maxBounds.x);
+
             smoothed.y = Mathf.Clamp(smoothed.y, minBounds.y, maxBounds.y);
         }
+
+        // Force X lock after smoothing (extra safety)
+        if (lockX)
+            smoothed.x = lockedX;
 
         transform.position = smoothed;
     }
