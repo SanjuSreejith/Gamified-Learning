@@ -847,7 +847,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         if (followCam != null)
         {
             followCam.SnapToTarget();
-            followCam.LockXAtCurrentPosition();
+           
         }
 
         yield return new WaitForSeconds(0.25f);
