@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
@@ -190,35 +190,29 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         switch (overallPerformance)
         {
-            case OverallPerformance.Master:
-                return new string[]
-                {
-                    "Welcome, accomplished programmer!",
-                    "I've been observing your journey through the temple.",
-                    "Your understanding of Python is impressive for a beginner.",
-                    "Let's test your knowledge of input and output operations.",
-                    "These are the final concepts you need to master."
-                };
+          
 
             case OverallPerformance.Competent:
                 return new string[]
-                {
-                    "Greetings, traveler.",
-                    "I see you've been learning Python in our temple.",
-                    "You show promise, but let's see if you truly understand.",
-                    "This final test covers input and output - essential for any program.",
-                    "Pay close attention to the details."
-                };
+  {
+    "Welcome. You’ve done well to reach this point.",
+    "I’ve been watching how you move through this house.",
+    "For someone just starting out, your grasp of Python is impressive.",
+    "Now comes the final check — input and output.",
+    "These are the last fundamentals you need to truly move forward."
+  };
+
 
             case OverallPerformance.Novice:
                 return new string[]
-                {
-                    "Hello there...",
-                    "I've watched your struggles with the previous statues.",
-                    "Don't worry - everyone starts somewhere.",
-                    "Let me help you understand input and output in Python.",
-                    "These concepts will unlock many possibilities."
-                };
+    {
+    "Hello there.",
+    "I can tell you’ve been learning inside this house for a while.",
+    "You’re getting there, but understanding matters more than speed.",
+    "This final test focuses on input and output — simple, but important.",
+    "Take your time. Details matter here."
+    };
+
 
             case OverallPerformance.Struggling:
                 return new string[]
@@ -392,33 +386,37 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             case OverallPerformance.Master:
                 if (successRate >= 0.8f)
                 {
-                    return "Magnificent! You've demonstrated exceptional understanding.\n" +
-                           "You comprehend both input and output operations perfectly.\n" +
-                           "You are ready to proceed to the next level of programming.\n\n" +
-                           "Press Enter to teleport to the advanced training area...";
+                    return "Magnificent... truly magnificent.\n" +
+                           "Your answers resonate with clarity and confidence.\n" +
+                           "Beyond this chamber, someone awaits you.\n\n" +
+                           "Abel — a wanderer of forgotten code — wishes to meet you.\n" +
+                           "Press Enter to teleport and face what lies ahead...";
                 }
                 else if (successRate >= 0.6f)
                 {
-                    return "Good work! You understand the concepts well.\n" +
-                           "With a bit more practice, you'll master these operations.\n" +
-                           "You may proceed to the next area.\n\n" +
-                           "Press Enter to continue your journey...";
+                    return "Well done.\n" +
+                           "Your understanding is strong, though not yet flawless.\n" +
+                           "Still, the path forward opens for you.\n\n" +
+                           "A man named Abel has been watching your progress.\n" +
+                           "Press Enter to teleport and meet him...";
                 }
                 break;
 
             case OverallPerformance.Competent:
                 if (successRate >= 0.7f)
                 {
-                    return "Well done! You have a solid grasp of input/output.\n" +
-                           "You've shown you can handle user interaction in programs.\n" +
-                           "You may proceed forward.\n\n" +
+                    return "You stand steady on the path of knowledge.\n" +
+                           "Not perfect — but prepared.\n\n" +
+                           "Ahead, you will meet Abel.\n" +
+                           "He walks where logic and instinct collide.\n\n" +
                            "Press Enter to teleport...";
                 }
                 else if (successRate >= 0.5f)
                 {
-                    return "Adequate performance. You understand the basics.\n" +
-                           "Remember: input() gets user data, print() shows output.\n" +
-                           "You may continue, but consider practicing more.\n\n" +
+                    return "You have grasped the foundations.\n" +
+                           "Mistakes remain, but fear does not define you.\n\n" +
+                           "Abel waits beyond this hall.\n" +
+                           "He does not judge — he observes.\n\n" +
                            "Press Enter to proceed...";
                 }
                 break;
@@ -426,15 +424,16 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             case OverallPerformance.Novice:
                 if (successRate >= 0.6f)
                 {
-                    return "Progress! You're beginning to understand.\n" +
-                           "Keep practicing - programming takes time to master.\n" +
-                           "You may proceed, but the road ahead requires more study.\n\n" +
+                    return "You move forward — slowly, but honestly.\n" +
+                           "Every step matters more than speed.\n\n" +
+                           "Someone wishes to speak with you.\n" +
+                           "Abel has helped many who doubted themselves.\n\n" +
                            "Press Enter to continue...";
                 }
                 break;
         }
 
-        // If not meeting thresholds for their level
+        // ❗ DO NOT CHANGE (as requested)
         return "You need more practice with input and output operations.\n" +
                "Let me guide you through a focused tutorial...";
     }
