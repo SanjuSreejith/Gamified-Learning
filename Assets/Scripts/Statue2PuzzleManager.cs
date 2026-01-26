@@ -586,7 +586,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         };
     }
 
-    AdvancedQuestion[] GetAverageQuestions()
+    AdvancedQuestion[] GetAverageQuestions() 
     {
         return new AdvancedQuestion[]
         {
