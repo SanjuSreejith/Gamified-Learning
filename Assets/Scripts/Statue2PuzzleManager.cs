@@ -54,7 +54,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     private string typedInput = "";
     private Coroutine typingCoroutine;
     private bool isTyping = false;
-    private int questionsCorrect = 0;
+    public int questionsCorrect = 0;
 
     // ---------------- UNITY ----------------
     void Start()
@@ -153,26 +153,28 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             case PlayerPerformance.Perfect:
                 return new string[]
                 {
-                    "Your understanding of output is profound.",
-                    "Let us explore advanced print formatting..."
+                    "Excellent work! You have a good grasp of Python basics.",
+                    "Let's build on that foundation with more practice..."
                 };
 
             case PlayerPerformance.Average:
                 return new string[]
                 {
-                    "I sense you understand basic output.",
-                    "Let me reinforce print function concepts..."
+                    "You understand some concepts but need more practice.",
+                    "Pay attention - these next questions are crucial.",
+                    "If you don't get these right, we'll need to revisit the basics."
                 };
 
             case PlayerPerformance.Poor:
                 return new string[]
                 {
-                    "The foundations of output need strengthening.",
-                    "Let me teach you how print() works..."
+                    "Let me explain the fundamentals clearly before we begin.",
+                    "These are the building blocks of programming.",
+                    "If you don't understand these, we must go back to square one."
                 };
 
             default:
-                return new string[] { "Let us begin with Python output..." };
+                return new string[] { "Let's begin with Python fundamentals..." };
         }
     }
 
@@ -191,12 +193,87 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
 
+        // Explain topics specific to each performance level
+        yield return StartCoroutine(ExplainTopics());
+
         // Start asking questions
         currentQuestionIndex = 0;
         currentAttempt = 0;
         questionsCorrect = 0;
 
         AskQuestion();
+    }
+
+    IEnumerator ExplainTopics()
+    {
+        state = State.StatueTalking;
+
+        if (performance == PlayerPerformance.Poor)
+        {
+            yield return StartCoroutine(TypeLine("Let me explain each concept carefully:"));
+            yield return new WaitForSeconds(0.5f);
+
+            // Explain print()
+            yield return StartCoroutine(TypeLine("1. print() - displays text on screen"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("   Example: print('Hello') shows: Hello"));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+
+            // Explain variables
+            yield return StartCoroutine(TypeLine("2. Variables - store information"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("   Format: name = value"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("   Example: score = 10"));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+
+            // Explain printing variables
+            yield return StartCoroutine(TypeLine("3. Printing variables"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("   Example: x = 5; print(x) shows: 5"));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+        }
+        else if (performance == PlayerPerformance.Average)
+        {
+            yield return StartCoroutine(TypeLine("Now I'll explain what we'll be testing:"));
+            yield return new WaitForSeconds(0.5f);
+
+            yield return StartCoroutine(TypeLine("We'll work with variables and print()"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("Remember: print() shows output"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("Variables store data: name = value"));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+
+            yield return StartCoroutine(TypeLine("Important: print() can show both text and variables"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("Example: print('Score:', score)"));
+            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLine("This prints: Score: [value of score]"));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+        }
+        else // Perfect
+        {
+            yield return StartCoroutine(TypeLine("You're ready for more advanced practice."));
+            yield return new WaitForSeconds(0.5f);
+            state = State.WaitingForContinue;
+            yield return new WaitUntil(() => state == State.StatueTalking);
+        }
+
+        yield return StartCoroutine(TypeLine("Ready? Let's begin the questions."));
+        yield return new WaitForSeconds(0.5f);
+        state = State.WaitingForContinue;
+        yield return new WaitUntil(() => state == State.StatueTalking);
     }
 
     string[] GetTeachingDialogue()
@@ -206,30 +283,22 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             case PlayerPerformance.Perfect:
                 return new string[]
                 {
-                    "Advanced concept: print() with advanced formatting.",
-                    "Examples:",
-                    "print(f'Hello {name}') - f-string formatting",
-                    "print('Hello', name, sep='|') - custom separator",
-                    "print('Line1', end=' ') - prevent newline"
+                    "Great job on the basics!",
+                    "Now let's practice variables and output more deeply."
                 };
 
             case PlayerPerformance.Average:
                 return new string[]
                 {
-                    "Let's review: print() basics.",
-                    "1. print('text') - prints text",
-                    "2. print('Hello', 'World') - adds space automatically",
-                    "3. print('Hello' + 'World') - concatenates without space"
+                    "I see you've learned some Python.",
+                    "Let's strengthen your understanding of core concepts."
                 };
 
             case PlayerPerformance.Poor:
                 return new string[]
                 {
-                    "Let's start from basics:",
-                    "1. print() displays text",
-                    "2. Quotes define text: 'Hello' or \"World\"",
-                    "3. Example: print('Hello World')",
-                    "4. Everything inside quotes prints exactly as written"
+                    "Let's start from the beginning.",
+                    "I'll teach you the absolute fundamentals of Python."
                 };
         }
         return new string[] { "Let's begin..." };
@@ -385,7 +454,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         {
             case 1: return "Hint: " + question.hint;
             case 2: return "Detailed hint: " + question.detailedHint;
-            default: return "Think about Python's print behavior.";
+            default: return "Think about the Python syntax.";
         }
     }
 
@@ -457,15 +526,15 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             switch (performance)
             {
                 case PlayerPerformance.Perfect:
-                    return "Masterful! Your understanding of output is complete. All paths awaken.";
+                    return "Excellent! You've mastered variables and output. Keep progressing!";
                 case PlayerPerformance.Average:
-                    return "Well done! You've mastered print function basics. Proceed with confidence.";
+                    return "Good work! You understand the basics. Practice will make you perfect.";
                 case PlayerPerformance.Poor:
-                    return "Progress made! Output foundations strengthened. Continue your journey.";
+                    return "Progress made! Remember: print() shows output, variables store data. Keep practicing!";
             }
         }
 
-        return "More practice needed. Return when ready to try again.";
+        return "You need more practice with these fundamentals. Return when you're ready.";
     }
 
     IEnumerator HidePanelDelayed()
@@ -488,31 +557,31 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         return new AdvancedQuestion[]
         {
             new AdvancedQuestion(
-                "What does this print: print(f'Result: {5+3}')?",
-                "result: 8",
-                "f-strings evaluate expressions inside {}",
-                "The expression 5+3 is calculated first",
-                new string[] { "result:8", "Result: 8" },
-                "f-strings evaluate expressions: {5+3} becomes 8, so it prints 'Result: 8'",
-                "Excellent! You understand f-string evaluation."
+                "What prints: speed = 4; print('Platform speed:', speed)?",
+                "platform speed: 4",
+                "print() can combine text and variables",
+                "The comma adds space automatically",
+                new string[] { "platform speed:4", "platform speed: 4" },
+                "print('text', variable) shows the text, then a space, then the variable value",
+                "Perfect! You understand how to display variables with labels."
             ),
             new AdvancedQuestion(
-                "What prints: print('Line1', end=' '); print('Line2')?",
-                "line1 line2",
-                "end=' ' prevents newline, adds space instead",
-                "Without newline, both print on same line",
-                new string[] { "line1 line2" },
-                "end=' ' replaces the default newline with a space, so both print on same line",
-                "Perfect! You understand print's end parameter."
+                "What prints: x = 10; y = 5; print('Total:', x + y)?",
+                "total: 15",
+                "print() can show calculation results",
+                "x + y equals 15, print shows it with label",
+                new string[] { "total:15", "total: 15" },
+                "The expression x + y is calculated first (10 + 5 = 15), then printed with the text",
+                "Excellent! You can combine calculations with print()."
             ),
             new AdvancedQuestion(
-                "What prints: name='Sam'; print(f'Hello {name.upper()}')?",
-                "hello SAM",
-                ".upper() converts to uppercase",
-                "f-strings can call string methods",
-                new string[] { "hello sam" },
-                "name.upper() returns 'SAM', so f-string becomes 'Hello SAM'",
-                "Correct! f-strings can include method calls."
+                "What prints: is_active = True; print('Active status:', is_active)?",
+                "active status: true",
+                "Boolean values can be printed too",
+                "True prints as 'True' (capital T)",
+                new string[] { "active status:true", "active status: true" },
+                "Boolean variables store True/False values, and print() displays them as text",
+                "Correct! You understand printing boolean variables."
             )
         };
     }
@@ -522,31 +591,31 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         return new AdvancedQuestion[]
         {
             new AdvancedQuestion(
-                "What prints: print('Hello' + 'World')?",
-                "helloworld",
-                "+ concatenates strings without space",
-                "Strings join directly: 'Hello'+'World'='HelloWorld'",
-                new string[] { "helloworld" },
-                "The + operator concatenates strings exactly: 'Hello' + 'World' = 'HelloWorld'",
-                "Good! You remember string concatenation."
+                "What prints: print('Platform', 7, 'enabled')?",
+                "platform 7 enabled",
+                "print() can show multiple items",
+                "Each item separated by space",
+                new string[] { "platform 7 enabled" },
+                "print() with multiple arguments shows each one with spaces in between",
+                "Good! You understand print() with multiple items."
             ),
             new AdvancedQuestion(
-                "What prints: print('Python', 'is', 'fun')?",
-                "python is fun",
-                "Commas in print() add spaces automatically",
-                "Multiple arguments separated by commas",
-                new string[] { "python is fun" },
-                "print() with commas adds spaces between arguments: 'Python' + ' ' + 'is' + ' ' + 'fun'",
-                "Correct! Commas add automatic spacing."
+                "What prints: score = 100; print('Score:', score)?",
+                "score: 100",
+                "print() shows variable values",
+                "Variable 'score' has value 100",
+                new string[] { "score:100", "score: 100" },
+                "The variable 'score' contains 100, so print() shows 'Score: 100'",
+                "Correct! You can display variable values with labels."
             ),
             new AdvancedQuestion(
-                "What prints: x = 5; print('Value:', x)?",
-                "value: 5",
-                "print() can mix text and variables",
-                "Variable value is inserted with space",
-                new string[] { "value:5", "Value: 5" },
-                "print() displays all arguments separated by spaces: 'Value:' + ' ' + '5'",
-                "Right! print() handles mixed types automatically."
+                "How would you create a variable 'health' with value 50?",
+                "health = 50",
+                "Use = to assign values",
+                "No quotes around numbers",
+                new string[] { "health=50", "health =50", "health= 50" },
+                "To create a variable: variable_name = value. For numbers, don't use quotes.",
+                "Right! That's how you store numerical values."
             )
         };
     }
@@ -556,31 +625,31 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         return new AdvancedQuestion[]
         {
             new AdvancedQuestion(
-                "What prints: print('Hello World')?",
-                "hello world",
-                "Exactly what's inside quotes",
-                "Quotes define the text to print",
-                new string[] { "hello world" },
-                "print() displays exactly the text between quotes: 'Hello World'",
-                "Good! print() shows text exactly as written."
+                "What prints: print('Game Started')?",
+                "game started",
+                "print() shows exactly what's in quotes",
+                "Text inside quotes is displayed as-is",
+                new string[] { "game started" },
+                "print('text') displays the exact text between the quotation marks",
+                "Good! You understand the basic print() function."
             ),
             new AdvancedQuestion(
-                "What prints: print('Hi'); print('There')?",
-                "hi\nthere",
-                "Each print() starts a new line",
-                "print() adds newline automatically",
-                new string[] { "hi\nthere", "hi there on two lines" },
-                "print() adds a newline character at the end, so 'Hi' and 'There' appear on separate lines",
-                "Correct! Each print() creates a new line."
+                "How do you create a variable called 'lives' with value 3?",
+                "lives = 3",
+                "variable_name = value",
+                "Use = to assign, no quotes for numbers",
+                new string[] { "lives=3", "lives =3", "lives= 3" },
+                "Variables are created by writing the name, then =, then the value",
+                "Correct! That's how you store data in variables."
             ),
             new AdvancedQuestion(
-                "What prints: print('A','B','C')?",
-                "a b c",
-                "Multiple items separated by spaces",
-                "Commas add spaces between items",
-                new string[] { "a b c" },
-                "print() with multiple arguments separates them with spaces: 'A' + ' ' + 'B' + ' ' + 'C'",
-                "Right! Multiple items print with spaces between them."
+                "What prints: x = 5; print(x)?",
+                "5",
+                "print(variable) shows its value",
+                "Variable x contains 5",
+                new string[] { "5" },
+                "When you print a variable, it shows the value stored in that variable",
+                "Right! Printing variables shows their stored values."
             )
         };
     }
