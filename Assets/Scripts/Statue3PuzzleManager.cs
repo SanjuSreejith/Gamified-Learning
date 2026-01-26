@@ -218,7 +218,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
                 return new string[]
                 {
                     "Ah... I see you're having difficulties.",
-                    "The previous concepts seemed challenging for you.",
+                    "The previous concepts seemed challenging for you.", 
                     "Let's go back to the very basics one more time.",
                     "I'll explain input and output clearly.",
                     "Pay attention - this is fundamental."
