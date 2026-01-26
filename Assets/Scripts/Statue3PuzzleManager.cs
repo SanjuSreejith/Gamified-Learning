@@ -878,7 +878,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         switch (overallPerformance)
         {
             case OverallPerformance.Master:
-                return "Your programming journey has just begun.\nBeyond this temple lies infinite possibilities.\nRemember: every expert was once a beginner.\nContinue learning, keep coding, and create wonders!";
+                return "Your programming journey has just begun.\nBeyond this place lies infinite possibilities.\nRemember: every expert was once a beginner.\nContinue learning, keep coding, and create wonders!";
 
             case OverallPerformance.Competent:
                 return "You've proven yourself worthy to continue.\nThe path of programming requires persistence.\nTake what you've learned and build upon it.";
@@ -900,7 +900,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     IEnumerator TransitionToTeaching()
     {
-        yield return StartCoroutine(TypeLineWithContinue("Let's visit the Tutorial Hall for focused practice..."));
+        yield return StartCoroutine(TypeLineWithContinue("Let's visit the Past for focused practice..."));
         yield return new WaitForSeconds(1.5f);
 
         // Fade out
