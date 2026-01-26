@@ -1050,7 +1050,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!225 &710693078
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -6906,6 +6906,7 @@ MonoBehaviour:
   target: {fileID: 394863926}
   offset: {x: 2, y: 4}
   smoothTime: 0.15
+  lockX: 0
   useBounds: 1
   minBounds: {x: 0, y: 0}
   maxBounds: {x: 9, y: 0}

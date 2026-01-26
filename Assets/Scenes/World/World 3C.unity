@@ -1149,11 +1149,11 @@ MonoBehaviour:
   questionsToPass: 3
   perfectThreshold: 5
   averageThreshold: 3
-  printscenceName: Printf
+  tutorialSceneName: printf
   masterQuestions:
   - questionText: Write code that asks for user's name .
     correctAnswer: name = input('Enter name= ')
-    hint: 
+    hint: name=
     explanation: input() gets text from users
     acceptableVariations:
     - 'name=input(''Enter name: '')'

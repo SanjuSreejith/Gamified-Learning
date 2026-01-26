@@ -1,7 +1,9 @@
-﻿using UnityEngine;
-using TMPro;
-using UnityEngine.SceneManagement;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FinalStatuePuzzle2D : MonoBehaviour
 {
@@ -25,7 +27,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     [Range(1, 4)] public int questionsToPass = 3;
     public int perfectThreshold = 5; // Combined correct answers from both statues
     public int averageThreshold = 3; // Minimum to proceed
-    public string printscenceName = "TutorialHall";
+    public string tutorialSceneName = "TutorialHall";
 
     // ----------------- STATES -----------------
     enum State
@@ -51,6 +53,8 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     OverallPerformance overallPerformance;
     private Coroutine typingCoroutine;
     private bool isTyping = false;
+    private List<string> currentDialogueChunks = new List<string>();
+    private int currentChunkIndex = 0;
 
     // ----------------- QUESTION DATA -----------------
     [System.Serializable]
@@ -108,7 +112,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             case State.Conclusion:
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
                 {
-                    DetermineFinalOutcome();
+                    ContinueDialogue();
                 }
                 break;
         }
@@ -133,10 +137,13 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     void CalculateOverallPerformance()
     {
-        int firstStatueCorrect = (firstStatue != null) ? firstStatue.CorrectAnswersCount : 0;
-        int secondStatueCorrect = (secondStatue != null) ? secondStatue.questionsCorrect : 0;
+        // Get correct answers from both statues using safe methods
+        int firstStatueCorrect = GetFirstStatueCorrectAnswers();
+        int secondStatueCorrect = GetSecondStatueCorrectAnswers();
 
         totalCorrectFromPrevious = firstStatueCorrect + secondStatueCorrect;
+
+        Debug.Log($"First Statue Correct: {firstStatueCorrect}, Second Statue Correct: {secondStatueCorrect}, Total: {totalCorrectFromPrevious}");
 
         if (totalCorrectFromPrevious >= perfectThreshold)
         {
@@ -157,7 +164,148 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         {
             overallPerformance = OverallPerformance.Struggling;
         }
+
+        Debug.Log($"Overall Performance: {overallPerformance}, Total Correct from Previous: {totalCorrectFromPrevious}");
     }
+
+    // ----------------- NEW METHODS TO GET CORRECT ANSWERS -----------------
+    int GetFirstStatueCorrectAnswers()
+    {
+        if (firstStatue == null)
+        {
+            Debug.LogWarning("First Statue reference is null!");
+            return 0;
+        }
+
+        // Try different methods to get the correct answer count
+        // Method 1: Use reflection to find any field or property named "CorrectAnswersCount"
+        System.Type type = firstStatue.GetType();
+
+        // Try to get a public field
+        var correctAnswersField = type.GetField("CorrectAnswersCount");
+        if (correctAnswersField != null)
+        {
+            return (int)correctAnswersField.GetValue(firstStatue);
+        }
+
+        // Try to get a public property
+        var correctAnswersProperty = type.GetProperty("CorrectAnswersCount");
+        if (correctAnswersProperty != null)
+        {
+            return (int)correctAnswersProperty.GetValue(firstStatue);
+        }
+
+        // Try other common names
+        var questionsCorrectField = type.GetField("questionsCorrect");
+        if (questionsCorrectField != null)
+        {
+            return (int)questionsCorrectField.GetValue(firstStatue);
+        }
+
+        var questionsCorrectProperty = type.GetProperty("questionsCorrect");
+        if (questionsCorrectProperty != null)
+        {
+            return (int)questionsCorrectProperty.GetValue(firstStatue);
+        }
+
+        // Try private fields if public ones don't exist
+        correctAnswersField = type.GetField("CorrectAnswersCount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (correctAnswersField != null)
+        {
+            return (int)correctAnswersField.GetValue(firstStatue);
+        }
+
+        questionsCorrectField = type.GetField("questionsCorrect", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (questionsCorrectField != null)
+        {
+            return (int)questionsCorrectField.GetValue(firstStatue);
+        }
+
+        Debug.LogWarning("Could not find correct answer count field in first statue!");
+        return 0;
+    }
+
+    int GetSecondStatueCorrectAnswers()
+    {
+        if (secondStatue == null)
+        {
+            Debug.LogWarning("Second Statue reference is null!");
+            return 0;
+        }
+
+        System.Type type = secondStatue.GetType();
+
+        // Try public field first
+        var questionsCorrectField = type.GetField("questionsCorrect");
+        if (questionsCorrectField != null)
+        {
+            return (int)questionsCorrectField.GetValue(secondStatue);
+        }
+
+        // Try public property
+        var questionsCorrectProperty = type.GetProperty("questionsCorrect");
+        if (questionsCorrectProperty != null)
+        {
+            return (int)questionsCorrectProperty.GetValue(secondStatue);
+        }
+
+        // Try other common names
+        var correctAnswersField = type.GetField("CorrectAnswersCount");
+        if (correctAnswersField != null)
+        {
+            return (int)correctAnswersField.GetValue(secondStatue);
+        }
+
+        // Try private fields
+        questionsCorrectField = type.GetField("questionsCorrect", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (questionsCorrectField != null)
+        {
+            return (int)questionsCorrectField.GetValue(secondStatue);
+        }
+
+        correctAnswersField = type.GetField("CorrectAnswersCount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (correctAnswersField != null)
+        {
+            return (int)correctAnswersField.GetValue(secondStatue);
+        }
+
+        Debug.LogWarning("Could not find correct answer count field in second statue!");
+        return 0;
+    }
+
+    // ----------------- ALTERNATIVE: Add these methods to your statue scripts -----------------
+    // If you can modify the statue scripts, add these public methods:
+
+    // In StatueDialogueTriggerSystem2D.cs:
+    /*
+    public int GetCorrectAnswersCount()
+    {
+        return CorrectAnswersCount; // Make sure this field exists and is public
+    }
+    */
+
+    // In AdaptiveStatuePuzzle2D.cs:
+    /*
+    public int GetQuestionsCorrect()
+    {
+        return questionsCorrect; // Make sure this field exists and is public
+    }
+    */
+
+    // Then update the GetFirstStatueCorrectAnswers and GetSecondStatueCorrectAnswers methods:
+    /*
+    int GetFirstStatueCorrectAnswers()
+    {
+        if (firstStatue == null) return 0;
+        return firstStatue.GetCorrectAnswersCount();
+    }
+
+    int GetSecondStatueCorrectAnswers()
+    {
+        if (secondStatue == null) return 0;
+        return secondStatue.GetQuestionsCorrect();
+    }
+    */
 
     // ----------------- INTRODUCTION -----------------
     IEnumerator IntroductionSequence()
@@ -169,14 +317,13 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         foreach (string line in greetingLines)
         {
-            yield return StartCoroutine(TypeLine(line));
-            yield return new WaitForSeconds(0.5f);
+            yield return StartCoroutine(TypeLineWithPagination(line));
+            yield return new WaitForSeconds(0.3f);
 
             // Wait for continue input
             while (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0))
                 yield return null;
 
-            // Clear input to prevent immediate next
             yield return null;
         }
 
@@ -190,35 +337,40 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         switch (overallPerformance)
         {
-          
+            case OverallPerformance.Master:
+                return new string[]
+                {
+                    "Excellent work. Your progress is remarkable.",
+                    "You've shown deep understanding of Python fundamentals.",
+                    "This final test will challenge your input/output skills.",
+                    "Show me what you've truly mastered."
+                };
 
             case OverallPerformance.Competent:
                 return new string[]
-  {
-    "Welcome. You’ve done well to reach this point.",
-    "I’ve been watching how you move through this house.",
-    "For someone just starting out, your grasp of Python is impressive.",
-    "Now comes the final check — input and output.",
-    "These are the last fundamentals you need to truly move forward."
-  };
-
+                {
+                    "Welcome. You've done well to reach this point.",
+                    "I've been watching how you move through this house.",
+                    "For someone just starting out, your grasp of Python is impressive.",
+                    "Now comes the final check — input and output.",
+                    "These are the last fundamentals you need to truly move forward."
+                };
 
             case OverallPerformance.Novice:
                 return new string[]
-    {
-    "Hello there.",
-    "I can tell you’ve been learning inside this house for a while.",
-    "You’re getting there, but understanding matters more than speed.",
-    "This final test focuses on input and output — simple, but important.",
-    "Take your time. Details matter here."
-    };
-
+                {
+                    "Hello there.",
+                    "I can tell you've been learning inside this house for a while.",
+                    "You're getting there, but understanding matters more than speed.",
+                    "This final test focuses on input and output — simple, but important.",
+                    "Take your time. Details matter here."
+                };
 
             case OverallPerformance.Struggling:
                 return new string[]
                 {
                     "Ah... I see you're having difficulties.",
-                    "The previous concepts seemed challenging for you.", 
+                    "The previous concepts seemed challenging for you.",
                     "Let's go back to the very basics one more time.",
                     "I'll explain input and output clearly.",
                     "Pay attention - this is fundamental."
@@ -296,7 +448,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         if (string.IsNullOrEmpty(input))
         {
-            StartCoroutine(TypeLine("Please type an answer."));
+            StartCoroutine(TypeLineWithPagination("Please type an answer."));
             return;
         }
 
@@ -305,11 +457,13 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         if (isCorrect)
         {
             questionsCorrect++;
-            StartCoroutine(TypeLine($"Correct! {question.feedback}\nPress Enter to continue..."));
+            string feedback = $"Correct! {question.feedback}\nPress Enter to continue...";
+            StartCoroutine(TypeLineWithPagination(feedback));
         }
         else
         {
-            StartCoroutine(TypeLine($"Not quite. {question.explanation}\nPress Enter to continue..."));
+            string response = $"Not quite. {question.explanation}\nPress Enter to continue...";
+            StartCoroutine(TypeLineWithPagination(response));
         }
 
         currentQuestionIndex++;
@@ -318,43 +472,298 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     bool CheckAnswer(string userAnswer, FinalQuestion question)
     {
-        userAnswer = userAnswer.ToLower().Replace(" ", "");
-        string correctAnswer = question.correctAnswer.ToLower().Replace(" ", "");
+        userAnswer = NormalizeAnswer(userAnswer);
+        string correctAnswer = NormalizeAnswer(question.correctAnswer);
 
+        // Direct match
         if (userAnswer == correctAnswer) return true;
 
-        if (question.acceptableVariations != null)
+        // Check acceptable variations
+        if (question.acceptableVariations != null && question.acceptableVariations.Length > 0)
         {
             foreach (string variation in question.acceptableVariations)
             {
-                if (userAnswer == variation.ToLower().Replace(" ", ""))
+                if (userAnswer == NormalizeAnswer(variation))
                     return true;
             }
         }
 
-        // Allow for minor syntax variations for novice
-        if (overallPerformance == OverallPerformance.Novice)
+        // Performance-based leniency
+        switch (overallPerformance)
         {
-            // Check if they have the right idea but minor syntax issues
-            return CheckNoviceAnswer(userAnswer, correctAnswer);
+            case OverallPerformance.Novice:
+                return CheckNoviceAnswer(userAnswer, correctAnswer, question);
+
+            case OverallPerformance.Competent:
+                return CheckCompetentAnswer(userAnswer, correctAnswer);
+
+            case OverallPerformance.Master:
+                return CheckMasterAnswer(userAnswer, correctAnswer, question);
         }
 
         return false;
     }
 
-    bool CheckNoviceAnswer(string userAnswer, string correctAnswer)
+    string NormalizeAnswer(string answer)
     {
-        // Remove common novice mistakes
-        userAnswer = userAnswer.Replace(";", "").Replace(":", "");
-        correctAnswer = correctAnswer.Replace(";", "").Replace(":", "");
+        if (string.IsNullOrEmpty(answer)) return "";
 
-        // Check for presence of key elements
-        if (correctAnswer.Contains("input(") && userAnswer.Contains("input("))
-            return true;
-        if (correctAnswer.Contains("print(") && userAnswer.Contains("print("))
-            return true;
+        // Convert to lowercase
+        answer = answer.ToLower();
 
-        return userAnswer == correctAnswer;
+        // Remove all whitespace
+        answer = System.Text.RegularExpressions.Regex.Replace(answer, @"\s+", "");
+
+        // Remove common Python punctuation that doesn't affect functionality
+        answer = answer.Replace(";", "").Replace(":", "");
+
+        // Standardize quotes
+        answer = answer.Replace("'", "\"");
+
+        // Remove trailing/leading spaces (though we already removed all spaces)
+        return answer.Trim();
+    }
+
+    bool CheckNoviceAnswer(string userAnswer, string correctAnswer, FinalQuestion question)
+    {
+        // For novice, check for presence of key concepts
+
+        // Check if answer is about input
+        if (correctAnswer.Contains("input(") || question.questionText.ToLower().Contains("input"))
+        {
+            if (userAnswer.Contains("input") || userAnswer.Contains("input("))
+                return true;
+        }
+
+        // Check if answer is about print
+        if (correctAnswer.Contains("print(") || question.questionText.ToLower().Contains("print"))
+        {
+            if (userAnswer.Contains("print") || userAnswer.Contains("print("))
+                return true;
+        }
+
+        // Check for variable assignment
+        if (correctAnswer.Contains("="))
+        {
+            if (userAnswer.Contains("="))
+            {
+                // Extract variable names
+                string userVar = ExtractVariableName(userAnswer);
+                string correctVar = ExtractVariableName(correctAnswer);
+
+                if (!string.IsNullOrEmpty(userVar) && !string.IsNullOrEmpty(correctVar))
+                {
+                    if (userVar == correctVar) return true;
+                }
+                else if (!string.IsNullOrEmpty(userVar) && correctAnswer.Contains(userVar))
+                {
+                    return true;
+                }
+            }
+        }
+
+        // Check if they have the right value (for boolean questions)
+        if (correctAnswer.Contains("true") || correctAnswer.Contains("false"))
+        {
+            if (userAnswer.Contains("true") || userAnswer.Contains("false"))
+            {
+                // Check if they have the right boolean value
+                bool correctHasTrue = correctAnswer.Contains("true");
+                bool userHasTrue = userAnswer.Contains("true");
+
+                return correctHasTrue == userHasTrue;
+            }
+        }
+
+        // Check for numeric values
+        if (correctAnswer.Contains("100") || correctAnswer.Contains("0") || correctAnswer.Contains("1") ||
+            correctAnswer.Contains("2") || correctAnswer.Contains("5") || correctAnswer.Contains("10"))
+        {
+            // Extract numbers from both answers
+            string correctNumbers = ExtractNumbers(correctAnswer);
+            string userNumbers = ExtractNumbers(userAnswer);
+
+            if (!string.IsNullOrEmpty(correctNumbers) && !string.IsNullOrEmpty(userNumbers))
+            {
+                return correctNumbers == userNumbers;
+            }
+        }
+
+        return false;
+    }
+
+    bool CheckCompetentAnswer(string userAnswer, string correctAnswer)
+    {
+        // For competent players, require correct structure but allow minor variations
+
+        // Check for required keywords
+        string[] requiredKeywords = ExtractKeywords(correctAnswer);
+        int matches = 0;
+
+        foreach (string keyword in requiredKeywords)
+        {
+            if (userAnswer.Contains(keyword)) matches++;
+        }
+
+        // Require at least 80% of key concepts
+        float matchPercentage = (float)matches / requiredKeywords.Length;
+        return matchPercentage >= 0.8f;
+    }
+
+    bool CheckMasterAnswer(string userAnswer, string correctAnswer, FinalQuestion question)
+    {
+        // For masters, be strict but allow advanced alternatives
+        if (userAnswer == correctAnswer) return true;
+
+        // Check for f-string alternatives
+        if (correctAnswer.Contains("print(") && question.questionText.Contains("print"))
+        {
+            bool hasFString = userAnswer.Contains("f\"") || userAnswer.Contains("f'");
+            bool hasFormat = userAnswer.Contains(".format(");
+            bool hasConcat = userAnswer.Contains("+");
+
+            if (hasFString || hasFormat || hasConcat)
+            {
+                // Check if they're printing the right variables
+                string[] keyVariables = ExtractVariables(correctAnswer);
+                int correctVars = 0;
+
+                foreach (string variable in keyVariables)
+                {
+                    if (userAnswer.Contains(variable)) correctVars++;
+                }
+
+                return correctVars >= keyVariables.Length * 0.8f;
+            }
+        }
+
+        // Check for correct function nesting
+        if (correctAnswer.Contains("int(input("))
+        {
+            if (userAnswer.Contains("int(") && userAnswer.Contains("input("))
+            {
+                // Check if int wraps input
+                int inputIndex = userAnswer.IndexOf("input(");
+                int intIndex = userAnswer.IndexOf("int(");
+
+                if (intIndex < inputIndex) // int( comes before input(
+                {
+                    // Check if they're doing the right operation
+                    if (correctAnswer.Contains("*2") || correctAnswer.Contains("* 2"))
+                    {
+                        return userAnswer.Contains("*2") || userAnswer.Contains("* 2");
+                    }
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    string ExtractVariableName(string code)
+    {
+        // Simple extraction of variable name before '='
+        int equalsIndex = code.IndexOf('=');
+        if (equalsIndex > 0)
+        {
+            string beforeEquals = code.Substring(0, equalsIndex);
+            // Remove any parentheses or spaces
+            beforeEquals = beforeEquals.Replace("(", "").Replace(")", "").Trim();
+
+            // Find the last word (variable name)
+            string[] parts = beforeEquals.Split(' ');
+            if (parts.Length > 0)
+            {
+                string variable = parts[parts.Length - 1];
+                // Filter out Python keywords
+                if (!IsPythonKeyword(variable))
+                {
+                    return variable;
+                }
+            }
+        }
+        return "";
+    }
+
+    string[] ExtractKeywords(string code)
+    {
+        List<string> keywords = new List<string>();
+
+        // Add Python keywords and functions
+        if (code.Contains("input(")) keywords.Add("input(");
+        if (code.Contains("print(")) keywords.Add("print(");
+        if (code.Contains("int(")) keywords.Add("int(");
+        if (code.Contains("str(")) keywords.Add("str(");
+        if (code.Contains("=")) keywords.Add("=");
+        if (code.Contains("true")) keywords.Add("true");
+        if (code.Contains("false")) keywords.Add("false");
+
+        return keywords.ToArray();
+    }
+
+    string[] ExtractVariables(string code)
+    {
+        List<string> variables = new List<string>();
+
+        // Simple extraction - look for words that aren't keywords
+        string[] tokens = code.Split(new char[] { ' ', '=', '(', ')', ',', ';', '+', '*' },
+                                   StringSplitOptions.RemoveEmptyEntries);
+
+        foreach (string token in tokens)
+        {
+            string cleanToken = token.ToLower();
+            // Skip Python keywords, numbers, and string literals
+            if (!IsPythonKeyword(cleanToken) &&
+                !cleanToken.StartsWith("\"") &&
+                !cleanToken.StartsWith("'") &&
+                !IsNumeric(cleanToken) &&
+                cleanToken.Length > 1)
+            {
+                // Check if it looks like a variable name (starts with letter)
+                if (char.IsLetter(cleanToken[0]))
+                {
+                    variables.Add(cleanToken);
+                }
+            }
+        }
+
+        // Remove duplicates and return
+        List<string> uniqueVars = new List<string>();
+        foreach (string var in variables)
+        {
+            if (!uniqueVars.Contains(var))
+                uniqueVars.Add(var);
+        }
+
+        return uniqueVars.ToArray();
+    }
+
+    bool IsPythonKeyword(string word)
+    {
+        string[] keywords = {
+            "input", "print", "int", "str", "float", "bool",
+            "true", "false", "none", "and", "or", "not",
+            "if", "else", "elif", "for", "while", "def",
+            "return", "import", "from", "as", "in", "is"
+        };
+        return System.Array.Exists(keywords, kw => kw == word.ToLower());
+    }
+
+    bool IsNumeric(string text)
+    {
+        return int.TryParse(text, out _) || float.TryParse(text, out _);
+    }
+
+    string ExtractNumbers(string text)
+    {
+        System.Text.StringBuilder numbers = new System.Text.StringBuilder();
+        foreach (char c in text)
+        {
+            if (char.IsDigit(c))
+                numbers.Append(c);
+        }
+        return numbers.ToString();
     }
 
     void NextQuestionOrConclude()
@@ -374,7 +783,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         state = State.Conclusion;
         string conclusion = GetConclusionDialogue();
-        StartCoroutine(TypeLine(conclusion));
+        StartCoroutine(TypeLineWithPagination(conclusion));
     }
 
     string GetConclusionDialogue()
@@ -386,56 +795,35 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             case OverallPerformance.Master:
                 if (successRate >= 0.8f)
                 {
-                    return "Magnificent... truly magnificent.\n" +
-                           "Your answers resonate with clarity and confidence.\n" +
-                           "Beyond this chamber, someone awaits you.\n\n" +
-                           "Abel — a wanderer of forgotten code — wishes to meet you.\n" +
-                           "Press Enter to teleport and face what lies ahead...";
+                    return "Magnificent... truly magnificent.\nYour answers resonate with clarity and confidence.\nBeyond this chamber, someone awaits you.\n\nAbel — a wanderer of forgotten code — wishes to meet you.\nPress Enter to teleport and face what lies ahead...";
                 }
                 else if (successRate >= 0.6f)
                 {
-                    return "Well done.\n" +
-                           "Your understanding is strong, though not yet flawless.\n" +
-                           "Still, the path forward opens for you.\n\n" +
-                           "A man named Abel has been watching your progress.\n" +
-                           "Press Enter to teleport and meet him...";
+                    return "Well done.\nYour understanding is strong, though not yet flawless.\nStill, the path forward opens for you.\n\nA man named Abel has been watching your progress.\nPress Enter to teleport and meet him...";
                 }
                 break;
 
             case OverallPerformance.Competent:
                 if (successRate >= 0.7f)
                 {
-                    return "You stand steady on the path of knowledge.\n" +
-                           "Not perfect — but prepared.\n\n" +
-                           "Ahead, you will meet Abel.\n" +
-                           "He walks where logic and instinct collide.\n\n" +
-                           "Press Enter to teleport...";
+                    return "You stand steady on the path of knowledge.\nNot perfect — but prepared.\nAhead, you will meet Abel.\nHe walks where logic and instinct collide.\n\nPress Enter to teleport...";
                 }
                 else if (successRate >= 0.5f)
                 {
-                    return "You have grasped the foundations.\n" +
-                           "Mistakes remain, but fear does not define you.\n\n" +
-                           "Abel waits beyond this hall.\n" +
-                           "He does not judge — he observes.\n\n" +
-                           "Press Enter to proceed...";
+                    return "You have grasped the foundations.\nMistakes remain, but fear does not define you.\nAbel waits beyond this hall.\nHe does not judge — he observes.\n\nPress Enter to proceed...";
                 }
                 break;
 
             case OverallPerformance.Novice:
                 if (successRate >= 0.6f)
                 {
-                    return "You move forward — slowly, but honestly.\n" +
-                           "Every step matters more than speed.\n\n" +
-                           "Someone wishes to speak with you.\n" +
-                           "Abel has helped many who doubted themselves.\n\n" +
-                           "Press Enter to continue...";
+                    return "You move forward — slowly, but honestly.\nEvery step matters more than speed.\nSomeone wishes to speak with you.\nAbel has helped many who doubted themselves.\n\nPress Enter to continue...";
                 }
                 break;
         }
 
-        // ❗ DO NOT CHANGE (as requested)
-        return "You need more practice with input and output operations.\n" +
-               "Let me guide you through a focused tutorial...";
+        // Default fallback
+        return "You need more practice with input and output operations.\nLet me guide you through a focused tutorial...";
     }
 
     void DetermineFinalOutcome()
@@ -495,7 +883,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         // Show final message
         string finalMessage = GetFinalTeleportMessage();
-        yield return StartCoroutine(TypeLine(finalMessage));
+        yield return StartCoroutine(TypeLineWithPagination(finalMessage));
         yield return new WaitForSeconds(1.5f);
 
         // Fade out
@@ -549,20 +937,13 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         switch (overallPerformance)
         {
             case OverallPerformance.Master:
-                return "Your programming journey has just begun.\n" +
-                       "Beyond this temple lies infinite possibilities.\n" +
-                       "Remember: every expert was once a beginner.\n" +
-                       "Continue learning, keep coding, and create wonders!";
+                return "Your programming journey has just begun.\nBeyond this temple lies infinite possibilities.\nRemember: every expert was once a beginner.\nContinue learning, keep coding, and create wonders!";
 
             case OverallPerformance.Competent:
-                return "You've proven yourself worthy to continue.\n" +
-                       "The path of programming requires persistence.\n" +
-                       "Take what you've learned and build upon it.";
+                return "You've proven yourself worthy to continue.\nThe path of programming requires persistence.\nTake what you've learned and build upon it.";
 
             case OverallPerformance.Novice:
-                return "You've taken your first steps into programming.\n" +
-                       "The road is long, but every journey begins with a single step.\n" +
-                       "Keep practicing, and you'll unlock great potential.";
+                return "You've taken your first steps into programming.\nThe road is long, but every journey begins with a single step.\nKeep practicing, and you'll unlock great potential.";
 
             default:
                 return "Proceeding to the next area...";
@@ -578,7 +959,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     IEnumerator TransitionToTeaching()
     {
-        yield return StartCoroutine(TypeLine("Let's visit the Tutorial Hall for focused practice..."));
+        yield return StartCoroutine(TypeLineWithPagination("Let's visit the Tutorial Hall for focused practice..."));
         yield return new WaitForSeconds(1.5f);
 
         // Fade out
@@ -598,34 +979,97 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         yield return new WaitForSeconds(1f);
 
         // Load teaching scene
-        SceneManager.LoadScene(printscenceName);
+        SceneManager.LoadScene(tutorialSceneName);
     }
 
-    // ----------------- HELPER METHODS -----------------
-    IEnumerator TypeLine(string line)
+    // ----------------- IMPROVED TYPING SYSTEM -----------------
+    IEnumerator TypeLineWithPagination(string line)
     {
         isTyping = true;
-        dialogueText.text = "";
+        currentDialogueChunks.Clear();
+        currentChunkIndex = 0;
 
-        foreach (char c in line)
+        // Split into chunks of max 3 lines
+        string[] lines = line.Split('\n');
+        List<string> chunk = new List<string>();
+
+        for (int i = 0; i < lines.Length; i++)
         {
-            dialogueText.text += c;
-            yield return new WaitForSeconds(typeSpeed);
+            chunk.Add(lines[i]);
+
+            // If we have 3 lines or this is the last line
+            if (chunk.Count >= 3 || i == lines.Length - 1)
+            {
+                currentDialogueChunks.Add(string.Join("\n", chunk));
+                chunk.Clear();
+            }
+        }
+
+        // Display first chunk
+        yield return StartCoroutine(TypeChunk(currentDialogueChunks[0]));
+
+        // If there are more chunks, wait for continue and show them
+        for (int i = 1; i < currentDialogueChunks.Count; i++)
+        {
+            yield return WaitForContinue();
+            yield return StartCoroutine(TypeChunk(currentDialogueChunks[i]));
         }
 
         isTyping = false;
     }
 
+    IEnumerator TypeChunk(string chunk)
+    {
+        dialogueText.text = "";
+
+        foreach (char c in chunk)
+        {
+            dialogueText.text += c;
+            yield return new WaitForSeconds(typeSpeed);
+        }
+
+        // Add continue prompt if there are more chunks
+        if (currentChunkIndex < currentDialogueChunks.Count - 1)
+        {
+            dialogueText.text += "\n\n[Press Enter to continue...]";
+        }
+
+        currentChunkIndex++;
+    }
+
+    IEnumerator WaitForContinue()
+    {
+        while (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0))
+        {
+            yield return null;
+        }
+        yield return null; // Clear input
+    }
+
     void ContinueDialogue()
     {
-        // Only continue if not currently typing
-        if (isTyping) return;
+        // If currently typing, skip to end of current chunk
+        if (isTyping)
+        {
+            StopAllCoroutines();
+            dialogueText.text = currentDialogueChunks[currentChunkIndex - 1];
 
-        // This is handled in the coroutine wait
+            // Add continue prompt if there are more chunks
+            if (currentChunkIndex < currentDialogueChunks.Count)
+            {
+                dialogueText.text += "\n\n[Press Enter to continue...]";
+            }
+
+            isTyping = false;
+        }
+        else if (state == State.Conclusion)
+        {
+            // After conclusion dialogue is done, determine outcome
+            DetermineFinalOutcome();
+        }
     }
 
     // ----------------- EDITOR SETUP -----------------
-    // This method can be called from the inspector to set up default questions
     [ContextMenu("Setup Default Questions")]
     void SetupDefaultQuestions()
     {
