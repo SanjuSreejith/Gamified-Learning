@@ -28,15 +28,19 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     public int perfectThreshold = 5; // Combined correct answers from both statues
     public int averageThreshold = 3; // Minimum to proceed
     public string tutorialSceneName = "TutorialHall";
+    [Header("Camera")]
+    public followingcamera followCam;
 
     // ----------------- STATES -----------------
     enum State
     {
         Idle,
         Introduction,
+        IntroductionWaiting,
         AskingQuestion,
         ReviewingAnswer,
         Conclusion,
+        ConclusionWaiting,
         Teleporting,
         TeachingScene
     }
@@ -55,6 +59,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     private bool isTyping = false;
     private List<string> currentDialogueChunks = new List<string>();
     private int currentChunkIndex = 0;
+    private bool waitForContinue = false;
 
     // ----------------- QUESTION DATA -----------------
     [System.Serializable]
@@ -94,7 +99,8 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         switch (state)
         {
-            case State.Introduction:
+            case State.IntroductionWaiting:
+            case State.ConclusionWaiting:
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
                 {
                     ContinueDialogue();
@@ -107,12 +113,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
                 if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
                 {
                     NextQuestionOrConclude();
-                }
-                break;
-            case State.Conclusion:
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
-                {
-                    ContinueDialogue();
                 }
                 break;
         }
@@ -178,50 +178,37 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         }
 
         // Try different methods to get the correct answer count
-        // Method 1: Use reflection to find any field or property named "CorrectAnswersCount"
         System.Type type = firstStatue.GetType();
 
-        // Try to get a public field
-        var correctAnswersField = type.GetField("CorrectAnswersCount");
-        if (correctAnswersField != null)
+        // Try public getter method first
+        var getCorrectAnswersMethod = type.GetMethod("GetCorrectAnswersCount");
+        if (getCorrectAnswersMethod != null)
         {
-            return (int)correctAnswersField.GetValue(firstStatue);
+            return (int)getCorrectAnswersMethod.Invoke(firstStatue, null);
         }
 
-        // Try to get a public property
+        // Try public property
         var correctAnswersProperty = type.GetProperty("CorrectAnswersCount");
         if (correctAnswersProperty != null)
         {
             return (int)correctAnswersProperty.GetValue(firstStatue);
         }
 
-        // Try other common names
-        var questionsCorrectField = type.GetField("questionsCorrect");
-        if (questionsCorrectField != null)
-        {
-            return (int)questionsCorrectField.GetValue(firstStatue);
-        }
-
-        var questionsCorrectProperty = type.GetProperty("questionsCorrect");
-        if (questionsCorrectProperty != null)
-        {
-            return (int)questionsCorrectProperty.GetValue(firstStatue);
-        }
-
-        // Try private fields if public ones don't exist
-        correctAnswersField = type.GetField("CorrectAnswersCount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        // Try public field
+        var correctAnswersField = type.GetField("CorrectAnswersCount");
         if (correctAnswersField != null)
         {
             return (int)correctAnswersField.GetValue(firstStatue);
         }
 
-        questionsCorrectField = type.GetField("questionsCorrect", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (questionsCorrectField != null)
+        // Try platform count
+        var platformsActivatedField = type.GetField("platformsActivated");
+        if (platformsActivatedField != null)
         {
-            return (int)questionsCorrectField.GetValue(firstStatue);
+            return (int)platformsActivatedField.GetValue(firstStatue);
         }
 
-        Debug.LogWarning("Could not find correct answer count field in first statue!");
+        Debug.LogWarning("Could not find correct answer count in first statue!");
         return 0;
     }
 
@@ -235,77 +222,23 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         System.Type type = secondStatue.GetType();
 
-        // Try public field first
+        // Try public getter method first
+        var getQuestionsCorrectMethod = type.GetMethod("GetQuestionsCorrect");
+        if (getQuestionsCorrectMethod != null)
+        {
+            return (int)getQuestionsCorrectMethod.Invoke(secondStatue, null);
+        }
+
+        // Try public field
         var questionsCorrectField = type.GetField("questionsCorrect");
         if (questionsCorrectField != null)
         {
             return (int)questionsCorrectField.GetValue(secondStatue);
         }
 
-        // Try public property
-        var questionsCorrectProperty = type.GetProperty("questionsCorrect");
-        if (questionsCorrectProperty != null)
-        {
-            return (int)questionsCorrectProperty.GetValue(secondStatue);
-        }
-
-        // Try other common names
-        var correctAnswersField = type.GetField("CorrectAnswersCount");
-        if (correctAnswersField != null)
-        {
-            return (int)correctAnswersField.GetValue(secondStatue);
-        }
-
-        // Try private fields
-        questionsCorrectField = type.GetField("questionsCorrect", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (questionsCorrectField != null)
-        {
-            return (int)questionsCorrectField.GetValue(secondStatue);
-        }
-
-        correctAnswersField = type.GetField("CorrectAnswersCount", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (correctAnswersField != null)
-        {
-            return (int)correctAnswersField.GetValue(secondStatue);
-        }
-
-        Debug.LogWarning("Could not find correct answer count field in second statue!");
+        Debug.LogWarning("Could not find correct answer count in second statue!");
         return 0;
     }
-
-    // ----------------- ALTERNATIVE: Add these methods to your statue scripts -----------------
-    // If you can modify the statue scripts, add these public methods:
-
-    // In StatueDialogueTriggerSystem2D.cs:
-    /*
-    public int GetCorrectAnswersCount()
-    {
-        return CorrectAnswersCount; // Make sure this field exists and is public
-    }
-    */
-
-    // In AdaptiveStatuePuzzle2D.cs:
-    /*
-    public int GetQuestionsCorrect()
-    {
-        return questionsCorrect; // Make sure this field exists and is public
-    }
-    */
-
-    // Then update the GetFirstStatueCorrectAnswers and GetSecondStatueCorrectAnswers methods:
-    /*
-    int GetFirstStatueCorrectAnswers()
-    {
-        if (firstStatue == null) return 0;
-        return firstStatue.GetCorrectAnswersCount();
-    }
-
-    int GetSecondStatueCorrectAnswers()
-    {
-        if (secondStatue == null) return 0;
-        return secondStatue.GetQuestionsCorrect();
-    }
-    */
 
     // ----------------- INTRODUCTION -----------------
     IEnumerator IntroductionSequence()
@@ -317,14 +250,15 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         foreach (string line in greetingLines)
         {
-            yield return StartCoroutine(TypeLineWithPagination(line));
-            yield return new WaitForSeconds(0.3f);
+            yield return StartCoroutine(TypeLineWithContinue(line));
+            yield return new WaitForSeconds(0.1f);
 
             // Wait for continue input
-            while (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0))
-                yield return null;
+            state = State.IntroductionWaiting;
+            waitForContinue = true;
+            yield return new WaitUntil(() => !waitForContinue);
 
-            yield return null;
+            yield return new WaitForSeconds(0.1f);
         }
 
         // Start asking questions
@@ -520,7 +454,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         // Standardize quotes
         answer = answer.Replace("'", "\"");
 
-        // Remove trailing/leading spaces (though we already removed all spaces)
+        // Remove trailing/leading spaces
         return answer.Trim();
     }
 
@@ -668,15 +602,12 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         if (equalsIndex > 0)
         {
             string beforeEquals = code.Substring(0, equalsIndex);
-            // Remove any parentheses or spaces
             beforeEquals = beforeEquals.Replace("(", "").Replace(")", "").Trim();
 
-            // Find the last word (variable name)
             string[] parts = beforeEquals.Split(' ');
             if (parts.Length > 0)
             {
                 string variable = parts[parts.Length - 1];
-                // Filter out Python keywords
                 if (!IsPythonKeyword(variable))
                 {
                     return variable;
@@ -690,7 +621,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         List<string> keywords = new List<string>();
 
-        // Add Python keywords and functions
         if (code.Contains("input(")) keywords.Add("input(");
         if (code.Contains("print(")) keywords.Add("print(");
         if (code.Contains("int(")) keywords.Add("int(");
@@ -706,21 +636,18 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         List<string> variables = new List<string>();
 
-        // Simple extraction - look for words that aren't keywords
         string[] tokens = code.Split(new char[] { ' ', '=', '(', ')', ',', ';', '+', '*' },
                                    StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string token in tokens)
         {
             string cleanToken = token.ToLower();
-            // Skip Python keywords, numbers, and string literals
             if (!IsPythonKeyword(cleanToken) &&
                 !cleanToken.StartsWith("\"") &&
                 !cleanToken.StartsWith("'") &&
                 !IsNumeric(cleanToken) &&
                 cleanToken.Length > 1)
             {
-                // Check if it looks like a variable name (starts with letter)
                 if (char.IsLetter(cleanToken[0]))
                 {
                     variables.Add(cleanToken);
@@ -728,7 +655,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             }
         }
 
-        // Remove duplicates and return
         List<string> uniqueVars = new List<string>();
         foreach (string var in variables)
         {
@@ -783,7 +709,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         state = State.Conclusion;
         string conclusion = GetConclusionDialogue();
-        StartCoroutine(TypeLineWithPagination(conclusion));
+        StartCoroutine(TypeLineWithContinue(conclusion));
     }
 
     string GetConclusionDialogue()
@@ -883,24 +809,30 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         // Show final message
         string finalMessage = GetFinalTeleportMessage();
-        yield return StartCoroutine(TypeLineWithPagination(finalMessage));
-        yield return new WaitForSeconds(1.5f);
+        yield return StartCoroutine(TypeLineWithContinue(finalMessage));
+        yield return new WaitForSeconds(1.2f);
 
         // Fade out
         if (fadePanel != null)
         {
             fadePanel.gameObject.SetActive(true);
-            float timer = 0;
-            while (timer < 1)
+            float t = 0f;
+            while (t < 1f)
             {
-                fadePanel.alpha = Mathf.Lerp(0, 1, timer);
-                timer += Time.deltaTime * fadeSpeed;
+                fadePanel.alpha = Mathf.Lerp(0f, 1f, t);
+                t += Time.deltaTime * fadeSpeed;
                 yield return null;
             }
-            fadePanel.alpha = 1;
+            fadePanel.alpha = 1f;
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.2f);
+
+        // Camera unlock
+        if (followCam != null)
+        {
+            followCam.UnlockX();
+        }
 
         // Teleport player
         if (player != null && teleportDestination != null)
@@ -909,23 +841,32 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             player.transform.rotation = teleportDestination.rotation;
         }
 
-        yield return new WaitForSeconds(0.5f);
+        yield return null;
+
+        // Camera snap & lock
+        if (followCam != null)
+        {
+            followCam.SnapToTarget();
+            followCam.LockXAtCurrentPosition();
+        }
+
+        yield return new WaitForSeconds(0.25f);
 
         // Fade in
         if (fadePanel != null)
         {
-            float timer = 0;
-            while (timer < 1)
+            float t = 0f;
+            while (t < 1f)
             {
-                fadePanel.alpha = Mathf.Lerp(1, 0, timer);
-                timer += Time.deltaTime * fadeSpeed;
+                fadePanel.alpha = Mathf.Lerp(1f, 0f, t);
+                t += Time.deltaTime * fadeSpeed;
                 yield return null;
             }
-            fadePanel.alpha = 0;
+            fadePanel.alpha = 0f;
             fadePanel.gameObject.SetActive(false);
         }
 
-        // Hide dialogue
+        // Cleanup
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
 
@@ -959,7 +900,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     IEnumerator TransitionToTeaching()
     {
-        yield return StartCoroutine(TypeLineWithPagination("Let's visit the Tutorial Hall for focused practice..."));
+        yield return StartCoroutine(TypeLineWithContinue("Let's visit the Tutorial Hall for focused practice..."));
         yield return new WaitForSeconds(1.5f);
 
         // Fade out
@@ -983,6 +924,45 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     }
 
     // ----------------- IMPROVED TYPING SYSTEM -----------------
+    IEnumerator TypeLineWithContinue(string fullText)
+    {
+        isTyping = true;
+        currentDialogueChunks.Clear();
+        currentChunkIndex = 0;
+
+        // Split text into lines
+        string[] lines = fullText.Split('\n');
+        List<string> chunk = new List<string>();
+
+        // Create chunks of max 3 lines
+        for (int i = 0; i < lines.Length; i++)
+        {
+            chunk.Add(lines[i]);
+
+            if (chunk.Count == 3 || i == lines.Length - 1)
+            {
+                currentDialogueChunks.Add(string.Join("\n", chunk));
+                chunk.Clear();
+            }
+        }
+
+        // Safety
+        if (currentDialogueChunks.Count == 0)
+            currentDialogueChunks.Add(fullText);
+
+        // Show first chunk
+        yield return StartCoroutine(TypeChunkLimited(currentDialogueChunks[0]));
+
+        isTyping = false;
+
+        // Enter waiting state
+        if (state == State.Introduction)
+            state = State.IntroductionWaiting;
+        else if (state == State.Conclusion)
+            state = State.ConclusionWaiting;
+    }
+
+
     IEnumerator TypeLineWithPagination(string line)
     {
         isTyping = true;
@@ -997,12 +977,16 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         {
             chunk.Add(lines[i]);
 
-            // If we have 3 lines or this is the last line
             if (chunk.Count >= 3 || i == lines.Length - 1)
             {
                 currentDialogueChunks.Add(string.Join("\n", chunk));
                 chunk.Clear();
             }
+        }
+
+        if (currentDialogueChunks.Count == 0)
+        {
+            currentDialogueChunks.Add(line);
         }
 
         // Display first chunk
@@ -1011,7 +995,9 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         // If there are more chunks, wait for continue and show them
         for (int i = 1; i < currentDialogueChunks.Count; i++)
         {
-            yield return WaitForContinue();
+            state = State.IntroductionWaiting;
+            waitForContinue = true;
+            yield return new WaitUntil(() => !waitForContinue);
             yield return StartCoroutine(TypeChunk(currentDialogueChunks[i]));
         }
 
@@ -1037,43 +1023,60 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         currentChunkIndex++;
     }
 
-    IEnumerator WaitForContinue()
-    {
-        while (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0))
-        {
-            yield return null;
-        }
-        yield return null; // Clear input
-    }
-
     void ContinueDialogue()
     {
-        // If currently typing, skip to end of current chunk
-        if (isTyping)
+        // If currently typing, skip to end
+        if (isTyping && typingCoroutine != null)
         {
-            StopAllCoroutines();
-            dialogueText.text = currentDialogueChunks[currentChunkIndex - 1];
+            StopCoroutine(typingCoroutine);
+            isTyping = false;
 
-            // Add continue prompt if there are more chunks
-            if (currentChunkIndex < currentDialogueChunks.Count)
+            // Show the full text
+            if (currentDialogueChunks.Count > 0 && currentChunkIndex > 0)
+            {
+                dialogueText.text = currentDialogueChunks[currentChunkIndex - 1];
+            }
+
+            if (state == State.IntroductionWaiting)
             {
                 dialogueText.text += "\n\n[Press Enter to continue...]";
             }
-
-            isTyping = false;
         }
-        else if (state == State.Conclusion)
+
+        // Handle the continue input
+        if (state == State.IntroductionWaiting)
         {
-            // After conclusion dialogue is done, determine outcome
+            waitForContinue = false;
+            state = State.Introduction;
+        }
+        else if (state == State.ConclusionWaiting)
+        {
             DetermineFinalOutcome();
         }
+    }
+    IEnumerator TypeChunkLimited(string chunk)
+    {
+        dialogueText.text = "";
+
+        foreach (char c in chunk)
+        {
+            dialogueText.text += c;
+            yield return new WaitForSeconds(typeSpeed);
+        }
+
+        // Show continue prompt ONLY if more chunks exist
+        if (currentChunkIndex < currentDialogueChunks.Count - 1)
+        {
+            dialogueText.text += "\n\n[Press Enter to continue...]";
+        }
+
+        currentChunkIndex++;
     }
 
     // ----------------- EDITOR SETUP -----------------
     [ContextMenu("Setup Default Questions")]
     void SetupDefaultQuestions()
     {
-        // Master Questions (Advanced input/output)
         masterQuestions = new FinalQuestion[]
         {
             new FinalQuestion()
@@ -1111,7 +1114,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             }
         };
 
-        // Competent Questions (Intermediate)
         competentQuestions = new FinalQuestion[]
         {
             new FinalQuestion()
@@ -1146,7 +1148,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             }
         };
 
-        // Novice Questions (Basic)
         noviceQuestions = new FinalQuestion[]
         {
             new FinalQuestion()

@@ -8,16 +8,13 @@ public class followingcamera : MonoBehaviour
 {
     [Header("Target")]
     public Transform target;
-    [Tooltip("Offset (x,y) from the target. Camera Z is preserved.")]
     public Vector2 offset = new Vector2(0f, 1f);
 
     [Header("Smoothing")]
-    [Tooltip("Approximate time for the camera to catch up. Smaller = snappier.")]
     public float smoothTime = 0.15f;
     private Vector3 velocity = Vector3.zero;
 
     [Header("Axis Locks")]
-    [Tooltip("If true, camera will NOT move on X axis at all.")]
     public bool lockX = false;
 
     [Header("Bounds (optional)")]
@@ -29,7 +26,6 @@ public class followingcamera : MonoBehaviour
 
     void Awake()
     {
-        // Store initial X so it never changes
         lockedX = transform.position.x;
     }
 
@@ -58,10 +54,45 @@ public class followingcamera : MonoBehaviour
             smoothed.y = Mathf.Clamp(smoothed.y, minBounds.y, maxBounds.y);
         }
 
-        // Force X lock after smoothing (extra safety)
         if (lockX)
             smoothed.x = lockedX;
 
         transform.position = smoothed;
+    }
+
+    // ================= NEW METHODS =================
+
+    /// <summary>
+    /// Unlock X movement (camera follows player horizontally)
+    /// </summary>
+    public void UnlockX()
+    {
+        lockX = false;
+    }
+
+    /// <summary>
+    /// Lock X at current camera position
+    /// </summary>
+    public void LockXAtCurrentPosition()
+    {
+        lockedX = transform.position.x;
+        lockX = true;
+    }
+
+    /// <summary>
+    /// Instantly center camera on target (used after teleport)
+    /// </summary>
+    public void SnapToTarget()
+    {
+        if (target == null) return;
+
+        transform.position = new Vector3(
+            target.position.x + offset.x,
+            target.position.y + offset.y,
+            transform.position.z
+        );
+
+        lockedX = transform.position.x;
+        velocity = Vector3.zero;
     }
 }
