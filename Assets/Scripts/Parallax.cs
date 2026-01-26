@@ -12,16 +12,21 @@ public class Parallax : MonoBehaviour
         startPos = transform.position;
     }
 
-   public float length;
+    public float length;
+    public float height;
 
-void LateUpdate()
-{
-    float dist = cam.position.x * parallaxStrength;
-    transform.position = new Vector3(startPos.x + dist, startPos.y, startPos.z);
+    void LateUpdate()
+    {
+        float distX = cam.position.x * parallaxStrength;
+        float distY = cam.position.y * parallaxStrength;
+        transform.position = new Vector3(startPos.x + distX, startPos.y + distY, startPos.z);
 
-    if (cam.position.x > startPos.x + length)
-        startPos.x += length;
-}
+        if (cam.position.x > startPos.x + length)
+            startPos.x += length;
+        
+        if (cam.position.y > startPos.y + height)
+            startPos.y += height;
+    }
 
 }
 
