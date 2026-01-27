@@ -1,0 +1,1456 @@
+fileFormatVersion: 2
+guid: 373dd5566d305e5438f74a2dbd5f9483
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 2092601613467867433
+    second: Abel Walk_0
+  - first:
+      213: 7819404189098581334
+    second: Abel Walk_1
+  - first:
+      213: 673080417031750097
+    second: Abel Walk_2
+  - first:
+      213: 1801054130053723687
+    second: Abel Walk_3
+  - first:
+      213: 1894942248814984521
+    second: Abel Walk_4
+  - first:
+      213: -8146779471329916118
+    second: Abel Walk_5
+  - first:
+      213: 3764075119179086860
+    second: Abel Walk_6
+  - first:
+      213: -565279992131261273
+    second: Abel Walk_7
+  - first:
+      213: -4147397430217959629
+    second: Abel Walk_8
+  - first:
+      213: -171768240169537822
+    second: Abel Walk_9
+  - first:
+      213: 3432523882099808061
+    second: Abel Walk_10
+  - first:
+      213: -1986367776283047874
+    second: Abel Walk_11
+  - first:
+      213: 1985684668301209560
+    second: Abel Walk_12
+  - first:
+      213: -2923973037059358392
+    second: Abel Walk_13
+  - first:
+      213: 1158045382331376334
+    second: Abel Walk_14
+  - first:
+      213: -2859438450340749532
+    second: Abel Walk_15
+  - first:
+      213: 1898633878882996328
+    second: Abel Walk_16
+  - first:
+      213: -3223976144201498989
+    second: Abel Walk_17
+  - first:
+      213: -8642421308006887620
+    second: Abel Walk_18
+  - first:
+      213: 7280171560326001020
+    second: Abel Walk_19
+  - first:
+      213: -5505963816832774309
+    second: Abel Walk_20
+  - first:
+      213: 92951871089329789
+    second: Abel Walk_21
+  - first:
+      213: 9151053726491374831
+    second: Abel Walk_22
+  - first:
+      213: 8706735801860177941
+    second: Abel Walk_23
+  - first:
+      213: 1263420556622463090
+    second: Abel Walk_24
+  - first:
+      213: 600178828499841015
+    second: Abel Walk_25
+  - first:
+      213: -5332779258545505487
+    second: Abel Walk_26
+  - first:
+      213: 7965705154791587836
+    second: Abel Walk_27
+  - first:
+      213: 7485304061660694461
+    second: Abel Walk_28
+  - first:
+      213: -144956878381231243
+    second: Abel Walk_29
+  - first:
+      213: -3177175991039113621
+    second: Abel Walk_30
+  - first:
+      213: 3979067453194482303
+    second: Abel Walk_31
+  - first:
+      213: -95804191523778057
+    second: Abel Walk_32
+  - first:
+      213: 5352725400518479621
+    second: Abel Walk_33
+  - first:
+      213: -8053639478457678855
+    second: Abel Walk_34
+  - first:
+      213: -483275836072234793
+    second: Abel Walk_35
+  - first:
+      213: 3191444544522577409
+    second: Abel Walk_36
+  - first:
+      213: -378939772079942707
+    second: Abel Walk_37
+  - first:
+      213: 2509703597217883613
+    second: Abel Walk_38
+  - first:
+      213: 9085386090431166929
+    second: Abel Walk_39
+  - first:
+      213: 2167275378602986765
+    second: Abel Walk_40
+  - first:
+      213: -8934098736420526765
+    second: Abel Walk_41
+  - first:
+      213: 4039834154897777256
+    second: Abel Walk_42
+  - first:
+      213: -8840771642714869093
+    second: Abel Walk_43
+  - first:
+      213: -577982321121379755
+    second: Abel Walk_44
+  - first:
+      213: -686283778836155651
+    second: Abel Walk_45
+  - first:
+      213: 2914825699369529250
+    second: Abel Walk_46
+  - first:
+      213: -6352001370726284342
+    second: Abel Walk_47
+  - first:
+      213: -7340849407322448242
+    second: Abel Walk_48
+  - first:
+      213: -3555608084287086354
+    second: Abel Walk_49
+  - first:
+      213: 6557916921590514480
+    second: Abel Walk_50
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Abel Walk_0
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 297
+        width: 39
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9295923941a6a0d10800000000000000
+      internalID: 2092601613467867433
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_1
+      rect:
+        serializedVersion: 2
+        x: 125
+        y: 297
+        width: 41
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 65d1c665eaa148c60800000000000000
+      internalID: 7819404189098581334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_2
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 297
+        width: 38
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d1037ab213475900800000000000000
+      internalID: 673080417031750097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_3
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 298
+        width: 42
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7263a1b5031aef810800000000000000
+      internalID: 1801054130053723687
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_4
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 297
+        width: 40
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 94d3f7a7fef2c4a10800000000000000
+      internalID: 1894942248814984521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_5
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 298
+        width: 45
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2b8febfb33d0fe80800000000000000
+      internalID: -8146779471329916118
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_6
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 297
+        width: 39
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c0c3e82c06eac3430800000000000000
+      internalID: 3764075119179086860
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_7
+      rect:
+        serializedVersion: 2
+        x: 718
+        y: 297
+        width: 39
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ac616697d8b728f0800000000000000
+      internalID: -565279992131261273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_8
+      rect:
+        serializedVersion: 2
+        x: 817
+        y: 298
+        width: 42
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3379d75d20c7176c0800000000000000
+      internalID: -4147397430217959629
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_9
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 297
+        width: 41
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2ee200512b1cd9df0800000000000000
+      internalID: -171768240169537822
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_10
+      rect:
+        serializedVersion: 2
+        x: 1014
+        y: 297
+        width: 40
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d379a93d846c2af20800000000000000
+      internalID: 3432523882099808061
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_11
+      rect:
+        serializedVersion: 2
+        x: 1111
+        y: 298
+        width: 40
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e38cd5d18010f64e0800000000000000
+      internalID: -1986367776283047874
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_12
+      rect:
+        serializedVersion: 2
+        x: 1210
+        y: 297
+        width: 70
+        height: 96
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8df680a6fa19e8b10800000000000000
+      internalID: 1985684668301209560
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_13
+      rect:
+        serializedVersion: 2
+        x: 28
+        y: 197
+        width: 39
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 841c141c306fb67d0800000000000000
+      internalID: -2923973037059358392
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_14
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 197
+        width: 39
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ec2a4afb324321010800000000000000
+      internalID: 1158045382331376334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_15
+      rect:
+        serializedVersion: 2
+        x: 221
+        y: 196
+        width: 47
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 42f985e11eb3158d0800000000000000
+      internalID: -2859438450340749532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_16
+      rect:
+        serializedVersion: 2
+        x: 322
+        y: 197
+        width: 44
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 860d755147d495a10800000000000000
+      internalID: 1898633878882996328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_17
+      rect:
+        serializedVersion: 2
+        x: 419
+        y: 197
+        width: 48
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39e398837c22243d0800000000000000
+      internalID: -3223976144201498989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_18
+      rect:
+        serializedVersion: 2
+        x: 519
+        y: 198
+        width: 44
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3f8bf02c93ff0880800000000000000
+      internalID: -8642421308006887620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_19
+      rect:
+        serializedVersion: 2
+        x: 618
+        y: 197
+        width: 40
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c71f12d467d580560800000000000000
+      internalID: 7280171560326001020
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_20
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 197
+        width: 40
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b5f47879413e693b0800000000000000
+      internalID: -5505963816832774309
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_21
+      rect:
+        serializedVersion: 2
+        x: 812
+        y: 197
+        width: 47
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d76cc79fb3b3a4100800000000000000
+      internalID: 92951871089329789
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_22
+      rect:
+        serializedVersion: 2
+        x: 914
+        y: 196
+        width: 41
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fe4780041e21ffe70800000000000000
+      internalID: 9151053726491374831
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_23
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 196
+        width: 38
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5104d0fd41a84d870800000000000000
+      internalID: 8706735801860177941
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_24
+      rect:
+        serializedVersion: 2
+        x: 1110
+        y: 198
+        width: 44
+        height: 78
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27088676d42988110800000000000000
+      internalID: 1263420556622463090
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_25
+      rect:
+        serializedVersion: 2
+        x: 1209
+        y: 197
+        width: 43
+        height: 79
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7ff6172f673445800800000000000000
+      internalID: 600178828499841015
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_26
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 97
+        width: 41
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13bf2d4c4892ef5b0800000000000000
+      internalID: -5332779258545505487
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_27
+      rect:
+        serializedVersion: 2
+        x: 127
+        y: 97
+        width: 38
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cffb9d852aedb8e60800000000000000
+      internalID: 7965705154791587836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_28
+      rect:
+        serializedVersion: 2
+        x: 225
+        y: 97
+        width: 39
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db7031f926421e760800000000000000
+      internalID: 7485304061660694461
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_29
+      rect:
+        serializedVersion: 2
+        x: 323
+        y: 97
+        width: 40
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5735654bc720dfdf0800000000000000
+      internalID: -144956878381231243
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_30
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 97
+        width: 41
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66c631054768e3d0800000000000000
+      internalID: -3177175991039113621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_31
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 97
+        width: 40
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f72b9f444cc783730800000000000000
+      internalID: 3979067453194482303
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_32
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 97
+        width: 40
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7f15b3c6892abaef0800000000000000
+      internalID: -95804191523778057
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_33
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 97
+        width: 42
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 50f4d1e4463b84a40800000000000000
+      internalID: 5352725400518479621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_34
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 98
+        width: 41
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f3c7797099bb3090800000000000000
+      internalID: -8053639478457678855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_35
+      rect:
+        serializedVersion: 2
+        x: 913
+        y: 97
+        width: 43
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d07266003f0b49f0800000000000000
+      internalID: -483275836072234793
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_36
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 97
+        width: 38
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 10660ac77e94a4c20800000000000000
+      internalID: 3191444544522577409
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_37
+      rect:
+        serializedVersion: 2
+        x: 1113
+        y: 97
+        width: 40
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dc358e5f84cbdbaf0800000000000000
+      internalID: -378939772079942707
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_38
+      rect:
+        serializedVersion: 2
+        x: 1211
+        y: 97
+        width: 40
+        height: 81
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dd521bbef1244d220800000000000000
+      internalID: 2509703597217883613
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_39
+      rect:
+        serializedVersion: 2
+        x: 27
+        y: 0
+        width: 57
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d9bc674386c51e70800000000000000
+      internalID: 9085386090431166929
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_40
+      rect:
+        serializedVersion: 2
+        x: 124
+        y: 0
+        width: 58
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d0dc4106975b31e10800000000000000
+      internalID: 2167275378602986765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_41
+      rect:
+        serializedVersion: 2
+        x: 222
+        y: 0
+        width: 59
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 355636bb884b30480800000000000000
+      internalID: -8934098736420526765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_42
+      rect:
+        serializedVersion: 2
+        x: 321
+        y: 0
+        width: 59
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8622c2a82cf501830800000000000000
+      internalID: 4039834154897777256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_43
+      rect:
+        serializedVersion: 2
+        x: 421
+        y: 0
+        width: 58
+        height: 77
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9232a708054f4580800000000000000
+      internalID: -8840771642714869093
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_44
+      rect:
+        serializedVersion: 2
+        x: 520
+        y: 0
+        width: 58
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 55aba1724289af7f0800000000000000
+      internalID: -577982321121379755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_45
+      rect:
+        serializedVersion: 2
+        x: 619
+        y: 0
+        width: 57
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: df2bb5b0a84d976f0800000000000000
+      internalID: -686283778836155651
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_46
+      rect:
+        serializedVersion: 2
+        x: 717
+        y: 0
+        width: 58
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2afa919b78a837820800000000000000
+      internalID: 2914825699369529250
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_47
+      rect:
+        serializedVersion: 2
+        x: 815
+        y: 0
+        width: 59
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ac3c01d586829d7a0800000000000000
+      internalID: -6352001370726284342
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_48
+      rect:
+        serializedVersion: 2
+        x: 915
+        y: 0
+        width: 58
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e8e98e68b50102a90800000000000000
+      internalID: -7340849407322448242
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_49
+      rect:
+        serializedVersion: 2
+        x: 1013
+        y: 0
+        width: 59
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee0af872941f7aec0800000000000000
+      internalID: -3555608084287086354
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Abel Walk_50
+      rect:
+        serializedVersion: 2
+        x: 1112
+        y: 0
+        width: 59
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0330de1e1b6620b50800000000000000
+      internalID: 6557916921590514480
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Abel Walk_0: 2092601613467867433
+      Abel Walk_1: 7819404189098581334
+      Abel Walk_10: 3432523882099808061
+      Abel Walk_11: -1986367776283047874
+      Abel Walk_12: 1985684668301209560
+      Abel Walk_13: -2923973037059358392
+      Abel Walk_14: 1158045382331376334
+      Abel Walk_15: -2859438450340749532
+      Abel Walk_16: 1898633878882996328
+      Abel Walk_17: -3223976144201498989
+      Abel Walk_18: -8642421308006887620
+      Abel Walk_19: 7280171560326001020
+      Abel Walk_2: 673080417031750097
+      Abel Walk_20: -5505963816832774309
+      Abel Walk_21: 92951871089329789
+      Abel Walk_22: 9151053726491374831
+      Abel Walk_23: 8706735801860177941
+      Abel Walk_24: 1263420556622463090
+      Abel Walk_25: 600178828499841015
+      Abel Walk_26: -5332779258545505487
+      Abel Walk_27: 7965705154791587836
+      Abel Walk_28: 7485304061660694461
+      Abel Walk_29: -144956878381231243
+      Abel Walk_3: 1801054130053723687
+      Abel Walk_30: -3177175991039113621
+      Abel Walk_31: 3979067453194482303
+      Abel Walk_32: -95804191523778057
+      Abel Walk_33: 5352725400518479621
+      Abel Walk_34: -8053639478457678855
+      Abel Walk_35: -483275836072234793
+      Abel Walk_36: 3191444544522577409
+      Abel Walk_37: -378939772079942707
+      Abel Walk_38: 2509703597217883613
+      Abel Walk_39: 9085386090431166929
+      Abel Walk_4: 1894942248814984521
+      Abel Walk_40: 2167275378602986765
+      Abel Walk_41: -8934098736420526765
+      Abel Walk_42: 4039834154897777256
+      Abel Walk_43: -8840771642714869093
+      Abel Walk_44: -577982321121379755
+      Abel Walk_45: -686283778836155651
+      Abel Walk_46: 2914825699369529250
+      Abel Walk_47: -6352001370726284342
+      Abel Walk_48: -7340849407322448242
+      Abel Walk_49: -3555608084287086354
+      Abel Walk_5: -8146779471329916118
+      Abel Walk_50: 6557916921590514480
+      Abel Walk_6: 3764075119179086860
+      Abel Walk_7: -565279992131261273
+      Abel Walk_8: -4147397430217959629
+      Abel Walk_9: -171768240169537822
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
