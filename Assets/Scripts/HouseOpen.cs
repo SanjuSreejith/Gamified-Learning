@@ -3,40 +3,39 @@ using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-public class DoorPythonInputLesson_Trigger : MonoBehaviour
+public class DoorScanfLesson_Trigger : MonoBehaviour
 {
-    /* ================= BOT UI ================= */
+    // ================= BOT UI =================
     [Header("Bot UI")]
     public GameObject boardPanel;
     public TextMeshProUGUI boardText;
 
-    /* ================= PYTHON TERMINAL ================= */
-    [Header("Python Terminal")]
+    // ================= TERMINAL UI =================
+    [Header("Terminal UI")]
     public GameObject terminalPanel;
     public TextMeshProUGUI terminalText;
 
-    /* ================= LOCK TERMINAL ================= */
-    [Header("Lock Terminal")]
-    public GameObject lockPanel;
-    public TextMeshProUGUI lockText;
-
-    /* ================= AUDIO ================= */
+    // ================= AUDIO =================
+    [Header("Audio")]
     public AudioSource audioSource;
+    public AudioClip typeLetter;
+    public AudioClip typeSpace;
+    public AudioClip typeSymbol;
     public AudioClip correctSound;
     public AudioClip wrongSound;
     public AudioClip doorOpenSound;
 
-    /* ================= SCENE ================= */
+    // ================= SCENE =================
+    [Header("Scene")]
     public string nextSceneName;
 
-    /* ================= STATE ================= */
+    // ================= STATE =================
     enum State
     {
         Idle,
         Teaching,
         WaitingForTerminal,
-        TypingPython,
-        TypingLock,
+        Typing,
         Transition
     }
 
@@ -44,258 +43,427 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     bool playerInside;
     bool dialogueActive;
+    bool terminalOpen;
 
-    string pythonInput = "";
-    string lockInput = "";
+    string input = "";
+    int attempts;
+    int dialogueIndex;
+    string[] activeDialogue;
 
-    const string CORRECT_CODE = "password = int(input())";
-    const string LOCK_PASSWORD = "59";
+    const string CORRECT_CODE = "scanf(\"%d\", &password);";
 
-    /* ================= DIALOGUES ================= */
-
+    // ================= DIALOGUES =================
     string[] teachingDialogue =
     {
-        "Hey… this door is locked.",
-        "Looks like a Python based lock.",
-        "We need to take input from the user.",
-        "In Python, input() always gives TEXT.",
-        "Even if you type a number, it is still text.",
-        "So we convert it to a number.",
-        "This is called TYPE CASTING.",
-        "We use int() for that.",
+        "This door is locked.",
+        "It needs a password.",
+        "I think the password is 349.",
+        "But typing numbers alone won't work.",
+        "In C, we use scanf to take input.",
+        "scanf reads input from the user.",
+        "It stores the value inside a variable.",
+        "For numbers, we use %d.",
         "Example:",
-        "password = int(input())",
-        "Press 1 to open the Python terminal."
+        "scanf(\"%d\", &password);",
+        "Press 1 to open the terminal."
     };
 
     string[] wrongDialogue =
     {
-        "That didn’t work.",
-        "input() alone gives text.",
-        "Numbers must be converted using int().",
-        "Check spelling and brackets.",
+        "That didn't work.",
+        "scanf syntax must be exact.",
+        "Check %d and &password.",
         "Press 1 and try again."
     };
 
-    string[] lockDialogue =
+    string[] successPerfect =
     {
-        "Good. The program worked.",
-        "Because of int(), the lock accepts numbers.",
-        "Now enter the password."
+        "Excellent!",
+        "You used scanf correctly.",
+        "The password was read properly.",
+        "The door is opening."
     };
 
-    string[] successDialogue =
+    string[] successGood =
     {
-        "Yes… that’s correct.",
-        "The lock accepted the number.",
-        "Before you go inside—",
-        "Turn off your headlight.",
-        "It could give you away.",
-        "I’ll wait outside.",
-        "Be careful."
+        "Good job!",
+        "You figured out scanf.",
+        "The door is opening."
     };
 
-    /* ================= START ================= */
+    string[] successOkay =
+    {
+        "You did it.",
+        "Practice makes you better.",
+        "The door is opening."
+    };
+
+    // ================= START =================
     void Start()
     {
-        boardPanel.SetActive(false);
-        terminalPanel.SetActive(false);
-        lockPanel.SetActive(false);
+        if (boardPanel != null) boardPanel.SetActive(false);
+        if (terminalPanel != null) terminalPanel.SetActive(false);
 
-        terminalText.text =
-            "PYTHON TERMINAL\n" +
-            "---------------\n\n> ";
+        if (terminalText != null)
+            terminalText.text = "C INPUT TERMINAL\n----------------\n\n";
 
-        state = State.Idle;
+        Debug.Log("DoorScanfLesson_Trigger initialized. State: " + state);
     }
 
-    /* ================= TRIGGER ================= */
+    // ================= TRIGGER (2D) =================
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        Debug.Log("Trigger entered by: " + other.name + " with tag: " + other.tag);
+
+        if (!other.CompareTag("Player"))
+            return;
 
         playerInside = true;
+        Debug.Log("Player entered trigger. Current state: " + state);
 
         if (state == State.Idle)
         {
             state = State.Teaching;
+            Debug.Log("Starting teaching dialogue...");
             StartDialogue(teachingDialogue);
+        }
+        else if (state == State.WaitingForTerminal)
+        {
+            // Show the terminal prompt again
+            Debug.Log("Player returned, showing terminal prompt");
+            if (boardPanel != null)
+            {
+                boardPanel.SetActive(true);
+                boardText.text = "Press 1 to open the terminal.";
+            }
         }
     }
 
     void OnTriggerExit2D(Collider2D other)
     {
-        if (!other.CompareTag("Player")) return;
+        if (!other.CompareTag("Player"))
+            return;
+
         playerInside = false;
+        Debug.Log("Player left trigger. State: " + state);
+
+        // Only hide board if not in dialogue and terminal is closed
+        if (!dialogueActive && !terminalOpen && state != State.Transition)
+        {
+            if (boardPanel != null)
+                boardPanel.SetActive(false);
+        }
     }
 
-    /* ================= UPDATE ================= */
+    // ================= UPDATE =================
     void Update()
     {
-        if (dialogueActive) return;
+        // Handle dialogue advancement first
+        if (dialogueActive)
+        {
+            HandleDialogueAdvance();
+        }
 
-        if (state == State.WaitingForTerminal && playerInside)
+        // Only handle terminal opening if we're waiting and player is inside
+        else if (state == State.WaitingForTerminal && playerInside)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
-                OpenPythonTerminal();
+            {
+                Debug.Log("1 key pressed to open terminal");
+                OpenTerminal();
+            }
         }
-        else if (state == State.TypingPython)
+
+        // Handle typing in terminal
+        else if (state == State.Typing && terminalOpen)
         {
-            HandlePythonTyping();
-        }
-        else if (state == State.TypingLock)
-        {
-            HandleLockTyping();
+            HandleTyping();
         }
     }
 
-    /* ================= DIALOGUE ================= */
-    int dialogueIndex;
-    string[] activeDialogue;
-
+    // ================= DIALOGUE =================
     void StartDialogue(string[] dialogue)
     {
+        if (dialogue == null || dialogue.Length == 0)
+        {
+            Debug.LogError("Dialogue array is null or empty!");
+            return;
+        }
+
         activeDialogue = dialogue;
         dialogueIndex = 0;
         dialogueActive = true;
 
+        if (boardPanel == null)
+        {
+            Debug.LogError("BoardPanel is not assigned!");
+            return;
+        }
+
         boardPanel.SetActive(true);
         boardText.text = activeDialogue[dialogueIndex];
-
-        StartCoroutine(DialogueRoutine());
+        Debug.Log("Started dialogue: " + activeDialogue[dialogueIndex]);
     }
 
-    IEnumerator DialogueRoutine()
+    void HandleDialogueAdvance()
     {
-        // wait for any previous Enter to be released
-        yield return new WaitUntil(() => !Input.GetKey(KeyCode.Return));
+        if (!dialogueActive) return;
 
-        while (dialogueIndex < activeDialogue.Length)
+        // Check for advance input
+        bool advanceInput = Input.GetKeyDown(KeyCode.Return) ||
+                           Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                           Input.GetMouseButtonDown(0);
+
+        if (advanceInput)
         {
-            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
-
+            Debug.Log("Dialogue advance input detected");
             dialogueIndex++;
 
             if (dialogueIndex < activeDialogue.Length)
             {
                 boardText.text = activeDialogue[dialogueIndex];
-                yield return new WaitUntil(() => !Input.GetKey(KeyCode.Return));
+                Debug.Log("Advanced to dialogue line " + dialogueIndex + ": " + activeDialogue[dialogueIndex]);
+            }
+            else
+            {
+                Debug.Log("Dialogue completed");
+                dialogueActive = false;
+
+                // Determine next state based on current state
+                if (state == State.Teaching)
+                {
+                    state = State.WaitingForTerminal;
+                    Debug.Log("Changed state to WaitingForTerminal");
+
+                    if (boardPanel != null)
+                    {
+                        boardPanel.SetActive(true);
+                        boardText.text = "Press 1 to open the terminal.";
+                    }
+                }
+                else if (state == State.Transition)
+                {
+                    Debug.Log("Transition state - dialogue ended, loading next scene");
+                    // Dialogue ended after success, proceed to next scene
+                    if (!string.IsNullOrEmpty(nextSceneName))
+                        SceneManager.LoadScene(nextSceneName);
+                }
+                else
+                {
+                    // For wrong dialogue, go back to waiting for terminal
+                    state = State.WaitingForTerminal;
+                    Debug.Log("Wrong dialogue completed, back to WaitingForTerminal");
+                    if (boardPanel != null)
+                        boardPanel.SetActive(false);
+                }
             }
         }
-
-        dialogueActive = false;
-
-        if (state == State.Teaching)
-            state = State.WaitingForTerminal;
     }
 
-    /* ================= PYTHON TERMINAL ================= */
-    void OpenPythonTerminal()
+    // ================= TERMINAL =================
+    void OpenTerminal()
     {
-        boardPanel.SetActive(false);
-        terminalPanel.SetActive(true);
-        pythonInput = "";
-        state = State.TypingPython;
-    }
+        Debug.Log("Opening terminal...");
 
-    void HandlePythonTyping()
-    {
-        foreach (char c in Input.inputString)
+        if (boardPanel != null)
+            boardPanel.SetActive(false);
+
+        terminalOpen = true;
+        input = "";
+
+        if (terminalPanel == null)
         {
-            if (c == '\b' && pythonInput.Length > 0)
-                pythonInput = pythonInput.Remove(pythonInput.Length - 1);
-            else if (c == '\n' || c == '\r')
+            Debug.LogError("TerminalPanel is not assigned!");
+            return;
+        }
+
+        terminalPanel.SetActive(true);
+
+        // Set up terminal display
+        terminalText.text = "C INPUT TERMINAL\n" +
+                           "----------------\n\n" +
+                           "Enter the scanf command:\n" +
+                           "> ";
+
+        state = State.Typing;
+        Debug.Log("Terminal opened. State changed to Typing");
+    }
+
+    void HandleTyping()
+    {
+        string inputThisFrame = Input.inputString;
+
+        if (!string.IsNullOrEmpty(inputThisFrame))
+            Debug.Log("Input received: " + System.Text.Encoding.ASCII.GetBytes(inputThisFrame)[0] + " (char: " + inputThisFrame[0] + ")");
+
+        foreach (char c in inputThisFrame)
+        {
+            if (c == '\b') // Backspace
             {
-                SubmitPython();
+                if (input.Length > 0)
+                {
+                    input = input.Remove(input.Length - 1);
+                    RefreshLine();
+                }
+            }
+            else if (c == '\n' || c == '\r') // Enter
+            {
+                Debug.Log("Enter pressed, submitting: " + input);
+                Submit();
+                break; // Break after submit to avoid processing more characters
+            }
+            else if (!char.IsControl(c)) // Regular character
+            {
+                input += c;
+                PlayTypingSound(c);
+                RefreshLine();
+            }
+        }
+    }
+
+    void RefreshLine()
+    {
+        string[] lines = terminalText.text.Split('\n');
+
+        // Find the line starting with "> "
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].StartsWith("> "))
+            {
+                lines[i] = "> " + input + "_"; // Add cursor
+                terminalText.text = string.Join("\n", lines);
                 return;
             }
-            else if (!char.IsControl(c))
-                pythonInput += c;
-
-            terminalText.text = "> " + pythonInput + "_";
         }
     }
 
-    void SubmitPython()
+    // ================= SUBMIT =================
+    void Submit()
     {
-        terminalPanel.SetActive(false);
+        Debug.Log("Submitting input: " + input);
+        terminalOpen = false;
 
-        if (Clean(pythonInput) == Clean(CORRECT_CODE))
+        if (terminalPanel != null)
+            terminalPanel.SetActive(false);
+
+        // Remove cursor from display
+        string displayText = terminalText.text.Replace("_", "");
+        terminalText.text = displayText + "\n\nYou entered: " + input + "\n";
+
+        attempts++;
+        Debug.Log("Attempt " + attempts + ": " + input);
+
+        if (Clean(input) == Clean(CORRECT_CODE))
         {
-            if (audioSource && correctSound)
-                audioSource.PlayOneShot(correctSound);
-
-            StartDialogue(lockDialogue);
-            OpenLockTerminal();
+            Debug.Log("CORRECT! Starting success sequence...");
+            StartCoroutine(Success());
         }
         else
         {
-            if (audioSource && wrongSound)
+            Debug.Log("WRONG. Expected: " + CORRECT_CODE + " Got: " + input);
+            if (audioSource != null && wrongSound != null)
                 audioSource.PlayOneShot(wrongSound);
 
-            StartDialogue(wrongDialogue);
             state = State.WaitingForTerminal;
+            StartDialogue(wrongDialogue);
         }
+
+        input = "";
     }
 
-    /* ================= LOCK TERMINAL ================= */
-    void OpenLockTerminal()
+    // ================= SUCCESS =================
+    IEnumerator Success()
     {
-        lockPanel.SetActive(true);
-        lockInput = "";
-        lockText.text = "> _";
-        state = State.TypingLock;
-    }
+        Debug.Log("Success coroutine started");
 
-    void HandleLockTyping()
-    {
-        foreach (char c in Input.inputString)
+        if (audioSource != null && correctSound != null)
+            audioSource.PlayOneShot(correctSound);
+
+        terminalText.text += "\nInput read successfully!\n";
+        terminalText.text += "Password = 349\n";
+        terminalText.text += "Door unlocked!\n\n";
+
+        // Determine which success dialogue to use
+        if (attempts == 1)
         {
-            if (c == '\b' && lockInput.Length > 0)
-                lockInput = lockInput.Remove(lockInput.Length - 1);
-            else if (c == '\n' || c == '\r')
-            {
-                SubmitLock();
-                return;
-            }
-            else if (char.IsDigit(c))
-                lockInput += c;
-
-            lockText.text = "> " + lockInput + "_";
+            Debug.Log("Perfect success (1 attempt)");
+            StartDialogue(successPerfect);
         }
-    }
-
-    void SubmitLock()
-    {
-        if (lockInput == LOCK_PASSWORD)
+        else if (attempts == 2)
         {
-            lockPanel.SetActive(false);
-            StartCoroutine(SuccessSequence());
+            Debug.Log("Good success (2 attempts)");
+            StartDialogue(successGood);
         }
         else
         {
-            lockInput = "";
-            lockText.text = "> _";
+            Debug.Log("Okay success (" + attempts + " attempts)");
+            StartDialogue(successOkay);
+        }
+
+        yield return new WaitUntil(() => !dialogueActive);
+        Debug.Log("Success dialogue completed");
+
+        if (audioSource != null && doorOpenSound != null)
+            audioSource.PlayOneShot(doorOpenSound);
+
+        state = State.Transition;
+        Debug.Log("Changed state to Transition");
+        yield return new WaitForSeconds(1f);
+
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            Debug.Log("Loading next scene: " + nextSceneName);
+            SceneManager.LoadScene(nextSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("Next scene name is not set!");
         }
     }
 
-    /* ================= SUCCESS ================= */
-    IEnumerator SuccessSequence()
+    // ================= SOUND =================
+    void PlayTypingSound(char c)
     {
-        StartDialogue(successDialogue);
+        if (!audioSource) return;
 
-        yield return new WaitUntil(() => !dialogueActive);
-
-        if (audioSource && doorOpenSound)
-            audioSource.PlayOneShot(doorOpenSound);
-
-        yield return new WaitForSeconds(1f);
-        SceneManager.LoadScene(nextSceneName);
+        if (char.IsLetter(c))
+        {
+            if (typeLetter != null) audioSource.PlayOneShot(typeLetter);
+        }
+        else if (c == ' ')
+        {
+            if (typeSpace != null) audioSource.PlayOneShot(typeSpace);
+        }
+        else
+        {
+            if (typeSymbol != null) audioSource.PlayOneShot(typeSymbol);
+        }
     }
 
-    /* ================= HELPERS ================= */
+    // ================= HELPERS =================
     string Clean(string s)
     {
-        return s.Replace(" ", "").ToLower();
+        if (string.IsNullOrEmpty(s)) return "";
+        return s.Replace(" ", "").Replace("\t", "").ToLower();
     }
+
+    // ================= DEBUG =================
+    //void OnGUI()
+    //{
+    //    // Debug display of current state
+    //    GUIStyle style = new GUIStyle(GUI.skin.label);
+    //    style.fontSize = 20;
+    //    style.normal.textColor = Color.white;
+
+    //    GUI.Label(new Rect(10, 10, 500, 30), $"State: {state}", style);
+    //    GUI.Label(new Rect(10, 40, 500, 30), $"Dialogue Active: {dialogueActive}", style);
+    //    GUI.Label(new Rect(10, 70, 500, 30), $"Terminal Open: {terminalOpen}", style);
+    //    GUI.Label(new Rect(10, 100, 500, 30), $"Player Inside: {playerInside}", style);
+    //    GUI.Label(new Rect(10, 130, 500, 30), $"Attempts: {attempts}", style);
+
+    //    if (state == State.WaitingForTerminal && playerInside)
+    //    {
+    //        GUI.Label(new Rect(10, 160, 500, 30), "PRESS 1 TO OPEN TERMINAL", style);
+    //    }
+    //}
 }
