@@ -38,6 +38,9 @@ public class NPCSmartFollower2D : MonoBehaviour
     Rigidbody2D rb;
     Animator anim;
     SpriteRenderer spriteRenderer;
+    bool forcedHold;
+    Transform holdPoint;
+    Vector3 originalScale;
 
     bool isGrounded;
     float stuckTimer;
@@ -55,6 +58,7 @@ public class NPCSmartFollower2D : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        originalScale = transform.localScale;
     }
 
     void Start()
@@ -85,8 +89,23 @@ public class NPCSmartFollower2D : MonoBehaviour
         HandleAnimations();
     }
 
-    // ---------------- PERSONALITY ----------------
+    public void MoveToHoldPoint(Transform point)
+    {
+        holdPoint = point;
+        forcedHold = true;
+        // Stop thinking when being held
+        thinkCooldown = 999f;
+    }
 
+    public void ReleaseFromHoldPoint()
+    {
+        forcedHold = false;
+        holdPoint = null;
+        // Restore thinking
+        thinkCooldown = 0.6f;
+    }
+
+    // ---------------- PERSONALITY ----------------
     void ApplyPersonality()
     {
         if (npcType == NPCType.Abel)
@@ -102,9 +121,10 @@ public class NPCSmartFollower2D : MonoBehaviour
     }
 
     // ---------------- THINKING ----------------
-
     void Think()
     {
+        if (forcedHold) return;
+
         thinkTimer += Time.fixedDeltaTime;
         if (thinkTimer < thinkCooldown) return;
 
@@ -119,9 +139,24 @@ public class NPCSmartFollower2D : MonoBehaviour
     }
 
     // ---------------- FOLLOW LOGIC ----------------
-
     void FollowPlayer()
     {
+        if (forcedHold && holdPoint != null)
+        {
+            float dx = holdPoint.position.x - transform.position.x;
+
+            if (Mathf.Abs(dx) < 0.1f)
+            {
+                rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+                return;
+            }
+
+            float dir = Mathf.Sign(dx);
+            rb.linearVelocity = new Vector2(dir * baseMoveSpeed * 0.6f, rb.linearVelocity.y);
+            HandleFlip(dir);
+            return;
+        }
+
         float distanceX = player.position.x - transform.position.x;
         float absDistance = Mathf.Abs(distanceX);
         float direction = Mathf.Sign(distanceX);
@@ -129,7 +164,6 @@ public class NPCSmartFollower2D : MonoBehaviour
         bool playerStopped = playerRb != null && Mathf.Abs(playerRb.linearVelocity.x) < 0.05f;
 
         // --- DYNAMIC SPEED ADJUSTMENT ---
-        // NPC speeds up the further the player is to "catch up" in time
         if (absDistance > catchUpDistance)
         {
             float speedFactor = Mathf.Clamp(absDistance / catchUpDistance, 1f, sprintMultiplier);
@@ -172,7 +206,6 @@ public class NPCSmartFollower2D : MonoBehaviour
     }
 
     // ---------------- SMART JUMP (Enemy Logic) ----------------
-
     void TrySmartJump(float direction)
     {
         if (!isGrounded) return;
@@ -199,7 +232,6 @@ public class NPCSmartFollower2D : MonoBehaviour
     }
 
     // ---------------- UTILS ----------------
-
     void PickNewStopDistance()
     {
         currentStopDistance = Random.Range(minStopDistance, maxStopDistance);
@@ -225,16 +257,33 @@ public class NPCSmartFollower2D : MonoBehaviour
     void HandleFlip(float direction)
     {
         if (spriteRenderer == null || direction == 0) return;
-        spriteRenderer.flipX = direction < 0;
+
+        // Flip sprite by changing scale instead of using flipX
+        // This prevents issues with other sprite renderer components
+        Vector3 scale = originalScale;
+        scale.x = Mathf.Abs(scale.x) * (direction > 0 ? 1 : -1);
+        transform.localScale = scale;
+    }
+    public void TeleportToHoldPoint(Transform point)
+    {
+        if (point == null) return;
+
+        rb.position = new Vector2(point.position.x, rb.position.y);
+        rb.linearVelocity = Vector2.zero;
     }
 
     void HandleAnimations()
     {
         float speed = Mathf.Abs(rb.linearVelocity.x);
         anim.SetBool("isWalking", speed > 0.1f);
-        // Added a "isRunning" parameter in case you want a faster animation for catch-up
         anim.SetBool("isRunning", speed > baseMoveSpeed * 1.1f);
         anim.SetBool("isGrounded", isGrounded);
+    }
+
+    public bool IsAtHoldPoint()
+    {
+        if (holdPoint == null || !forcedHold) return false;
+        return Vector2.Distance(transform.position, holdPoint.position) < 0.3f;
     }
 
     void OnDrawGizmosSelected()

@@ -2,28 +2,38 @@
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Collider2D))]
 public class EnemyAI2D_Smart : MonoBehaviour
 {
+    /* ================= REFERENCES ================= */
     [Header("References")]
     public Transform player;
     public Transform groundCheck;
     public Transform frontCheck;
     public LayerMask groundLayer;
 
+    /* ================= MOVEMENT ================= */
     [Header("Movement")]
     public float moveSpeed = 2.5f;
     public float stopDistance = 0.8f;
 
+    /* ================= JUMP ================= */
     [Header("Jump")]
     public float jumpForce = 6f;
     public float wallCheckDistance = 0.4f;
     public float stuckTimeBeforeJump = 0.2f;
 
+    /* ================= GROUND CHECK ================= */
     [Header("Ground Check")]
     public float groundRadius = 0.15f;
 
+    /* ================= GAME OVER ================= */
+    [Header("Game Over")]
+    public string gameOverLayerName = "GameOver";
+
     Rigidbody2D rb;
     Animator anim;
+    Collider2D col;
 
     bool isGrounded;
     bool facingRight = true;
@@ -31,19 +41,29 @@ public class EnemyAI2D_Smart : MonoBehaviour
     float stuckTimer;
     float lastX;
 
+    float originalSpeed;
+    bool slowed;
+
+    bool isDisabled;
+    Vector3 spawnPosition;
+
     enum AIState { Idle, Chase }
     AIState state = AIState.Chase;
 
-    // ------------------ INIT ------------------
+    /* ================= INIT ================= */
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        col = GetComponent<Collider2D>();
     }
 
     void Start()
     {
+        originalSpeed = moveSpeed;
+        spawnPosition = transform.position;
+
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
@@ -53,10 +73,20 @@ public class EnemyAI2D_Smart : MonoBehaviour
         lastX = transform.position.x;
     }
 
-    // ------------------ UPDATE ------------------
+    /* ================= SPEED CONTROL ================= */
+
+    public void SetSlow(bool state, float multiplier)
+    {
+        slowed = state;
+        moveSpeed = slowed ? originalSpeed * multiplier : originalSpeed;
+    }
+
+    /* ================= UPDATE ================= */
 
     void FixedUpdate()
     {
+        if (isDisabled) return;
+
         if (player == null)
         {
             SetIdle();
@@ -76,7 +106,7 @@ public class EnemyAI2D_Smart : MonoBehaviour
         DetectStuck();
     }
 
-    // ------------------ AI BEHAVIOUR ------------------
+    /* ================= AI BEHAVIOUR ================= */
 
     void ChasePlayer()
     {
@@ -102,13 +132,12 @@ public class EnemyAI2D_Smart : MonoBehaviour
         anim.SetBool("isWalking", false);
     }
 
-    // ------------------ SMART JUMP LOGIC ------------------
+    /* ================= SMART JUMP ================= */
 
     void TrySmartJump(float direction)
     {
         if (!isGrounded) return;
 
-        // 1️⃣ Wall directly in front
         RaycastHit2D wallHit = Physics2D.Raycast(
             frontCheck.position,
             Vector2.right * direction,
@@ -116,14 +145,7 @@ public class EnemyAI2D_Smart : MonoBehaviour
             groundLayer
         );
 
-        if (wallHit.collider != null)
-        {
-            Jump();
-            return;
-        }
-
-        // 2️⃣ Movement blocked (stuck)
-        if (stuckTimer >= stuckTimeBeforeJump)
+        if (wallHit.collider != null || stuckTimer >= stuckTimeBeforeJump)
         {
             Jump();
             stuckTimer = 0f;
@@ -135,25 +157,21 @@ public class EnemyAI2D_Smart : MonoBehaviour
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
     }
 
-    // ------------------ STUCK DETECTION ------------------
+    /* ================= STUCK ================= */
 
     void DetectStuck()
     {
         float currentX = transform.position.x;
 
         if (Mathf.Abs(currentX - lastX) < 0.001f && Mathf.Abs(rb.linearVelocity.x) > 0.1f)
-        {
             stuckTimer += Time.fixedDeltaTime;
-        }
         else
-        {
             stuckTimer = 0f;
-        }
 
         lastX = currentX;
     }
 
-    // ------------------ GROUND CHECK ------------------
+    /* ================= GROUND ================= */
 
     void CheckGround()
     {
@@ -164,7 +182,7 @@ public class EnemyAI2D_Smart : MonoBehaviour
         );
     }
 
-    // ------------------ ANIMATION ------------------
+    /* ================= ANIMATION ================= */
 
     void HandleAnimations()
     {
@@ -172,7 +190,7 @@ public class EnemyAI2D_Smart : MonoBehaviour
         anim.SetBool("isGrounded", isGrounded);
     }
 
-    // ------------------ FLIP ------------------
+    /* ================= FLIP ================= */
 
     void Flip(float direction)
     {
@@ -190,7 +208,53 @@ public class EnemyAI2D_Smart : MonoBehaviour
         transform.localScale = scale;
     }
 
-    // ------------------ DEBUG ------------------
+    /* ================= GAME OVER (LAKE) ================= */
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.layer == LayerMask.NameToLayer(gameOverLayerName))
+        {
+            DisableEnemy();
+        }
+    }
+
+    void DisableEnemy()
+    {
+        if (isDisabled) return;
+        isDisabled = true;
+
+        // Stop AI & physics
+        state = AIState.Idle;
+        rb.linearVelocity = Vector2.zero;
+        rb.angularVelocity = 0f;
+        rb.bodyType = RigidbodyType2D.Static;
+
+        // Animation
+        anim.SetBool("isWalking", false);
+        anim.SetTrigger("Fall"); // optional animation
+
+        // Disable collisions
+        col.enabled = false;
+    }
+
+    /* ================= REUSE ================= */
+
+    public void RespawnEnemy()
+    {
+        isDisabled = false;
+
+        transform.position = spawnPosition;
+
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.linearVelocity = Vector2.zero;
+
+        state = AIState.Chase;
+        col.enabled = true;
+
+        gameObject.SetActive(true);
+    }
+
+    /* ================= DEBUG ================= */
 
     void OnDrawGizmosSelected()
     {
