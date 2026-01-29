@@ -28,6 +28,10 @@ public class BridgeBreakController2D : MonoBehaviour
     bool armed;
     int conditionLimit;
     bool cinematicPlaying;
+    [Header("Audio")]
+    public AudioSource bridgeAudio;
+    public AudioClip bridgeBreakClip;
+
 
     /* ================= INIT ================= */
 
@@ -100,6 +104,10 @@ public class BridgeBreakController2D : MonoBehaviour
 
         Debug.Log("💥 Bridge breaking!");
 
+        // 🔊 PLAY BRIDGE BREAK SOUND
+        if (bridgeAudio && bridgeBreakClip)
+            bridgeAudio.PlayOneShot(bridgeBreakClip);
+
         // 🎥 PLAY CINEMATIC
         if (!cinematicPlaying && bridgeCinematicCam && playerCam)
             StartCoroutine(BridgeCinematic());
@@ -123,6 +131,7 @@ public class BridgeBreakController2D : MonoBehaviour
             rb.AddTorque(Random.Range(-15f, 15f), ForceMode2D.Impulse);
         }
     }
+
 
     /* ================= CINEMATIC ================= */
 

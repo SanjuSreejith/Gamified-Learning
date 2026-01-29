@@ -187,16 +187,13 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     {
         yield return new WaitForSeconds(0.4f);
 
-        Speak("Abel", "You're a little late… we were wondering.");
+        Speak("Abel", "Good. You made it across the first river.");
         yield return Wait();
 
-        Speak("Kuttan", "We already crossed ahead.");
+        Speak("Kuttan", "Your logic worked. Keep going.");
         yield return Wait();
 
-        Speak("Abel", "You don't need the jetpack anymore. Let's go.");
-        yield return Wait();
-
-        DisableJetpack();
+        Speak("Abel", "Press F when you're ready for the next one.");
     }
 
     IEnumerator EndDialogue()
@@ -413,7 +410,8 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= VALIDATION ================= */
-    void ValidateLogic()
+
+ void ValidateLogic()
     {
         string ifL = ifLine.Trim().ToLower();
         string elifL = elifLine.Trim().ToLower();
@@ -422,46 +420,76 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         string elifB = elifBody.Trim().ToLower();
         string elseB = elseBody.Trim().ToLower();
 
-        if (!ifL.StartsWith("if ") || !ifL.EndsWith(":"))
+        // ---------- IF ----------
+        if (!IsValidConditionalLine(ifL, "if"))
         {
-            Speak("Abel", "Fix the IF condition. Format: 'if condition:'");
+            Speak("Abel", "The IF line is wrong. Use: if <condition>:");
             OpenTerminal();
             return;
         }
 
-        if (!ifB.Contains("energy") || !ifB.Contains("-="))
+        if (!IsValidEnergyReduction(ifB))
         {
-            Speak("Kuttan", "IF must reduce energy using '-=' operator.");
+            Speak("Kuttan", "Inside IF, you must reduce energy using '-='.");
             OpenTerminal();
             return;
         }
 
-        if (!elifL.StartsWith("elif ") || !elifL.EndsWith(":"))
+        // ---------- ELIF ----------
+        if (!IsValidConditionalLine(elifL, "elif"))
         {
-            Speak("Abel", "ELIF syntax error. Format: 'elif condition:'");
+            Speak("Abel", "The ELIF line is wrong. Use: elif <condition>:");
             OpenTerminal();
             return;
         }
 
-        if (!elifB.Contains("energy") || !elifB.Contains("-="))
+        if (!IsValidEnergyReduction(elifB))
         {
-            Speak("Kuttan", "ELIF must reduce energy using '-=' operator.");
+            Speak("Kuttan", "Inside ELIF, you must reduce energy using '-='.");
             OpenTerminal();
             return;
         }
 
-        if (!elseB.Contains("energy") || !elseB.Contains("-="))
+        // ---------- ELSE ----------
+        if (!IsValidEnergyReduction(elseB))
         {
-            Speak("Abel", "ELSE must reduce energy using '-=' operator.");
+            Speak("Abel", "Inside ELSE, you must reduce energy using '-='.");
             OpenTerminal();
             return;
         }
 
+        // ---------- SUCCESS ----------
         logicLocked = true;
         EquipJetpack();
         canFly = true;
 
         Speak("Abel", "Logic locked. Press F to fly across the first river.");
+    }
+
+
+    bool IsValidConditionalLine(string line, string keyword)
+    {
+        // Must start with keyword (if / elif)
+        if (!line.StartsWith(keyword)) return false;
+
+        // Must end with colon
+        if (!line.EndsWith(":")) return false;
+
+        // Remove keyword and colon safely
+        string condition = line
+            .Substring(keyword.Length)
+            .Trim()
+            .TrimEnd(':')
+            .Trim();
+
+        // Condition must exist
+        return condition.Length > 0;
+    }
+
+    bool IsValidEnergyReduction(string body)
+    {
+        // Accepts: energy-=40, energy -= 40, energy  -=40, etc.
+        return body.Contains("energy") && body.Contains("-=");
     }
 
     /* ================= ENERGY EVALUATION ================= */

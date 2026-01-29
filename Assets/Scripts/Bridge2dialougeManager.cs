@@ -64,7 +64,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     void Start()
     {
         terminalPanel.SetActive(false);
-        dialoguePanel.SetActive(false);
+        //dialoguePanel.SetActive(false);
 
         if (fadePanel)
         {

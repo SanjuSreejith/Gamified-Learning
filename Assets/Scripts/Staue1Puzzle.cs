@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections;
 using System.Text.RegularExpressions;
@@ -27,6 +27,11 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     [Header("Input Display")]
     public Color normalTextColor = Color.white;
     public Color inputTextColor = Color.yellow;
+    [Header("Audio")]
+    public AudioSource answerAudio;
+    public AudioClip correctClip;
+    public AudioClip wrongClip;
+
 
     // ---------------- STATES ----------------
     enum State
@@ -152,6 +157,15 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
         }
     }
 
+    void PlayAnswerSound(bool correct)
+    {
+        if (answerAudio == null) return;
+
+        AudioClip clip = correct ? correctClip : wrongClip;
+        if (clip != null)
+            answerAudio.PlayOneShot(clip);
+    }
+
     // ---------------- QUESTIONS ----------------
     void SetupQuestions()
     {
@@ -241,19 +255,29 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
 
         if (input == q.correctAnswer)
         {
+            // 🔊 Correct sound
+            PlayAnswerSound(true);
+
             ActivatePlatform();
             questionIndex++;
             StartStatueLine("Correct. Understanding acknowledged.");
         }
         else if (similarity >= almostCorrectThreshold)
         {
+            // 🔊 Wrong (almost)
+            PlayAnswerSound(false);
+
             StartStatueLine("Almost. Hint: " + q.hint);
         }
         else
         {
+            // 🔊 Wrong
+            PlayAnswerSound(false);
+
             StartStatueLine("Incorrect. Hint: " + q.hint);
         }
     }
+
 
     // ---------------- END ----------------
     void EndDialogue()

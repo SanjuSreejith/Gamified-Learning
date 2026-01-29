@@ -29,6 +29,11 @@ public class BridgeBreak2Controller2D : MonoBehaviour
     [Header("Runtime")]
     public int peopleCount;
     public bool isBroken;
+    [Header("Audio")]
+    public AudioSource bridgeAudio;
+    public AudioClip bridgeBreakClip;
+
+
 
     // 🔑 STORED CONDITION
     string storedOperator;
@@ -188,9 +193,15 @@ public class BridgeBreak2Controller2D : MonoBehaviour
 
         Debug.Log("[Bridge] 💥 BRIDGE BROKEN");
 
+        // 🔊 PLAY BRIDGE BREAK SOUND
+        if (bridgeAudio && bridgeBreakClip)
+            bridgeAudio.PlayOneShot(bridgeBreakClip);
+
+        // 🎥 Cinematic
         if (!cinematicPlaying && bridgeCinematicCam && playerCam)
             StartCoroutine(PlayCinematic());
 
+        // 🌫 Particles
         if (breakParticles)
         {
             breakParticles.transform.position =
@@ -198,6 +209,7 @@ public class BridgeBreak2Controller2D : MonoBehaviour
             breakParticles.Play();
         }
 
+        // 💥 Physics
         foreach (var plank in bridgePlanks)
         {
             if (!plank) continue;
@@ -213,6 +225,7 @@ public class BridgeBreak2Controller2D : MonoBehaviour
             plank.AddTorque(Random.Range(-20f, 20f), ForceMode2D.Impulse);
         }
     }
+
 
     /* ================= CINEMATIC ================= */
 

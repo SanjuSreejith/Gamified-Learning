@@ -27,6 +27,12 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     [Range(1, 3)] public int maxAttemptsPerQuestion = 2;
     public int questionsToPass = 2;
 
+
+    [Header("Audio")]
+    public AudioSource answerAudio;
+    public AudioClip correctClip;
+    public AudioClip wrongClip;
+
     // ---------------- STATES ----------------
     enum State
     {
@@ -95,6 +101,14 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
         // Start with assessment dialogue
         StartCoroutine(AssessmentSequence());
+    }
+    void PlayAnswerSound(bool correct)
+    {
+        if (answerAudio == null) return;
+
+        AudioClip clip = correct ? correctClip : wrongClip;
+        if (clip != null)
+            answerAudio.PlayOneShot(clip);
     }
 
     void AssessFirstStatuePerformance()
@@ -408,6 +422,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     {
         questionsCorrect++;
 
+        // 🔊 Correct answer sound
+        PlayAnswerSound(true);
+
         // Activate platform for this question
         if (currentQuestionIndex < puzzlePlatforms.Length && puzzlePlatforms[currentQuestionIndex] != null)
         {
@@ -429,9 +446,11 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     void HandleWrongAnswer(AdvancedQuestion question)
     {
+        // 🔊 Wrong answer sound
+        PlayAnswerSound(false);
+
         if (currentAttempt < maxAttemptsPerQuestion)
         {
-            // Give another attempt with more help
             string hint = GetProgressiveHint(question, currentAttempt);
             StartStatueLine($"Try again. {hint}\n> ");
             typedInput = "";
@@ -439,14 +458,17 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         }
         else
         {
-            // Max attempts reached
             string explanation = question.explanation;
-            StartStatueLine($"The correct answer is: {question.correctAnswer}\n{explanation}\nPress Enter to continue...");
+            StartStatueLine(
+                $"The correct answer is: {question.correctAnswer}\n{explanation}\nPress Enter to continue..."
+            );
+
             currentQuestionIndex++;
             currentAttempt = 0;
             state = State.ReviewingAnswer;
         }
     }
+
 
     string GetProgressiveHint(AdvancedQuestion question, int attempt)
     {

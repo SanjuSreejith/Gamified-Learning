@@ -25,6 +25,10 @@ public class BridgeBreak3Controller2D : MonoBehaviour
     public float cinematicDuration = 2.5f;
 
     bool cinematicPlaying;
+    [Header("Audio")]
+    public AudioSource bridgeAudio;
+    public AudioClip bridgeBreakClip;
+
 
     /* ================= INTERNAL ================= */
 
@@ -206,9 +210,15 @@ public class BridgeBreak3Controller2D : MonoBehaviour
 
         Debug.Log("🔥 [Bridge3] BRIDGE BREAK TRIGGERED!");
 
+        // 🔊 PLAY BRIDGE BREAK SOUND
+        if (bridgeAudio && bridgeBreakClip)
+            bridgeAudio.PlayOneShot(bridgeBreakClip);
+
+        // 🎥 Cinematic
         if (!cinematicPlaying && bridgeCinematicCam && playerCam)
             StartCoroutine(PlayCinematic());
 
+        // 🌫 Particles
         if (breakParticles)
         {
             breakParticles.transform.position =
@@ -216,6 +226,7 @@ public class BridgeBreak3Controller2D : MonoBehaviour
             breakParticles.Play();
         }
 
+        // 💥 Physics
         foreach (var rb in bridgePlanks)
         {
             if (!rb) continue;
@@ -229,6 +240,7 @@ public class BridgeBreak3Controller2D : MonoBehaviour
             rb.AddTorque(Random.Range(-20f, 20f), ForceMode2D.Impulse);
         }
     }
+
 
     /* ================= CINEMATIC ================= */
 

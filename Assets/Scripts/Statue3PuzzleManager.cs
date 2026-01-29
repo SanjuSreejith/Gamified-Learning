@@ -30,6 +30,9 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     public string tutorialSceneName = "TutorialHall";
     [Header("Camera")]
     public followingcamera followCam;
+   public AudioClip right;
+    public AudioClip wrong;
+    public AudioSource Answer;
 
     // ----------------- STATES -----------------
     enum State
@@ -391,11 +394,20 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         if (isCorrect)
         {
             questionsCorrect++;
+
+            // 🔊 Play correct sound
+            if (right != null && Answer != null)
+                Answer.PlayOneShot(right);
+
             string feedback = $"Correct! {question.feedback}\nPress Enter to continue...";
             StartCoroutine(TypeLineWithPagination(feedback));
         }
         else
         {
+            // 🔊 Play wrong sound
+            if (wrong != null && Answer != null)
+                Answer.PlayOneShot(wrong);
+
             string response = $"Not quite. {question.explanation}\nPress Enter to continue...";
             StartCoroutine(TypeLineWithPagination(response));
         }
@@ -403,6 +415,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         currentQuestionIndex++;
         state = State.ReviewingAnswer;
     }
+
 
     bool CheckAnswer(string userAnswer, FinalQuestion question)
     {

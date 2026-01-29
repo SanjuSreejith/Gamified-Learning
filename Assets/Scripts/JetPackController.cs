@@ -10,6 +10,9 @@ public class JetpackController2D : MonoBehaviour
     int currentPoint = 1;        // player starts at point[0]
     bool isFlying;
     float lockedY;
+    [Header("Audio")]
+    public AudioSource jetpackAudio;
+    public AudioClip jetpackLoopClip;
 
     PlayerJetpackAnimator2D animator;
 
@@ -41,19 +44,40 @@ public class JetpackController2D : MonoBehaviour
     {
         StopAllCoroutines();
 
+        // 🔇 Stop jetpack sound
+        StopJetpackSound();
+
         isFlying = false;
 
         if (animator != null)
             animator.ResetMovement();
 
-        // Notify lesson that flight failed
         OnFlightEnd?.Invoke(false);
     }
 
 
+    void StartJetpackSound()
+    {
+        if (!jetpackAudio || !jetpackLoopClip) return;
+
+        if (!jetpackAudio.isPlaying)
+        {
+            jetpackAudio.clip = jetpackLoopClip;
+            jetpackAudio.Play();
+        }
+    }
+
+    void StopJetpackSound()
+    {
+        if (jetpackAudio && jetpackAudio.isPlaying)
+            jetpackAudio.Stop();
+    }
     IEnumerator FlyRoutine(float travelPercent)
     {
         isFlying = true;
+
+        // 🔊 Jetpack sound ON
+        StartJetpackSound();
 
         // ▶ Fly animation ON
         if (animator != null)
@@ -83,11 +107,14 @@ public class JetpackController2D : MonoBehaviour
         bool success = Mathf.Approximately(travelPercent, 1f);
 
         if (success)
-            currentPoint++; // move to next checkpoint
+            currentPoint++; // reached checkpoint
 
         // ⏹ Fly animation OFF
         if (animator != null)
             animator.ResetMovement();
+
+        // 🔇 Jetpack sound OFF
+        StopJetpackSound();
 
         isFlying = false;
         OnFlightEnd?.Invoke(success);

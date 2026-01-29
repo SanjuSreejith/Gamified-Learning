@@ -90,7 +90,7 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             l.portrait = l.speaker == "Abel" ? abelPortrait : kuttanPortrait;
 
         terminalPanel.SetActive(false);
-        dialoguePanel.SetActive(false);
+       
     }
 
     void PrepareNPCsForDialogue()
