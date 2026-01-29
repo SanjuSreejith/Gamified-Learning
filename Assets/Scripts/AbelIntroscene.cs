@@ -280,8 +280,8 @@ public class AbelIntroNPC : MonoBehaviour
         if (isMorning)
         {
             yield return Speak(
-                "It’s morning.\n" +
-                "NULL is quiet for now.\n" +
+                "It’s night.\n" +
+                
                 "We can wait till tomorrow."
             );
         }

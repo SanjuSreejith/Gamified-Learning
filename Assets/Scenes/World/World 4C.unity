@@ -13244,7 +13244,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 4.5979, y: -0.17790222}
+  m_AnchoredPosition: {x: 4.5979004, y: -0.17788696}
   m_SizeDelta: {x: -181.76, y: -73.585}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1401626841
@@ -21649,7 +21649,7 @@ MonoBehaviour:
   animatorController: {fileID: 1460152175}
   riverDistances: 0a0000000200000006000000
   playerEnergy: 100
-  autoFillCorrect: 1
+  autoFillCorrect: 0
   autoFillFalse: 0
   npcTransforms:
   - {fileID: 52738574}
