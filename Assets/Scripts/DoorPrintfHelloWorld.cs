@@ -63,7 +63,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         "It reacts to Python programs.",
         "Python prints text using print().",
         "Let’s try a basic program.",
-        "Print: Hello World",
+        "Print:Welcome",
         "Press 1 to begin."
     };
 
@@ -259,8 +259,8 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             int q1 = s.IndexOf('"');
             int q2 = s.LastIndexOf('"');
             string inside = s.Substring(q1 + 1, q2 - q1 - 1);
-            if (inside != "Hello World")
-                errors.Add("The text must be exactly: Hello World.");
+            if (inside != "Welcome")
+                errors.Add("The text must be exactly: Welcome!");
         }
 
         return errors;
@@ -291,7 +291,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     // ================= SUCCESS =================
     void HandleSuccess()
     {
-        outputTerminalText.text += "Hello World\n\n";
+        outputTerminalText.text += "Welcome\n\n";
         StartDialogue(successDialogue, GameState.SuccessDialogue);
     }
 

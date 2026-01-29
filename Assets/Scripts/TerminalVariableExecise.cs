@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Globalization;
 
 public class TerminalVariableExercise : MonoBehaviour
 {
@@ -56,6 +57,7 @@ public class TerminalVariableExercise : MonoBehaviour
 
     int step = 1;
     int totalMistakes = 0;
+    int mistakesThisStep = 0;
 
     const int TOTAL_TASKS = 4;
 
@@ -79,6 +81,7 @@ public class TerminalVariableExercise : MonoBehaviour
 
         step = 1;
         totalMistakes = 0;
+        mistakesThisStep = 0;
         input = "";
         finished = false;
         taskBuffer = "";
@@ -93,7 +96,7 @@ public class TerminalVariableExercise : MonoBehaviour
     {
         yield return Say("Now you will write Python.");
         yield return Say("No types. No semicolons.");
-        yield return Say("Just clean logic.");
+        yield return Say("Press ENTER to submit.");
 
         BuildTask();
         EnableInput();
@@ -137,22 +140,18 @@ public class TerminalVariableExercise : MonoBehaviour
             case 1:
                 taskBuffer += "Store a name\nValue: \"Alex\"\nVariable: name\n";
                 break;
-
             case 2:
                 taskBuffer += "Store age\nValue: 25\nVariable: age\n";
                 break;
-
             case 3:
                 taskBuffer += "Store readiness\nValue: True\nVariable: is_ready\n";
                 break;
-
             case 4:
                 taskBuffer += "Store energy level\nValue: 0.5\nVariable: energy_level\n";
                 break;
         }
 
         taskBuffer += "\n";
-        // Don't clear outputBuffer here - keep previous output
         RefreshTerminal();
     }
 
@@ -161,22 +160,24 @@ public class TerminalVariableExercise : MonoBehaviour
     {
         string currentInput = input;
         AppendOutput($"> {currentInput}");
+        input = "";
 
         CompilerResult result = ValidatePython(step, currentInput);
-        input = "";
 
         if (result.success)
         {
+            mistakesThisStep = 0;
             StartCoroutine(Correct());
         }
         else
         {
             totalMistakes++;
+            mistakesThisStep++;
             StartCoroutine(ExplainMistake(result));
         }
     }
 
-    // ================= COMPILER RESULT =================
+    // ================= COMPILER =================
     struct CompilerResult
     {
         public bool success;
@@ -184,108 +185,64 @@ public class TerminalVariableExercise : MonoBehaviour
         public string reference;
     }
 
-    // ================= VALIDATION =================
     CompilerResult ValidatePython(int step, string raw)
     {
         string s = raw.Trim();
 
-        // Check for semicolons first (Python doesn't use them)
         if (s.Contains(";"))
             return Error("Python does not use semicolons.", GetReferenceCode(step));
 
-        // Basic format check - must contain assignment
-        if (!s.Contains("="))
+        int eqIndex = s.IndexOf('=');
+        if (eqIndex == -1)
             return Error("Assignment requires '='.", GetReferenceCode(step));
 
-        // Split into left (variable) and right (value)
-        string[] parts = s.Split('=');
-        if (parts.Length != 2)
-            return Error("Invalid assignment format.", GetReferenceCode(step));
+        string variable = s.Substring(0, eqIndex).Trim();
+        string value = s.Substring(eqIndex + 1).Trim();
 
-        string variable = parts[0].Trim();
-        string value = parts[1].Trim();
+        if (string.IsNullOrEmpty(variable) || string.IsNullOrEmpty(value))
+            return Error("Invalid assignment format.", GetReferenceCode(step));
 
         switch (step)
         {
             case 1:
                 if (variable != "name")
-                    return Error("Variable must be named `name`.", GetReferenceCode(step));
-
-                // Check if value is a string (in quotes)
-                if (value.Length < 2 || !((value.StartsWith("\"") && value.EndsWith("\"")) ||
-                                         (value.StartsWith("'") && value.EndsWith("'"))))
-                    return Error("String values must be in quotes.", GetReferenceCode(step));
-
-                // Check if the value inside quotes is "Alex"
-                string innerValue = value.Substring(1, value.Length - 2);
-                if (innerValue != "Alex")
-                    return Error($"Value should be \"Alex\", not \"{innerValue}\".", GetReferenceCode(step));
+                    return Error("Variable must be `name`.", GetReferenceCode(step));
+                if (!(value.StartsWith("\"") && value.EndsWith("\"")))
+                    return Error("Strings must be in quotes.", GetReferenceCode(step));
+                if (value[1..^1] != "Alex")
+                    return Error("Value must be \"Alex\".", GetReferenceCode(step));
                 break;
 
             case 2:
                 if (variable != "age")
-                    return Error("Variable must be named `age`.", GetReferenceCode(step));
-
-                if (!int.TryParse(value, out int ageValue))
-                    return Error("Age must be a whole number.", GetReferenceCode(step));
-
-                if (ageValue != 25)
-                    return Error($"Value should be 25, not {ageValue}.", GetReferenceCode(step));
+                    return Error("Variable must be `age`.", GetReferenceCode(step));
+                if (!int.TryParse(value, out int age) || age != 25)
+                    return Error("Age must be 25.", GetReferenceCode(step));
                 break;
 
             case 3:
                 if (variable != "is_ready")
-                    return Error("Variable must be named `is_ready`.", GetReferenceCode(step));
-
-                if (!(value == "True" || value == "False"))
-                    return Error("Boolean values are either True or False.", GetReferenceCode(step));
-
+                    return Error("Variable must be `is_ready`.", GetReferenceCode(step));
                 if (value != "True")
-                    return Error($"Value should be True, not {value}.", GetReferenceCode(step));
+                    return Error("Boolean must be True.", GetReferenceCode(step));
                 break;
 
             case 4:
                 if (variable != "energy_level")
-                    return Error("Variable must be named `energy_level`.", GetReferenceCode(step));
-
-                if (!float.TryParse(value, out float energyValue))
-                    return Error("Energy must be a decimal number.", GetReferenceCode(step));
-
-                if (Mathf.Abs(energyValue - 0.5f) > 0.001f)
-                    return Error($"Value should be 0.5, not {value}.", GetReferenceCode(step));
+                    return Error("Variable must be `energy_level`.", GetReferenceCode(step));
+                if (!float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float f) || Mathf.Abs(f - 0.5f) > 0.001f)
+                    return Error("Energy must be 0.5.", GetReferenceCode(step));
                 break;
         }
 
         return new CompilerResult { success = true };
     }
 
-    string GetReferenceCode(int stepNum)
-    {
-        switch (stepNum)
-        {
-            case 1: return "name = \"Alex\"";
-            case 2: return "age = 25";
-            case 3: return "is_ready = True";
-            case 4: return "energy_level = 0.5";
-            default: return "";
-        }
-    }
-
-    CompilerResult Error(string msg, string reference)
-    {
-        return new CompilerResult
-        {
-            success = false,
-            error = msg,
-            reference = reference
-        };
-    }
-
-    // ================= FEEDBACK =================
+    // ================= DIALOGUE BRANCHING =================
     IEnumerator ExplainMistake(CompilerResult r)
     {
         DisableInput();
-        SetFace(thinkingFace);
+        SetFace(mistakesThisStep >= 2 ? warningFace : thinkingFace);
 
         if (feedbackAudio && errorSound)
             feedbackAudio.PlayOneShot(errorSound);
@@ -293,17 +250,17 @@ public class TerminalVariableExercise : MonoBehaviour
         AppendOutput("Error");
         yield return Say(r.error);
 
-        if (!string.IsNullOrEmpty(r.reference))
-        {
-            yield return Say("Try this:");
-            AppendOutput(" " + r.reference);
-        }
+        if (mistakesThisStep == 1)
+            yield return Say("Slow down. Read the task carefully.");
+        else if (mistakesThisStep == 2)
+            yield return Say("You're repeating the same mistake.");
+        else
+            yield return Say("Focus. Precision matters here.");
 
-        // Check if we should clear the terminal
+        AppendOutput(" " + r.reference);
+
         if (currentOutputLines >= maxLinesBeforeClear)
-        {
             yield return ClearTerminalOutput();
-        }
 
         EnableInput();
     }
@@ -317,17 +274,18 @@ public class TerminalVariableExercise : MonoBehaviour
 
         SetFace(happyFace);
         AppendOutput(" Correct");
-        yield return Say("Well done.");
 
-        // Check if we should clear the terminal before next task
-        if (currentOutputLines >= maxLinesBeforeClear)
-        {
-            yield return ClearTerminalOutput();
-        }
+        if (totalMistakes == 0)
+            yield return Say("Perfect execution.");
+        else if (totalMistakes < 3)
+            yield return Say("Good. You're learning.");
         else
-        {
-            AppendOutput("---"); // Separator line
-        }
+            yield return Say("You got it. Keep sharpening.");
+
+        if (currentOutputLines >= maxLinesBeforeClear)
+            yield return ClearTerminalOutput();
+        else
+            AppendOutput("---");
 
         step++;
 
@@ -338,7 +296,7 @@ public class TerminalVariableExercise : MonoBehaviour
             yield break;
         }
 
-        yield return new WaitForSeconds(0.5f); // Brief pause
+        yield return new WaitForSeconds(0.4f);
         BuildTask();
         EnableInput();
     }
@@ -351,10 +309,10 @@ public class TerminalVariableExercise : MonoBehaviour
         AppendOutput("...clearing...");
         yield return new WaitForSeconds(0.3f);
 
-        // Clear output buffer but keep task buffer
         outputBuffer = "";
         currentOutputLines = 0;
-        RefreshTerminal();
+        taskBuffer = "";
+        BuildTask();
 
         yield return new WaitForSeconds(0.2f);
         isClearingTerminal = false;
@@ -364,28 +322,18 @@ public class TerminalVariableExercise : MonoBehaviour
     IEnumerator Finish()
     {
         SetFace(proudFace);
-        yield return Say("Excellent! You understand Python variables.");
 
-        float accuracy = Mathf.Clamp01(1f - (float)totalMistakes / (TOTAL_TASKS * 2f));
-        int percent = Mathf.RoundToInt(accuracy * 100f);
+        int accuracy = Mathf.RoundToInt(Mathf.Clamp01(1f - totalMistakes / 8f) * 100f);
+        yield return Say($"Accuracy: {accuracy}%");
 
-        AppendOutput($"\n--- FINISHED ---");
-        AppendOutput($"Tasks: {TOTAL_TASKS}/{TOTAL_TASKS}");
-        AppendOutput($"Mistakes: {totalMistakes}");
-        AppendOutput($"Accuracy: {percent}%");
-
-        yield return Say($"Accuracy: {percent}%");
-
-        if (percent >= 90)
-            yield return Say("Perfect! You're ready.");
-        else if (percent >= 70)
-            yield return Say("Good job. Keep practicing.");
+        if (accuracy >= 90)
+            yield return Say("You think like a programmer.");
+        else if (accuracy >= 70)
+            yield return Say("Solid foundation. Keep practicing.");
         else
-            yield return Say("You're getting there. Review the basics.");
+            yield return Say("You survived. Improvement awaits.");
 
         yield return Say("The system trusts you now.");
-        AppendOutput("\n>>> ENTERING GAME WORLD <<<");
-
         yield return new WaitForSeconds(sceneChangeDelay);
         SceneManager.LoadScene(nextSceneName);
     }
@@ -401,19 +349,13 @@ public class TerminalVariableExercise : MonoBehaviour
     void EnableInput()
     {
         inputEnabled = true;
-        cursorVisible = true;
-
-        if (cursorRoutine != null)
-            StopCoroutine(cursorRoutine);
-
         cursorRoutine = StartCoroutine(CursorBlink());
     }
 
     void DisableInput()
     {
         inputEnabled = false;
-        if (cursorRoutine != null)
-            StopCoroutine(cursorRoutine);
+        if (cursorRoutine != null) StopCoroutine(cursorRoutine);
     }
 
     IEnumerator CursorBlink()
@@ -428,17 +370,10 @@ public class TerminalVariableExercise : MonoBehaviour
 
     void RefreshTerminal()
     {
-        string fullText = taskBuffer + outputBuffer;
-
-        if (inputEnabled && !finished && !isClearingTerminal)
-        {
-            fullText += $"> {input}{(cursorVisible ? "_" : "")}\n";
-        }
-
-        terminalText.text = fullText;
+        terminalText.text = taskBuffer + outputBuffer +
+            (inputEnabled ? $"> {input}{(cursorVisible ? "_" : "")}\n" : "");
     }
 
-    // ================= DIALOGUE =================
     IEnumerator Say(string msg)
     {
         waitingForAdvance = true;
@@ -461,26 +396,37 @@ public class TerminalVariableExercise : MonoBehaviour
     void HandleDialogueAdvance()
     {
         if (!waitingForAdvance || autoSkipDialogue) return;
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
             waitingForAdvance = false;
     }
 
-    // ================= HELPERS =================
     void PlayTypingSound(char c)
     {
         if (!typingAudio) return;
-
-        if (c == '\b' && typeBackspace)
-            typingAudio.PlayOneShot(typeBackspace);
-        else if (c == ' ' && typeSpace)
-            typingAudio.PlayOneShot(typeSpace);
-        else if (typeLetter)
-            typingAudio.PlayOneShot(typeLetter);
+        if (c == '\b' && typeBackspace) typingAudio.PlayOneShot(typeBackspace);
+        else if (c == ' ' && typeSpace) typingAudio.PlayOneShot(typeSpace);
+        else if (typeLetter) typingAudio.PlayOneShot(typeLetter);
     }
 
     void SetFace(Sprite face)
     {
-        if (botFaceImage && face)
-            botFaceImage.sprite = face;
+        if (botFaceImage && face) botFaceImage.sprite = face;
+    }
+
+    CompilerResult Error(string msg, string reference)
+    {
+        return new CompilerResult { success = false, error = msg, reference = reference };
+    }
+
+    string GetReferenceCode(int s)
+    {
+        return s switch
+        {
+            1 => "name = \"Alex\"",
+            2 => "age = 25",
+            3 => "is_ready = True",
+            4 => "energy_level = 0.5",
+            _ => ""
+        };
     }
 }
