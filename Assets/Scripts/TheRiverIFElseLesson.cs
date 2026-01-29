@@ -45,6 +45,20 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     bool active = false;
     bool conceptTaught = false;
 
+    /* ================= FLOW CONTROL ================= */
+    bool logicLocked = false;
+    bool canFly = false;
+    bool isFlying = false;
+
+    /* ================= DEBUG/AUTOFILL ================= */
+    [Header("Debug/AutoFill")]
+    public bool autoFillCorrect = false;
+    public bool autoFillFalse = false;
+
+    [Header("NPCs")]
+    public Transform[] npcTransforms;
+    public Transform npcFinalPoint;
+
     void Reset() => GetComponent<Collider2D>().isTrigger = true;
 
     void Start()
@@ -52,8 +66,158 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         dialoguePanel.SetActive(false);
         terminalPanel.SetActive(false);
         jetpackPanel.SetActive(false);
+
+        jetpack.OnFlightEnd += OnFlightEnded;
+        UpdateEnergyUI();
     }
 
+    /* ================= FLIGHT HANDLING ================= */
+    void OnFlightEnded(bool success)
+    {
+        isFlying = false;
+
+        if (!success)
+        {
+            // ❌ Wrong logic → player falls, but lesson continues
+            Speak("Abel", "Hmm… looks like your logic didn’t give enough energy.");
+            StartCoroutine(FallDialogue());
+
+            // Allow retry / progression
+            canFly = true;
+            return;
+        }
+
+
+        currentRiverIndex++;
+
+        // 🔹 FIRST CHECKPOINT: teleport NPCs ONLY
+        if (currentRiverIndex == 1)
+        {
+            StartCoroutine(TeleportNPCsToFinalPoint());
+            StartCoroutine(FirstPointDialogue());
+            canFly = true;
+            return;
+        }
+
+        // 🔹 FINAL CHECKPOINT: dialogue + jetpack removal
+        if (currentRiverIndex >= riverDistances.Length)
+        {
+            StartCoroutine(FinalArrivalDialogue());
+            canFly = false;
+            return;
+        }
+
+        // 🔹 MIDDLE CHECKPOINTS
+        Speak("Abel", "Press F to cross the next river.");
+        canFly = true;
+    }
+    IEnumerator FinalArrivalDialogue()
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        Speak("Abel", "You're a little late… we were wondering.");
+        yield return Wait();
+
+        Speak("Kuttan", "We already crossed ahead.");
+        yield return Wait();
+
+        Speak("Abel", "You don't need the jetpack anymore. Let's go.");
+        yield return Wait();
+
+        DisableJetpack();
+    }
+
+    IEnumerator FallDialogue()
+    {
+        yield return Wait();
+
+        Speak("Kuttan", "You didn’t calculate enough energy for that river.");
+        yield return Wait();
+
+        Speak("Abel", "In programming, wrong conditions don’t stop the program...");
+        yield return Wait();
+
+        Speak("Abel", "They just lead to wrong results.");
+        yield return Wait();
+
+        Speak("Abel", "Try again. Fix the logic.");
+    }
+
+    IEnumerator TeleportNPCsToFinalPoint()
+    {
+        if (npcTransforms == null || npcFinalPoint == null)
+            yield break;
+
+        // 🧊 Pause NPC logic so nothing fights the teleport
+        PauseNPCs(true);
+
+        // Small delay so pause fully applies (important)
+        yield return null;
+
+        foreach (var npc in npcTransforms)
+        {
+            npc.position = npcFinalPoint.position;
+        }
+
+        Debug.Log("NPCs teleported");
+
+        // 🟢 Unpause AFTER teleport
+        yield return null;
+        PauseNPCs(false);
+    }
+
+    void PauseNPCs(bool paused)
+    {
+        if (npcTransforms == null) return;
+
+        foreach (var npc in npcTransforms)
+        {
+            var behaviours = npc.GetComponents<MonoBehaviour>();
+            foreach (var b in behaviours)
+            {
+                // Don't disable this controller itself if attached
+                if (b != this)
+                    b.enabled = !paused;
+            }
+        }
+    }
+
+
+    IEnumerator FirstPointDialogue()
+    {
+        yield return new WaitForSeconds(0.4f);
+
+        Speak("Abel", "You're a little late… we were wondering.");
+        yield return Wait();
+
+        Speak("Kuttan", "We already crossed ahead.");
+        yield return Wait();
+
+        Speak("Abel", "You don't need the jetpack anymore. Let's go.");
+        yield return Wait();
+
+        DisableJetpack();
+    }
+
+    IEnumerator EndDialogue()
+    {
+        Speak("Abel", "Good thinking. You learned how logic saves energy.");
+        yield return Wait();
+
+        Speak("Kuttan", "That's how programming works too.");
+        yield return Wait();
+    }
+
+    void DisableJetpack()
+    {
+        if (animatorController != null)
+            animatorController.SetJetpack(false);
+
+        if (jetpackPanel != null)
+            jetpackPanel.SetActive(false);
+    }
+
+    /* ================= TRIGGER ================= */
     void OnTriggerEnter2D(Collider2D other)
     {
         if (active || !other.CompareTag("Player")) return;
@@ -62,7 +226,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= INTRO SEQUENCE ================= */
-
     IEnumerator IntroSequence()
     {
         Speak("Abel", "No bridge ahead.");
@@ -74,38 +237,20 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         Speak("Abel", "But a jetpack is like a bike. No fuel, no ride.");
         yield return Wait();
 
-        // 🔹 ANNOUNCE ALL RIVER DISTANCES
-        Speak("Kuttan", $"Three rivers ahead: first one is {riverDistances[0]} meters.");
+        Speak("Kuttan", $"Three rivers ahead: {riverDistances[0]}, {riverDistances[1]}, {riverDistances[2]} meters.");
         yield return Wait();
 
-        Speak("Abel", $"Second river is short — about {riverDistances[1]} meters.");
+        Speak("Abel", $"Energy cost is {ENERGY_RATE} per meter. Calculate carefully.");
         yield return Wait();
 
-        Speak("Kuttan", $"Last river is medium — {riverDistances[2]} meters.");
-        yield return Wait();
-
-        // 🔹 EXPLAIN ENERGY CALCULATION
-        Speak("Abel",
-            "For the 10-meter river, we need 40 energy.\n" +
-            $"That's {ENERGY_RATE} energy per meter.");
-        yield return Wait();
-
-        Speak("Kuttan",
-            "Use that rate to calculate for other distances.\n" +
-            "We have 100 energy to start with.");
-        yield return Wait();
-
-        // 🔹 TEACH IF / ELIF / ELSE ONCE
         if (!conceptTaught)
         {
-            Speak("Abel",
-                "We use if, elif, and else for decisions.\n" +
-                "Let me show you how it works.");
+            Speak("Abel", "Write your if / elif / else logic once.");
             yield return Wait();
 
             terminalPanel.SetActive(true);
             terminalText.text =
-                "<color=#9CDCFE>river_length</color> = 10\n" +
+                "<color=#9CDCFE>river_length</color> = ?\n" +
                 "<color=#9CDCFE>energy</color> = 100\n\n" +
                 "if river_length > 8:\n" +
                 "    energy -= 40\n" +
@@ -114,35 +259,67 @@ public class RiverIfElseLessonController2D : MonoBehaviour
                 "else:\n" +
                 "    energy -= 8";
 
-            Speak("Kuttan", "This checks if the river is long, medium, or short.");
             yield return Wait();
-            Speak("Abel", "Only one condition runs — the first one that matches!");
-            yield return Wait();
-
             terminalPanel.SetActive(false);
             conceptTaught = true;
         }
 
-        EquipJetpack();
         OpenTerminal();
     }
 
-    /* ================= TERMINAL ================= */
-
+    /* ================= TERMINAL LOGIC ================= */
     void OpenTerminal()
     {
         editing = true;
         currentLine = 0;
         ifLine = ifBody = elifLine = elifBody = elseBody = "";
+
+        // Auto-fill correct values if enabled
+        if (autoFillCorrect)
+        {
+            ifLine = "if river_length >= 10:";
+            ifBody = "    energy -= 40";
+            elifLine = "elif river_length >= 6:";
+            elifBody = "    energy -= 24";
+            elseBody = "    energy -= 8";
+            FinishTerminal();
+            return;
+        }
+        else if (autoFillFalse)
+        {
+            ifLine = "if river_length >= 10:";
+            ifBody = "    energy -= 40";
+            elifLine = "elif river_length >= 6:";
+            elifBody = "    energy -= 15";
+            elseBody = "    energy -= 8";
+            FinishTerminal();
+            return;
+        }
+
         terminalPanel.SetActive(true);
         UpdateTerminal();
     }
 
+    void FinishTerminal()
+    {
+        editing = false;
+        terminalPanel.SetActive(false);
+        ValidateLogic();
+    }
+
     void Update()
     {
-        if (!editing) return;
-        HandleTyping();
-        UpdateTerminal();
+        if (editing)
+        {
+            HandleTyping();
+            UpdateTerminal();
+            return;
+        }
+
+        if (logicLocked && canFly && !isFlying && Input.GetKeyDown(KeyCode.F))
+        {
+            TryFly();
+        }
     }
 
     void HandleTyping()
@@ -157,17 +334,12 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
             if (c == '\n' || c == '\r')
             {
-                // Skip the fixed "else:" line (index 4)
-                if (currentLine == 3)
-                    currentLine = 5;
-                else
-                    currentLine++;
+                if (currentLine == 3) currentLine = 5;
+                else currentLine++;
 
-                // Auto-indent bodies
                 if (currentLine == 1 || currentLine == 3 || currentLine == 5)
                     AddTextToLine(currentLine, "    ");
 
-                // ENTER after else body completes
                 if (currentLine > 5)
                 {
                     editing = false;
@@ -200,11 +372,30 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     {
         switch (currentLine)
         {
-            case 0: if (ifLine.Length > 0) ifLine = ifLine.Substring(0, ifLine.Length - 1); break;
-            case 1: if (ifBody.Length > 0) ifBody = ifBody.Substring(0, ifBody.Length - 1); break;
-            case 2: if (elifLine.Length > 0) elifLine = elifLine.Substring(0, elifLine.Length - 1); break;
-            case 3: if (elifBody.Length > 0) elifBody = elifBody.Substring(0, elifBody.Length - 1); break;
-            case 5: if (elseBody.Length > 0) elseBody = elseBody.Substring(0, elseBody.Length - 1); break;
+            case 0:
+                if (ifLine.Length > 0)
+                    ifLine = ifLine.Substring(0, ifLine.Length - 1);
+                break;
+
+            case 1:
+                if (ifBody.Length > 0)
+                    ifBody = ifBody.Substring(0, ifBody.Length - 1);
+                break;
+
+            case 2:
+                if (elifLine.Length > 0)
+                    elifLine = elifLine.Substring(0, elifLine.Length - 1);
+                break;
+
+            case 3:
+                if (elifBody.Length > 0)
+                    elifBody = elifBody.Substring(0, elifBody.Length - 1);
+                break;
+
+            case 5:
+                if (elseBody.Length > 0)
+                    elseBody = elseBody.Substring(0, elseBody.Length - 1);
+                break;
         }
     }
 
@@ -222,119 +413,157 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= VALIDATION ================= */
-
     void ValidateLogic()
     {
-        if (!ifLine.StartsWith("if") || !ifLine.EndsWith(":"))
+        string ifL = ifLine.Trim().ToLower();
+        string elifL = elifLine.Trim().ToLower();
+
+        string ifB = ifBody.Trim().ToLower();
+        string elifB = elifBody.Trim().ToLower();
+        string elseB = elseBody.Trim().ToLower();
+
+        if (!ifL.StartsWith("if ") || !ifL.EndsWith(":"))
         {
-            Speak("Abel", "Start with 'if' and end with ':'.");
+            Speak("Abel", "Fix the IF condition. Format: 'if condition:'");
             OpenTerminal();
             return;
         }
 
-        if (!ifBody.StartsWith("    energy -="))
+        if (!ifB.Contains("energy") || !ifB.Contains("-="))
         {
-            Speak("Kuttan", "The IF block must reduce energy.");
+            Speak("Kuttan", "IF must reduce energy using '-=' operator.");
             OpenTerminal();
             return;
         }
 
-        if (!elifLine.StartsWith("elif") || !elifLine.EndsWith(":"))
+        if (!elifL.StartsWith("elif ") || !elifL.EndsWith(":"))
         {
-            Speak("Abel", "Use 'elif' for the second condition.");
+            Speak("Abel", "ELIF syntax error. Format: 'elif condition:'");
             OpenTerminal();
             return;
         }
 
-        if (!elifBody.StartsWith("    energy -="))
+        if (!elifB.Contains("energy") || !elifB.Contains("-="))
         {
-            Speak("Kuttan", "The ELIF block must reduce energy too.");
+            Speak("Kuttan", "ELIF must reduce energy using '-=' operator.");
             OpenTerminal();
             return;
         }
 
-        if (!elseBody.StartsWith("    energy -="))
+        if (!elseB.Contains("energy") || !elseB.Contains("-="))
         {
-            Speak("Abel", "The ELSE block must also reduce energy.");
+            Speak("Abel", "ELSE must reduce energy using '-=' operator.");
             OpenTerminal();
             return;
         }
 
-        StartCoroutine(ExecuteLogic());
+        logicLocked = true;
+        EquipJetpack();
+        canFly = true;
+
+        Speak("Abel", "Logic locked. Press F to fly across the first river.");
     }
 
-    /* ================= EXECUTION ================= */
-
-    IEnumerator ExecuteLogic()
+    /* ================= ENERGY EVALUATION ================= */
+    int EvaluateEnergyCost(int riverLength)
     {
-        int distance = riverDistances[currentRiverIndex];
-        int energyUsed = distance * ENERGY_RATE;
-        playerEnergy -= energyUsed;
+        // IF conditions
+        if (ifLine.Contains(">=") && riverLength >= ExtractNumber(ifLine))
+            return ExtractNumber(ifBody);
 
-        jetpackPanel.SetActive(true);
-        energyText.text =
-            $"Distance: {distance}m\nEnergy used: {energyUsed}\nRemaining: {playerEnergy}";
+        if (ifLine.Contains(">") && riverLength > ExtractNumber(ifLine))
+            return ExtractNumber(ifBody);
 
-        if (playerEnergy < 0)
+        // ELIF conditions
+        if (elifLine.Contains(">=") && riverLength >= ExtractNumber(elifLine))
+            return ExtractNumber(elifBody);
+
+        if (elifLine.Contains(">") && riverLength > ExtractNumber(elifLine))
+            return ExtractNumber(elifBody);
+
+        // ELSE fallback
+        return ExtractNumber(elseBody);
+    }
+
+    int ExtractNumber(string line)
+    {
+        string digits = "";
+        foreach (char c in line)
+            if (char.IsDigit(c)) digits += c;
+
+        return int.Parse(digits);
+    }
+
+    /* ================= FLIGHT ATTEMPT ================= */
+    void TryFly()
+    {
+        if (!canFly || isFlying || currentRiverIndex >= riverDistances.Length)
+            return;
+
+        int riverLength = riverDistances[currentRiverIndex];
+        int requiredEnergy = riverLength * ENERGY_RATE;
+
+        int usedEnergy = EvaluateEnergyCost(riverLength);
+
+        float travelPercent = Mathf.Clamp(
+            (float)usedEnergy / requiredEnergy,
+            0f,
+            1.2f
+        );
+
+        if (usedEnergy > playerEnergy)
         {
             jetpack.FailFall();
-            Speak("Kuttan", "Out of fuel mid-air! Need better planning.");
-            yield break;
+            Speak("Kuttan", "You don't have enough energy!");
+            return;
         }
 
-        Speak("Abel", $"Good! Used {energyUsed} energy for {distance}m river.");
-        yield return StartCoroutine(Wait());
+        playerEnergy -= usedEnergy;
+        UpdateEnergyUI();
 
-        jetpack.FlyToNextPoint();
-        currentRiverIndex++;
+        isFlying = true;
+        canFly = false;
 
-        if (currentRiverIndex < riverDistances.Length)
-        {
-            yield return StartCoroutine(NextRiver());
-        }
-        else
-        {
-            Speak("Kuttan", "All rivers crossed successfully!");
-            yield return StartCoroutine(Wait());
-            Speak("Abel", "Excellent logic. You've mastered if/elif/else!");
-        }
+        // 🚀 ONLY start flight — DO NOT TOUCH EVENTS
+        jetpack.FlyToNextPoint(travelPercent);
     }
 
-    IEnumerator NextRiver()
+
+    /* ================= HELPER METHODS ================= */
+    void UpdateEnergyUI()
     {
-        yield return new WaitForSeconds(1.2f);
-        jetpackPanel.SetActive(false);
-
-        if (currentRiverIndex < riverDistances.Length)
-        {
-            Speak("Abel", $"Next river: {riverDistances[currentRiverIndex]} meters.");
-            yield return StartCoroutine(Wait());
-            OpenTerminal();
-        }
+        if (energyText != null)
+            energyText.text = $"Energy: {playerEnergy}";
     }
-
-    /* ================= HELPERS ================= */
 
     void EquipJetpack()
     {
-        jetpack.Equip();
-        animatorController.SetJetpack(true);
+        if (jetpack != null)
+            jetpack.Equip();
+
+        if (animatorController != null)
+            animatorController.SetJetpack(true);
+
+        if (jetpackPanel != null)
+            jetpackPanel.SetActive(true);
     }
 
     void Speak(string who, string text)
     {
-        dialoguePanel.SetActive(true);
-        speakerText.text = who;
-        dialogueText.text = text;
-        speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            speakerText.text = who;
+            dialogueText.text = text;
+            speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+        }
     }
 
     IEnumerator Wait()
     {
-        while (Input.GetKey(KeyCode.Return))
-            yield return null;
-
+        while (Input.GetKey(KeyCode.Return)) yield return null;
         yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
     }
 }
