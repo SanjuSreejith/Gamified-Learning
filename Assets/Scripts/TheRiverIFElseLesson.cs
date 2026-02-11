@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
 using TMPro;
+using Unity.AppUI.UI;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using static UnityEngine.Rendering.VolumeComponent;
 
 [RequireComponent(typeof(Collider2D))]
 public class RiverIfElseLessonController2D : MonoBehaviour
@@ -30,6 +32,10 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
     public int playerEnergy = 100;
     const int ENERGY_RATE = 4;
+    string WithCursor(string text, bool active)
+    {
+        return active ? text + "<color=#FFD54F>|</color>" : text;
+    }
 
     /* ================= TERMINAL INPUT ================= */
     string ifLine = "";
@@ -58,6 +64,10 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     [Header("NPCs")]
     public Transform[] npcTransforms;
     public Transform npcFinalPoint;
+    const string INDENT = "    ";
+    const string USER_COLOR = "#4FC3F7";   // blue for player input
+
+
 
     void Reset() => GetComponent<Collider2D>().isTrigger = true;
 
@@ -221,6 +231,19 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         active = true;
         StartCoroutine(IntroSequence());
     }
+    void AddIndent()
+    {
+        // Only allow indent on body lines
+        if (currentLine == 1 || currentLine == 3 || currentLine == 5)
+        {
+            string line = GetLineText(currentLine);
+
+            // Prevent double-indent
+            if (!line.StartsWith(INDENT))
+                AddTextToLine(currentLine, INDENT);
+        }
+    }
+
 
     /* ================= INTRO SEQUENCE ================= */
     IEnumerator IntroSequence()
@@ -247,8 +270,8 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
             terminalPanel.SetActive(true);
             terminalText.text =
-                "<color=#9CDCFE>river_length</color> = ?\n" +
-                "<color=#9CDCFE>energy</color> = 100\n\n" +
+                "<color=#9CDCFE>river_length = ?</color>\n" +
+                "<color=#9CDCFE>energy= 100</color> \n\n" +
                 "if river_length > 8:\n" +
                 "    energy -= 40\n" +
                 "elif river_length > 4:\n" +
@@ -323,12 +346,16 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     {
         foreach (char c in Input.inputString)
         {
-            if (c == '\t')
-            {
-                AddText("    ");
-                continue;
-            }
+           
+                // TAB (Unity-safe)
+                if (Input.GetKeyDown(KeyCode.Tab))
+                {
+                    AddIndent();
+                    return;
+                }
 
+
+            // ENTER
             if (c == '\n' || c == '\r')
             {
                 if (currentLine == 3) currentLine = 5;
@@ -346,10 +373,82 @@ public class RiverIfElseLessonController2D : MonoBehaviour
                 return;
             }
 
-            if (c == '\b') RemoveChar();
-            else AddText(c.ToString());
+            // BACKSPACE ⭐ FIXED
+            if (c == '\b')
+            {
+                HandleBackspace();
+            }
+            else
+            {
+                AddText(c.ToString());
+            }
         }
     }
+    void HandleBackspace()
+    {
+        string lineText = GetLineText(currentLine);
+
+        // Normal delete
+        if (!string.IsNullOrEmpty(lineText))
+        {
+            RemoveCharFromLine(currentLine);
+            return;
+        }
+
+        // Jump to previous editable line
+        int prevLine = GetPreviousEditableLine(currentLine);
+        if (prevLine != -1)
+        {
+            currentLine = prevLine;
+            RemoveCharFromLine(currentLine);
+        }
+    }
+
+    void RemoveCharFromLine(int line)
+    {
+        const string INDENT = "    ";
+        string text = GetLineText(line);
+
+        if (string.IsNullOrEmpty(text))
+            return;
+
+        // 🔒 Protect indentation (first 4 spaces)
+        if ((line == 1 || line == 3 || line == 5) &&
+            text.Length <= INDENT.Length)
+            return;
+
+        switch (line)
+        {
+            case 0: ifLine = text.Substring(0, text.Length - 1); break;
+            case 1: ifBody = text.Substring(0, text.Length - 1); break;
+            case 2: elifLine = text.Substring(0, text.Length - 1); break;
+            case 3: elifBody = text.Substring(0, text.Length - 1); break;
+            case 5: elseBody = text.Substring(0, text.Length - 1); break;
+        }
+    }
+
+
+    string GetLineText(int line)
+    {
+        switch (line)
+        {
+            case 0: return ifLine;
+            case 1: return ifBody;
+            case 2: return elifLine;
+            case 3: return elifBody;
+            case 5: return elseBody;
+        }
+        return "";
+    }
+
+
+    int GetPreviousEditableLine(int line)
+    {
+        if (line == 5) return 3;
+        if (line == 3) return 1;
+        return -1;
+    }
+
 
     void AddText(string t) => AddTextToLine(currentLine, t);
 
@@ -399,19 +498,50 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     void UpdateTerminal()
     {
         terminalText.text =
-            "<color=#9CDCFE>river_length</color> = ?\n" +
-            "<color=#9CDCFE>energy</color> = 100\n\n" +
-            (string.IsNullOrEmpty(ifLine) ? "if ____________:" : ifLine) + "\n" +
-            (string.IsNullOrEmpty(ifBody) ? "    energy -= ______" : ifBody) + "\n" +
-            (string.IsNullOrEmpty(elifLine) ? "elif ____________:" : elifLine) + "\n" +
-            (string.IsNullOrEmpty(elifBody) ? "    energy -= ______" : elifBody) + "\n" +
+            "<color=#9CDCFE>river_length = ?</color>\n" +
+            "<color=#9CDCFE>energy = 100</color>\n\n" +
+
+            WithCursor(
+                string.IsNullOrEmpty(ifLine)
+                    ? "if ____________:"
+                    : ColorUserText(ifLine),
+                currentLine == 0
+            ) + "\n" +
+
+            WithCursor(
+                string.IsNullOrEmpty(ifBody)
+                    ? INDENT + "energy -= ______"
+                    : ColorUserText(ifBody),
+                currentLine == 1
+            ) + "\n" +
+
+            WithCursor(
+                string.IsNullOrEmpty(elifLine)
+                    ? "elif ____________:"
+                    : ColorUserText(elifLine),
+                currentLine == 2
+            ) + "\n" +
+
+            WithCursor(
+                string.IsNullOrEmpty(elifBody)
+                    ? INDENT + "energy -= ______"
+                    : ColorUserText(elifBody),
+                currentLine == 3
+            ) + "\n" +
+
             ELSE_LINE + "\n" +
-            (string.IsNullOrEmpty(elseBody) ? "    energy -= ______" : elseBody);
+
+            WithCursor(
+                string.IsNullOrEmpty(elseBody)
+                    ? INDENT + "energy -= ______"
+                    : ColorUserText(elseBody),
+                currentLine == 5
+            );
     }
 
     /* ================= VALIDATION ================= */
 
- void ValidateLogic()
+    void ValidateLogic()
     {
         string ifL = ifLine.Trim().ToLower();
         string elifL = elifLine.Trim().ToLower();
@@ -491,25 +621,48 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         // Accepts: energy-=40, energy -= 40, energy  -=40, etc.
         return body.Contains("energy") && body.Contains("-=");
     }
+    string ColorUserText(string text)
+    {
+        return $"<color={USER_COLOR}>{text}</color>";
+    }
+
 
     /* ================= ENERGY EVALUATION ================= */
     int EvaluateEnergyCost(int riverLength)
     {
-        // IF conditions
+        // ---------- IF ----------
+        if (ifLine.Contains("==") && riverLength == ExtractNumber(ifLine))
+            return ExtractNumber(ifBody);
+
         if (ifLine.Contains(">=") && riverLength >= ExtractNumber(ifLine))
             return ExtractNumber(ifBody);
 
         if (ifLine.Contains(">") && riverLength > ExtractNumber(ifLine))
             return ExtractNumber(ifBody);
 
-        // ELIF conditions
+        if (ifLine.Contains("<=") && riverLength <= ExtractNumber(ifLine))
+            return ExtractNumber(ifBody);
+
+        if (ifLine.Contains("<") && riverLength < ExtractNumber(ifLine))
+            return ExtractNumber(ifBody);
+
+        // ---------- ELIF ----------
+        if (elifLine.Contains("==") && riverLength == ExtractNumber(elifLine))
+            return ExtractNumber(elifBody);
+
         if (elifLine.Contains(">=") && riverLength >= ExtractNumber(elifLine))
             return ExtractNumber(elifBody);
 
         if (elifLine.Contains(">") && riverLength > ExtractNumber(elifLine))
             return ExtractNumber(elifBody);
 
-        // ELSE fallback
+        if (elifLine.Contains("<=") && riverLength <= ExtractNumber(elifLine))
+            return ExtractNumber(elifBody);
+
+        if (elifLine.Contains("<") && riverLength < ExtractNumber(elifLine))
+            return ExtractNumber(elifBody);
+
+        // ---------- ELSE ----------
         return ExtractNumber(elseBody);
     }
 
@@ -584,6 +737,8 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             speakerText.text = who;
             dialogueText.text = text;
             speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+
+            DialogueBacklogManager.Instance?.AddLine(who, text);
         }
     }
 

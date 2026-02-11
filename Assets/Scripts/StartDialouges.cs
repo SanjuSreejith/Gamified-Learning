@@ -58,6 +58,9 @@ public class IntroCasualDialogue : MonoBehaviour
 
         yield return StartCoroutine(TypeLine(line));
 
+        // ✅ ADD TO BACKLOG AFTER FULL LINE IS SHOWN
+        DialogueBacklogManager.Instance?.AddLine(speaker, line);
+
         waitingForInput = true;
 
         while (waitingForInput)
@@ -70,6 +73,7 @@ public class IntroCasualDialogue : MonoBehaviour
 
         yield return new WaitForSeconds(0.15f);
     }
+
 
     IEnumerator TypeLine(string line)
     {

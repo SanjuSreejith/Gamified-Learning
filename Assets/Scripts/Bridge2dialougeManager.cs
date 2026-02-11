@@ -267,6 +267,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
         dialogueText.text = text;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
         waitingForDialogueClose = true;
+        DialogueBacklogManager.Instance?.AddLine(speaker, text);
     }
 
     /* ================= RESTORE ================= */

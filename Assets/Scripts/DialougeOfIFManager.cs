@@ -222,15 +222,23 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             return;
         }
 
-        speakerText.text = lines[index].speaker;
-        dialogueText.text = lines[index].text;
-        speakerImage.sprite = lines[index].portrait;
+        DialogueLine line = lines[index]; 
+
+        speakerText.text = line.speaker;
+        dialogueText.text = line.text;
+        speakerImage.sprite = line.portrait;
+
+        DialogueBacklogManager.Instance?.AddLine(
+            line.speaker,
+            line.text
+        );
 
         UpdateHighlightMode();
         UpdateTerminal();
 
         waitingForInput = true;
     }
+
 
     void NextLine()
     {
@@ -362,6 +370,7 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         speakerText.text = speaker;
         dialogueText.text = text;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
+        DialogueBacklogManager.Instance?.AddLine(speaker, text);
     }
 
     void RestoreEnemies()
