@@ -104,7 +104,10 @@ GameObject:
   - component: {fileID: 4280334110373864245}
   - component: {fileID: 674326990530835892}
   - component: {fileID: 3498795953453674126}
-  - component: {fileID: 1128081410143856005}
+  - component: {fileID: 3325189817780946271}
+  - component: {fileID: 1167303206267349993}
+  - component: {fileID: 6884204348308362098}
+  - component: {fileID: 9107921244953905179}
   m_Layer: 7
   m_Name: Player2
   m_TagString: Player
@@ -120,9 +123,9 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4024157858530958404}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.05, y: -3.99, z: -0.08}
-  m_LocalScale: {x: 5.568502, y: 4.3558164, z: 0.94343}
+  m_LocalScale: {x: 0.7, y: 0.635733, z: 0.13769396}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 806764600116825167}
@@ -175,9 +178,9 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -8803371887732516606, guid: 5fa4644547c9e634b9b43c7e2112614a, type: 3}
+  m_Sprite: {fileID: -4563798465293866004, guid: 4146d4d85b22ded4d84e4132f110a2ef, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -226,10 +229,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b592667f42be0904cb03710f7683cef8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_movement
-  moveSpeed: 6
-  acceleration: 10
-  deceleration: 10
-  jumpForce: 4
+  moveSpeed: 5.4
+  acceleration: 8
+  deceleration: 8
+  jumpForce: 6
   coyoteTime: 0.15
   jumpBufferTime: 0.15
   groundCheck: {fileID: 806764600116825167}
@@ -237,10 +240,10 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  walkClip: {fileID: 0}
-  jumpClip: {fileID: 0}
-  footstepSource: {fileID: 0}
-  actionSource: {fileID: 0}
+  walkClip: {fileID: 8300000, guid: d3f3cc8ad058cad408e97b1875afec82, type: 3}
+  jumpClip: {fileID: 8300000, guid: 7d65afb5fe7bb7e41a03b001f5acfbde, type: 3}
+  footstepSource: {fileID: 3325189817780946271}
+  actionSource: {fileID: 3325189817780946271}
   groundNormalMinY: 0.65
 --- !u!70 &3498795953453674126
 CapsuleCollider2D:
@@ -276,10 +279,143 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 0.23, y: 0.5}
+  m_Offset: {x: 0.29753932, y: -0.096630834}
+  m_Size: {x: 0.82507885, y: 2.5453944}
   m_Direction: 0
---- !u!95 &1128081410143856005
+--- !u!82 &3325189817780946271
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4024157858530958404}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!114 &1167303206267349993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4024157858530958404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c154df392a541a49b561a7afc7e3ee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  landingPoints:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  flySpeed: 12
+  jetpackAudio: {fileID: 0}
+  jetpackLoopClip: {fileID: 8300000, guid: d0c00bdd87700d44bba26aff23736220, type: 3}
+--- !u!114 &6884204348308362098
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4024157858530958404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 792ae63fe7a474040ad6c04f2982f6b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  animator: {fileID: 9107921244953905179}
+  hasJetpackParam: HasJetpack
+  speedXParam: SpeedX
+  flyTriggerParam: Fly
+--- !u!95 &9107921244953905179
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -289,7 +425,7 @@ Animator:
   m_GameObject: {fileID: 4024157858530958404}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: bf6bcf3ac72aaa840a915d398738c7aa, type: 2}
+  m_Controller: {fileID: 9100000, guid: 00a983eb10b579244be1ec8729de6373, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
