@@ -104,15 +104,9 @@ public class BridgeBreakController2D : MonoBehaviour
 
         Debug.Log("💥 Bridge breaking!");
 
-        // 🔊 PLAY BRIDGE BREAK SOUND
         if (bridgeAudio && bridgeBreakClip)
             bridgeAudio.PlayOneShot(bridgeBreakClip);
 
-        // 🎥 PLAY CINEMATIC
-        if (!cinematicPlaying && bridgeCinematicCam && playerCam)
-            StartCoroutine(BridgeCinematic());
-
-        // 🌫 Particles
         if (breakParticles)
         {
             breakParticles.transform.position =
@@ -120,16 +114,44 @@ public class BridgeBreakController2D : MonoBehaviour
             breakParticles.Play();
         }
 
-        // 💥 Physics
-        foreach (var rb in bridgePlanks)
-        {
-            if (!rb) continue;
+        if (!cinematicPlaying && bridgeCinematicCam && playerCam)
+            StartCoroutine(BridgeBreakSequence());
+        else
+            ReleaseBridge();
+    }
+    System.Collections.IEnumerator BridgeBreakSequence()
+    {
+        cinematicPlaying = true;
 
-            rb.bodyType = RigidbodyType2D.Dynamic;
-            rb.gravityScale = 2f;
-            rb.AddForce(Random.insideUnitCircle * 2f, ForceMode2D.Impulse);
-            rb.AddTorque(Random.Range(-15f, 15f), ForceMode2D.Impulse);
+        // 1️⃣ FREEZE TIME
+        Time.timeScale = 0f;
+
+        // 2️⃣ SWITCH CAMERA
+        bridgeCinematicCam.Priority = 40;
+        playerCam.Priority = 10;
+
+        // 3️⃣ WAIT UNTIL CAMERA FINISHES BLENDING (REAL TIME)
+        CinemachineBrain brain = Camera.main.GetComponent<CinemachineBrain>();
+
+        while (brain != null && brain.ActiveBlend != null)
+        {
+            yield return null; // waits in real-time because timescale = 0
         }
+
+        // 4️⃣ RESUME TIME
+        Time.timeScale = 1f;
+
+        // 5️⃣ RELEASE BRIDGE
+        ReleaseBridge();
+
+        // 6️⃣ LET CINEMATIC PLAY
+        yield return new WaitForSeconds(cinematicDuration);
+
+        // 7️⃣ RETURN CAMERA
+        bridgeCinematicCam.Priority = 1;
+        playerCam.Priority = 30;
+
+        cinematicPlaying = false;
     }
 
 
@@ -149,6 +171,22 @@ public class BridgeBreakController2D : MonoBehaviour
 
         cinematicPlaying = false;
     }
+    void ReleaseBridge()
+    {
+        foreach (var rb in bridgePlanks)
+        {
+            if (!rb) continue;
+
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            rb.gravityScale = 2f;
+            rb.linearVelocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+
+            rb.AddForce(Random.insideUnitCircle * 2f, ForceMode2D.Impulse);
+            rb.AddTorque(Random.Range(-15f, 15f), ForceMode2D.Impulse);
+        }
+    }
+
 
 #if UNITY_EDITOR
     void OnGUI()
