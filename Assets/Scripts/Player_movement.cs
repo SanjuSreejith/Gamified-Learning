@@ -24,10 +24,10 @@ public class PlayerMovement2D : MonoBehaviour
     public AudioClip jumpClip;
 
     [Header("Audio Sources")]
-    public AudioSource footstepSource;   // looping footsteps
-    public AudioSource actionSource;     // jump, land, etc.
+    public AudioSource footstepSource;
+    public AudioSource actionSource;
 
-    // Collision based ground detection
+    // Collision-based ground detection
     HashSet<Collider2D> groundContactSet = new HashSet<Collider2D>();
     public float groundNormalMinY = 0.65f;
 
@@ -37,24 +37,34 @@ public class PlayerMovement2D : MonoBehaviour
     float moveInput;
     float coyoteCounter;
     float jumpBufferCounter;
-    bool isGrounded;
 
-    bool isJumpAnimActive;
+    // FIX: Separate raw physics grounded from animation grounded
+    bool isGrounded;
+    bool wasGrounded;
+
+    bool isJumping;     // rising after a jump input
+    bool isFalling;     // moving downward and not grounded
     bool jumpLocked;
     bool facingRight = true;
+    float groundIgnoreTimer;
+    const float GroundIgnoreTime = 0.08f; // small, safe value
+
+
+    // FIX: Small landing grace period to avoid flicker on landing frame
+    float landingGraceCounter;
+    const float LandingGraceDuration = 0.06f;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
 
-        // Safety checks
         if (footstepSource != null)
         {
             footstepSource.loop = true;
             footstepSource.playOnAwake = false;
             footstepSource.volume = 1f;
-            footstepSource.spatialBlend = 0f; // 2D sound
+            footstepSource.spatialBlend = 0f;
         }
 
         if (actionSource != null)
@@ -62,7 +72,7 @@ public class PlayerMovement2D : MonoBehaviour
             actionSource.loop = false;
             actionSource.playOnAwake = false;
             actionSource.volume = 1f;
-            actionSource.spatialBlend = 0f; // 2D sound
+            actionSource.spatialBlend = 0f;
         }
     }
 
@@ -70,21 +80,18 @@ public class PlayerMovement2D : MonoBehaviour
     {
         moveInput = Input.GetAxisRaw("Horizontal");
 
-        // Flip
+        // -------- FLIP --------
         if (moveInput > 0.01f && !facingRight) Flip();
         else if (moveInput < -0.01f && facingRight) Flip();
 
-        // Jump buffer
-        if (Input.GetButtonDown("Jump"))
-            jumpBufferCounter = jumpBufferTime;
-        else
-            jumpBufferCounter -= Time.deltaTime;
+        // -------- GROUND CHECK --------
+        wasGrounded = isGrounded;
 
-        // Ground check
+        bool rawGrounded;
         if (groundCheck != null)
         {
             int mask = groundLayer.value == 0 ? ~0 : groundLayer.value;
-            isGrounded = Physics2D.OverlapCircle(
+            rawGrounded = Physics2D.OverlapCircle(
                 groundCheck.position,
                 groundRadius,
                 mask
@@ -92,23 +99,33 @@ public class PlayerMovement2D : MonoBehaviour
         }
         else
         {
-            isGrounded = groundContactSet.Count > 0;
+            rawGrounded = groundContactSet.Count > 0;
         }
 
-        // Reset jump lock on land
-        if (isGrounded && jumpLocked)
+        // Ignore ground for a short moment after jump
+        if (groundIgnoreTimer > 0f)
         {
-            isJumpAnimActive = false;
-            jumpLocked = false;
+            groundIgnoreTimer -= Time.deltaTime;
+            isGrounded = false;
+        }
+        else
+        {
+            isGrounded = rawGrounded;
         }
 
-        // Coyote time
+        // -------- JUMP BUFFER --------
+        if (Input.GetButtonDown("Jump"))
+            jumpBufferCounter = jumpBufferTime;
+        else
+            jumpBufferCounter -= Time.deltaTime;
+
+        // -------- COYOTE TIME --------
         if (isGrounded)
             coyoteCounter = coyoteTime;
         else
             coyoteCounter -= Time.deltaTime;
 
-        // Jump
+        // -------- JUMP --------
         if (jumpBufferCounter > 0 && coyoteCounter > 0)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
@@ -116,45 +133,55 @@ public class PlayerMovement2D : MonoBehaviour
             jumpBufferCounter = 0;
             coyoteCounter = 0;
 
-            isJumpAnimActive = true;
+            isJumping = true;
             jumpLocked = true;
+
+            // Ignore ground right after jumping
+            groundIgnoreTimer = GroundIgnoreTime;
 
             PlayJumpSound();
         }
 
-        // Animations
+        // -------- LANDING (REAL LANDING ONLY) --------
+        if (isGrounded && !wasGrounded && jumpLocked)
+        {
+            isJumping = false;
+            jumpLocked = false;
+        }
+
+        // -------- ANIMATIONS --------
         if (anim != null)
         {
-            bool isMoving = Mathf.Abs(rb.linearVelocity.x) > 0.1f && !isJumpAnimActive;
+            bool isMoving = isGrounded
+                            && Mathf.Abs(rb.linearVelocity.x) > 0.1f
+                            && !isJumping;
+
             anim.SetBool("IsMoving", isMoving);
-            anim.SetBool("IsJumping", isJumpAnimActive);
+            anim.SetBool("IsJumping", isJumping);
         }
 
         HandleFootstepSound();
     }
 
+
     void FixedUpdate()
     {
         float targetSpeed = moveInput * moveSpeed;
         float speedDiff = targetSpeed - rb.linearVelocity.x;
-
-        float accelRate = Mathf.Abs(targetSpeed) > 0.01f
-            ? acceleration
-            : deceleration;
+        float accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
 
         rb.AddForce(Vector2.right * speedDiff * accelRate, ForceMode2D.Force);
     }
 
-    // ================= SOUND =================
 
+    // ================= SOUND =================
     void HandleFootstepSound()
     {
         if (footstepSource == null || walkClip == null) return;
 
-        bool shouldPlay =
-            isGrounded &&
-            Mathf.Abs(rb.linearVelocity.x) > 0.1f &&
-            !isJumpAnimActive;
+        bool shouldPlay = isGrounded
+                          && Mathf.Abs(rb.linearVelocity.x) > 0.1f
+                          && !isJumping;
 
         if (shouldPlay)
         {
@@ -171,11 +198,14 @@ public class PlayerMovement2D : MonoBehaviour
         }
     }
 
+
+
     void PlayJumpSound()
     {
         if (actionSource == null || jumpClip == null) return;
         actionSource.PlayOneShot(jumpClip, 1f);
     }
+
 
     // ================= COLLISION =================
 
