@@ -63,7 +63,7 @@ public class PlayerMovement2D : MonoBehaviour
         {
             footstepSource.loop = true;
             footstepSource.playOnAwake = false;
-            footstepSource.volume = 1f;
+          
             footstepSource.spatialBlend = 0f;
         }
 
@@ -71,7 +71,7 @@ public class PlayerMovement2D : MonoBehaviour
         {
             actionSource.loop = false;
             actionSource.playOnAwake = false;
-            actionSource.volume = 1f;
+           
             actionSource.spatialBlend = 0f;
         }
     }
