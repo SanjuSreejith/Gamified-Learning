@@ -8,6 +8,8 @@ TagManager:
   - Bridge
   - NPC
   - Enemy
+  - FxTemporaire
+  - Machine
   layers:
   - Default
   - TransparentFX
@@ -21,8 +23,8 @@ TagManager:
   - Bridge
   - Npc
   - Enemy
-  - 
-  - 
+  - Wood
+  - Machine
   - 
   - 
   - 

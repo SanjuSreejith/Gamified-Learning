@@ -8,7 +8,9 @@ public class PlayerJetpackAnimator2D : MonoBehaviour
     [Header("Animator Params")]
     [SerializeField] string hasJetpackParam = "HasJetpack";
     [SerializeField] string speedXParam = "SpeedX";
-    [SerializeField] string flyTriggerParam = "Fly";
+    [SerializeField] string isFlyingParam = "IsFlying";
+
+    bool isFlying;
 
     void Awake()
     {
@@ -16,44 +18,74 @@ public class PlayerJetpackAnimator2D : MonoBehaviour
             animator = GetComponent<Animator>();
     }
 
-    /// <summary>
-    /// Enable / disable jetpack visuals/state
-    /// </summary>
+    // =========================
+    // Jetpack Visual Toggle
+    // =========================
     public void SetJetpack(bool enabled)
     {
         if (!animator) return;
         animator.SetBool(hasJetpackParam, enabled);
     }
 
-    /// <summary>
-    /// Call ONCE when flight starts
-    /// </summary>
-    public void PlayFly()
+    // =========================
+    // Start Flying (Manual / Auto)
+    // =========================
+    public void StartFlying()
     {
         if (!animator) return;
 
-        // Reset first to avoid stuck trigger
-        animator.ResetTrigger(flyTriggerParam);
-        animator.SetTrigger(flyTriggerParam);
+        if (!isFlying)
+        {
+            isFlying = true;
+            animator.SetBool(isFlyingParam, true);
+        }
     }
 
-    /// <summary>
-    /// Update horizontal movement speed
-    /// </summary>
+    // =========================
+    // Stop Flying (Normal Stop)
+    // =========================
+    public void StopFlying()
+    {
+        if (!animator) return;
+
+        if (isFlying)
+        {
+            isFlying = false;
+            animator.SetBool(isFlyingParam, false);
+        }
+
+        animator.SetFloat(speedXParam, 0f);
+    }
+
+    // =========================
+    // Horizontal Speed Update
+    // =========================
     public void UpdateXSpeed(float xSpeed)
     {
         if (!animator) return;
+
         animator.SetFloat(speedXParam, Mathf.Abs(xSpeed));
     }
 
-    /// <summary>
-    /// Call when flight ENDS (landing / fail)
-    /// </summary>
+    // =========================
+    // Full Reset (Fail / Equip / Scene Reset)
+    // =========================
     public void ResetMovement()
     {
         if (!animator) return;
 
-        animator.ResetTrigger(flyTriggerParam);
+        isFlying = false;
+
+        animator.SetBool(isFlyingParam, false);
+        animator.SetBool(hasJetpackParam, false);
         animator.SetFloat(speedXParam, 0f);
+    }
+
+    // =========================
+    // Helper (Optional)
+    // =========================
+    public bool IsFlying()
+    {
+        return isFlying;
     }
 }

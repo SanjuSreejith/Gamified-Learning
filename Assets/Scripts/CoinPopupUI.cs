@@ -18,6 +18,10 @@ public class CoinUIController : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
+        // Load existing coins
+        displayedCoins = PlayerPrefs.GetInt("PlayerCoins", 0);
+        coinText.text = displayedCoins.ToString();
+
         canvasGroup.alpha = 0;
         gameObject.SetActive(false);
     }
@@ -37,17 +41,16 @@ public class CoinUIController : MonoBehaviour
 
     IEnumerator ShowRoutine(int addAmount)
     {
-        int start = displayedCoins;
         int target = displayedCoins + addAmount;
 
         while (displayedCoins < target)
         {
             displayedCoins++;
             coinText.text = displayedCoins.ToString();
-            yield return new WaitForSeconds(countSpeed);
+            yield return new WaitForSecondsRealtime(countSpeed);
         }
 
-        yield return new WaitForSeconds(visibleTime);
+        yield return new WaitForSecondsRealtime(visibleTime);
 
         canvasGroup.alpha = 0;
         gameObject.SetActive(false);

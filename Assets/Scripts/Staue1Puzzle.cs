@@ -10,6 +10,9 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI dialogueText;
 
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;
+
     [Header("Platforms (3 ordered)")]
     public platformMove[] platforms;
 
@@ -25,15 +28,13 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     public float almostCorrectThreshold = 0.7f;
 
     [Header("Input Display")]
-    public Color normalTextColor = Color.white;
     public Color inputTextColor = Color.yellow;
+
     [Header("Audio")]
     public AudioSource answerAudio;
     public AudioClip correctClip;
     public AudioClip wrongClip;
 
-
-    // ---------------- STATES ----------------
     enum State
     {
         Idle,
@@ -44,29 +45,21 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
 
     State state = State.Idle;
 
-    // ---------------- DATA ----------------
     private BasicQuestion[] questions;
     private int questionIndex = 0;
-    public int platformsActivated = 0; // Made public for second statue
+    public int platformsActivated = 0;
+
     private string typedInput = "";
-    private string currentLine = "";
     private Coroutine typingCoroutine;
     private bool isTyping = false;
 
-    // Public property to track performance
     public int CorrectAnswersCount => platformsActivated;
     public int TotalQuestions => questions != null ? questions.Length : 0;
 
-    // ---------------- UNITY ----------------
     void Start()
     {
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
-        else
-            Debug.LogError("Dialogue Panel not assigned!");
-
-        if (speakerText == null || dialogueText == null)
-            Debug.LogError("TextMeshProUGUI components not assigned!");
 
         SetupQuestions();
     }
@@ -78,9 +71,11 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
             case State.WaitingForContinue:
                 CheckContinueInput();
                 break;
+
             case State.WaitingForAnswer:
                 HandleAnswerTyping();
                 break;
+
             case State.StatueTalking:
                 CheckSkipTyping();
                 break;
@@ -88,13 +83,14 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     }
 
     // ---------------- TRIGGER ----------------
+
     public void StartDialogue()
     {
         if (state != State.Idle) return;
-        if (dialoguePanel == null) return;
 
         dialoguePanel.SetActive(true);
         speakerText.text = "Statue";
+
         questionIndex = 0;
         platformsActivated = 0;
 
@@ -104,12 +100,19 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     public void EndDialogueEarly()
     {
         StopAllCoroutines();
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+
+        if (hintSystem)
+            hintSystem.DisableHints();
+
+        dialoguePanel.SetActive(false);
+
+        SetGamePaused(false);
+
         state = State.Idle;
     }
 
-    // ---------------- DIALOGUE FLOW ----------------
+    // ---------------- DIALOGUE ----------------
+
     void StartStatueLine(string line)
     {
         if (typingCoroutine != null)
@@ -122,19 +125,19 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     {
         state = State.StatueTalking;
         isTyping = true;
+
         dialogueText.text = "";
-        currentLine = line;
 
         foreach (char c in line)
         {
-            if (!isTyping) // Skip typing if interrupted
+            if (!isTyping)
             {
                 dialogueText.text = line;
                 break;
             }
 
             dialogueText.text += c;
-            yield return new WaitForSeconds(typeSpeed);
+            yield return new WaitForSecondsRealtime(typeSpeed);
         }
 
         isTyping = false;
@@ -144,17 +147,13 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
     void CheckSkipTyping()
     {
         if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)
-        {
             isTyping = false;
-        }
     }
 
     void CheckContinueInput()
     {
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
-        {
             AskQuestion();
-        }
     }
 
     void PlayAnswerSound(bool correct)
@@ -162,11 +161,13 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
         if (answerAudio == null) return;
 
         AudioClip clip = correct ? correctClip : wrongClip;
+
         if (clip != null)
             answerAudio.PlayOneShot(clip);
     }
 
     // ---------------- QUESTIONS ----------------
+
     void SetupQuestions()
     {
         questions = new BasicQuestion[]
@@ -174,17 +175,34 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
             new BasicQuestion(
                 "If a user types Tarkya, what does input() return?",
                 "tarkya",
-                "Does Python change what the user types?"
+                new string[]
+                {
+                    "Python does not change what the user types.",
+                    "input() returns exactly what the user enters.",
+                    "If the user typed Tarkya, what would the result be?"
+                }
             ),
+
             new BasicQuestion(
-                "print(\"Hello\", name) where name is Alex, what is printed?",
+                "print(\"Hello\", name) where name = Alex. What prints?",
                 "hello alex",
-                "Remember the space added by print()"
+                new string[]
+                {
+                    "print() automatically adds a space.",
+                    "The output combines Hello and Alex.",
+                    "Think: Hello + space + Alex."
+                }
             ),
+
             new BasicQuestion(
                 "Does input() return a number or text?",
                 "text",
-                "Even digits are treated as something else"
+                new string[]
+                {
+                    "input() reads user input as a string.",
+                    "Even digits are treated as something else.",
+                    "Python considers input() result as text."
+                }
             )
         };
     }
@@ -198,28 +216,38 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
         }
 
         typedInput = "";
-        dialogueText.text = questions[questionIndex].questionText + "\n> ";
+
+        dialogueText.text =
+            questions[questionIndex].questionText + "\n> ";
+
         state = State.WaitingForAnswer;
+
+        SetGamePaused(true);
+
+        if (hintSystem)
+        {
+            hintSystem.SetHints(questions[questionIndex].hints);
+            hintSystem.EnableHints();
+        }
     }
 
     // ---------------- ANSWER INPUT ----------------
+
     void HandleAnswerTyping()
     {
         foreach (char c in Input.inputString)
         {
-            if (c == '\b') // Backspace
+            if (c == '\b')
             {
                 if (typedInput.Length > 0)
-                {
                     typedInput = typedInput.Substring(0, typedInput.Length - 1);
-                }
             }
-            else if (c == '\n' || c == '\r') // Enter
+            else if (c == '\n' || c == '\r')
             {
                 SubmitAnswer();
                 return;
             }
-            else if (!char.IsControl(c)) // Only add non-control characters
+            else if (!char.IsControl(c))
             {
                 typedInput += c;
             }
@@ -230,18 +258,14 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
 
     void UpdateAnswerDisplay()
     {
-        if (questionIndex < questions.Length)
-        {
-            dialogueText.text = questions[questionIndex].questionText + "\n> " +
-                               "<color=#" + ColorUtility.ToHtmlStringRGB(inputTextColor) + ">" +
-                               typedInput + "</color>";
-        }
+        dialogueText.text =
+            questions[questionIndex].questionText +
+            "\n> <color=#" + ColorUtility.ToHtmlStringRGB(inputTextColor) + ">" +
+            typedInput + "</color>";
     }
 
     void SubmitAnswer()
     {
-        if (questionIndex >= questions.Length) return;
-
         string input = typedInput.Trim().ToLower();
         BasicQuestion q = questions[questionIndex];
 
@@ -255,89 +279,83 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
 
         if (input == q.correctAnswer)
         {
-            // 🔊 Correct sound
             PlayAnswerSound(true);
 
             ActivatePlatform();
             questionIndex++;
+
             StartStatueLine("Correct. Understanding acknowledged.");
         }
         else if (similarity >= almostCorrectThreshold)
         {
-            // 🔊 Wrong (almost)
             PlayAnswerSound(false);
-
-            StartStatueLine("Almost. Hint: " + q.hint);
+            StartStatueLine("Almost correct. Think carefully.");
         }
         else
         {
-            // 🔊 Wrong
             PlayAnswerSound(false);
-
-            StartStatueLine("Incorrect. Hint: " + q.hint);
+            StartStatueLine("Incorrect. Try again.");
         }
     }
 
-
     // ---------------- END ----------------
+
     void EndDialogue()
     {
-        string finalMessage = platformsActivated == platforms.Length
+        if (hintSystem)
+            hintSystem.DisableHints();
+
+        string finalMessage =
+            platformsActivated == platforms.Length
             ? "All paths awaken. You may proceed."
             : "Some paths remain silent.";
 
         StartStatueLine(finalMessage);
+
+        SetGamePaused(false);
+
         StartCoroutine(HidePanelDelayed());
     }
 
     IEnumerator HidePanelDelayed()
     {
-        yield return new WaitForSeconds(2.2f);
+        yield return new WaitForSecondsRealtime(2.2f);
 
-        // Wait until typing is complete
         while (isTyping)
             yield return null;
 
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+        dialoguePanel.SetActive(false);
 
         state = State.Idle;
     }
 
     // ---------------- PLATFORM ----------------
+
     void ActivatePlatform()
     {
         if (platformsActivated >= platforms.Length)
-        {
-            Debug.LogWarning("All platforms already activated!");
             return;
-        }
 
         if (platforms[platformsActivated] != null)
         {
             platforms[platformsActivated].Resume();
             platformsActivated++;
         }
-        else
-        {
-            Debug.LogError($"Platform at index {platformsActivated} is null!");
-        }
     }
 
-    // ---------------- UTILS ----------------
+    // ---------------- STRING SIMILARITY ----------------
+
     float CalculateSimilarity(string a, string b)
     {
-        // Clean strings
         a = Regex.Replace(a.ToLower().Trim(), @"\s+", " ");
         b = Regex.Replace(b.ToLower().Trim(), @"\s+", " ");
 
-        if (a == b) return 1.0f;
-        if (string.IsNullOrEmpty(a) || string.IsNullOrEmpty(b)) return 0.0f;
+        if (a == b) return 1f;
 
         int distance = ComputeLevenshteinDistance(a, b);
         int maxLength = Mathf.Max(a.Length, b.Length);
 
-        return 1.0f - (float)distance / maxLength;
+        return 1f - (float)distance / maxLength;
     }
 
     int ComputeLevenshteinDistance(string a, string b)
@@ -355,6 +373,7 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
             for (int j = 1; j <= b.Length; j++)
             {
                 int cost = (a[i - 1] == b[j - 1]) ? 0 : 1;
+
                 dp[i, j] = Mathf.Min(
                     Mathf.Min(dp[i - 1, j] + 1, dp[i, j - 1] + 1),
                     dp[i - 1, j - 1] + cost
@@ -364,20 +383,24 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
 
         return dp[a.Length, b.Length];
     }
+
+    void SetGamePaused(bool pause)
+    {
+        Time.timeScale = pause ? 0f : 1f;
+    }
 }
 
-// ---------------- DATA CLASSES ----------------
 [System.Serializable]
 public class BasicQuestion
 {
     public string questionText;
     public string correctAnswer;
-    public string hint;
+    public string[] hints;
 
-    public BasicQuestion(string q, string a, string h)
+    public BasicQuestion(string q, string a, string[] h)
     {
         questionText = q;
-        correctAnswer = a.ToLower(); // Ensure correct answer is always lowercase
-        hint = h;
+        correctAnswer = a.ToLower();
+        hints = h;
     }
-} 
+}

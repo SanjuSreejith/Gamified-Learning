@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement2D : MonoBehaviour
@@ -8,6 +7,8 @@ public class PlayerMovement2D : MonoBehaviour
     public float moveSpeed = 3f;
     public float acceleration = 12f;
     public float deceleration = 16f;
+    [Header("Camera Effects")]
+    public FollowingCamera followCamera;
 
     [Header("Jump")]
     public float jumpForce = 14f;
@@ -19,90 +20,120 @@ public class PlayerMovement2D : MonoBehaviour
     public float groundRadius = 0.2f;
     public LayerMask groundLayer;
 
-    [Header("Audio Clips")]
+    [Header("Audio")]
     public AudioClip walkClip;
     public AudioClip jumpClip;
-
-    [Header("Audio Sources")]
     public AudioSource footstepSource;
     public AudioSource actionSource;
 
-    // Collision-based ground detection
-    HashSet<Collider2D> groundContactSet = new HashSet<Collider2D>();
-    public float groundNormalMinY = 0.65f;
+    [Header("Jetpack")]
+    public JetpackController2D jetpack;
 
+    [Header("Jump Block Check")]
+    public Transform wallCheck;
+    public float wallCheckDistance = 0.4f;
+    public float playerHeight = 1.6f;
+    [Header("Fast Fall")]
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2.0f;
+
+    [Header("Double Jump")]
+    public int maxJumps = 2;
+
+    [Header("Animation Triggers")]
+    [SerializeField] string landTrigger = "Land";
+    [SerializeField] string jumpTrigger = "Jump";
+    [SerializeField] string doubleJumpTrigger = "DoubleJump";
+
+    float moveIntentTimer;
+    const float MoveIntentGraceTime = 0.12f; // 80 ms (1–2 frames)
+    float lastFallSpeed;
+    // Components
     Rigidbody2D rb;
     Animator anim;
+    SpriteRenderer sr;
 
+    // State
     float moveInput;
     float coyoteCounter;
     float jumpBufferCounter;
 
-    // FIX: Separate raw physics grounded from animation grounded
     bool isGrounded;
     bool wasGrounded;
-
-    bool isJumping;     // rising after a jump input
-    bool isFalling;     // moving downward and not grounded
-    bool jumpLocked;
+    bool isJumping;
     bool facingRight = true;
+    int jumpCount;
+
     float groundIgnoreTimer;
-    const float GroundIgnoreTime = 0.08f; // small, safe value
-
-
-    // FIX: Small landing grace period to avoid flicker on landing frame
-    float landingGraceCounter;
-    const float LandingGraceDuration = 0.06f;
+    const float GroundIgnoreTime = 0.08f;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        sr = GetComponent<SpriteRenderer>();
+    }
 
-        if (footstepSource != null)
-        {
-            footstepSource.loop = true;
-            footstepSource.playOnAwake = false;
-          
-            footstepSource.spatialBlend = 0f;
-        }
+    bool JetpackActive()
+    {
+        return jetpack != null && jetpack.IsFlying();
+    }
 
-        if (actionSource != null)
-        {
-            actionSource.loop = false;
-            actionSource.playOnAwake = false;
-           
-            actionSource.spatialBlend = 0f;
-        }
+    bool IsBlockedByTallGround()
+    {
+        Vector2 dir = facingRight ? Vector2.right : Vector2.left;
+        RaycastHit2D hit = Physics2D.Raycast(wallCheck.position, dir, wallCheckDistance, groundLayer);
+
+        if (!hit) return false;
+
+        float heightDiff = hit.collider.bounds.max.y - transform.position.y;
+        return heightDiff > playerHeight * 0.8f;
     }
 
     void Update()
     {
-        moveInput = Input.GetAxisRaw("Horizontal");
-
-        // -------- FLIP --------
-        if (moveInput > 0.01f && !facingRight) Flip();
-        else if (moveInput < -0.01f && facingRight) Flip();
-
-        // -------- GROUND CHECK --------
-        wasGrounded = isGrounded;
-
-        bool rawGrounded;
-        if (groundCheck != null)
+        // Jetpack override
+        if (JetpackActive())
         {
-            int mask = groundLayer.value == 0 ? ~0 : groundLayer.value;
-            rawGrounded = Physics2D.OverlapCircle(
-                groundCheck.position,
-                groundRadius,
-                mask
-            );
+            footstepSource?.Stop();
+            return;
+        }
+
+        // ───── INPUT ─────
+        moveInput = Input.GetAxisRaw("Horizontal");
+        bool jumpPressed = Input.GetButtonDown("Jump");
+
+        // ───── MOVEMENT INTENT BUFFER (CRITICAL) ─────
+        if (Mathf.Abs(moveInput) > 0.01f)
+        {
+            moveIntentTimer = MoveIntentGraceTime;
         }
         else
         {
-            rawGrounded = groundContactSet.Count > 0;
+            moveIntentTimer -= Time.deltaTime;
         }
 
-        // Ignore ground for a short moment after jump
+        // ───── FACING ─────
+        if (moveInput > 0.01f)
+        {
+            facingRight = true;
+            sr.flipX = false;
+        }
+        else if (moveInput < -0.01f)
+        {
+            facingRight = false;
+            sr.flipX = true;
+        }
+
+        // ───── GROUND CHECK ─────
+        wasGrounded = isGrounded;
+
+        bool rawGrounded = Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundRadius,
+            groundLayer
+        );
+
         if (groundIgnoreTimer > 0f)
         {
             groundIgnoreTimer -= Time.deltaTime;
@@ -113,139 +144,191 @@ public class PlayerMovement2D : MonoBehaviour
             isGrounded = rawGrounded;
         }
 
-        // -------- JUMP BUFFER --------
-        if (Input.GetButtonDown("Jump"))
-            jumpBufferCounter = jumpBufferTime;
-        else
-            jumpBufferCounter -= Time.deltaTime;
+        // ───── TIMERS ─────
+        coyoteCounter = isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
+        jumpBufferCounter = jumpPressed ? jumpBufferTime : jumpBufferCounter - Time.deltaTime;
 
-        // -------- COYOTE TIME --------
-        if (isGrounded)
-            coyoteCounter = coyoteTime;
-        else
-            coyoteCounter -= Time.deltaTime;
-
-        // -------- JUMP --------
-        if (jumpBufferCounter > 0 && coyoteCounter > 0)
+        // ───── JUMP LOGIC (INTENT DRIVEN) ─────
+        if (jumpBufferCounter > 0f)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
+            bool canNormalJump = jumpCount == 0 && coyoteCounter > 0f;
+            bool canDoubleJump = jumpCount == 1;
 
-            jumpBufferCounter = 0;
-            coyoteCounter = 0;
+            if (canNormalJump && IsBlockedByTallGround())
+                canNormalJump = false;
 
-            isJumping = true;
-            jumpLocked = true;
+            if (canNormalJump || canDoubleJump)
+            {
+                // ✅ FIXED: velocity (NOT linearVelocity)
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
-            // Ignore ground right after jumping
-            groundIgnoreTimer = GroundIgnoreTime;
+                // 🎥 Camera shake on jump
+                if (followCamera)
+                {
+                    // First jump = subtle, double jump = stronger
+                    followCamera.Shake(jumpCount == 0 ? 0.08f : 0.12f);
+                }
 
-            PlayJumpSound();
+                jumpBufferCounter = 0f;
+                coyoteCounter = 0f;
+                groundIgnoreTimer = GroundIgnoreTime;
+
+                jumpCount++;
+                isJumping = true;
+
+                if (jumpCount == 1)
+                {
+                    anim.SetTrigger(jumpTrigger);
+                    anim.SetBool("IsDoubleJumping", false);
+                }
+                else
+                {
+                    anim.SetTrigger(doubleJumpTrigger);
+                    anim.SetBool("IsDoubleJumping", true);
+                }
+
+                PlayJumpSound();
+            }
         }
 
-        // -------- LANDING (REAL LANDING ONLY) --------
-        if (isGrounded && !wasGrounded && jumpLocked)
+        // ───── END JUMP STATE AT APEX ─────
+        if (isJumping && rb.linearVelocity.y <= 0f)
         {
             isJumping = false;
-            jumpLocked = false;
         }
-
-        // -------- ANIMATIONS --------
-        if (anim != null)
+        // Track fall speed BEFORE touching ground
+        if (!isGrounded && rb.linearVelocity.y < 0f)
         {
-            bool isMoving = isGrounded
-                            && Mathf.Abs(rb.linearVelocity.x) > 0.1f
-                            && !isJumping;
+            lastFallSpeed = rb.linearVelocity.y;
+        }
+        // ───── LANDING ─────
+        if (isGrounded && !wasGrounded)
+        {
+            anim.SetTrigger(landTrigger);
+            anim.SetBool("IsDoubleJumping", false);
 
-            anim.SetBool("IsMoving", isMoving);
-            anim.SetBool("IsJumping", isJumping);
+            // 💥 Impact-based camera shake (stable)
+            if (followCamera)
+            {
+                float impactSpeed = Mathf.Abs(lastFallSpeed);
+                float shake = Mathf.InverseLerp(3f, 12f, impactSpeed) * 0.35f;
+                followCamera.Shake(shake);
+            }
+
+            jumpCount = 0;
+            isJumping = false;
         }
 
+        UpdateAnimator();
         HandleFootstepSound();
     }
 
-
     void FixedUpdate()
     {
+        if (JetpackActive()) return;
+
+        // ================= HORIZONTAL MOVEMENT =================
         float targetSpeed = moveInput * moveSpeed;
         float speedDiff = targetSpeed - rb.linearVelocity.x;
-        float accelRate = Mathf.Abs(targetSpeed) > 0.01f ? acceleration : deceleration;
+
+        float accelRate = Mathf.Abs(targetSpeed) > 0.01f
+            ? acceleration
+            : deceleration;
 
         rb.AddForce(Vector2.right * speedDiff * accelRate, ForceMode2D.Force);
-    }
 
-
-    // ================= SOUND =================
-    void HandleFootstepSound()
-    {
-        if (footstepSource == null || walkClip == null) return;
-
-        bool shouldPlay = isGrounded
-                          && Mathf.Abs(rb.linearVelocity.x) > 0.1f
-                          && !isJumping;
-
-        if (shouldPlay)
+        // ================= FAST FALL & SHORT HOP =================
+        if (!isGrounded)
         {
-            if (!footstepSource.isPlaying)
+            // Fast fall when going down
+            if (rb.linearVelocity.y < 0f)
             {
-                footstepSource.clip = walkClip;
-                footstepSource.Play();
+                rb.AddForce(
+                    Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1f),
+                    ForceMode2D.Force
+                );
+            }
+            // Short hop when jump released early
+            else if (rb.linearVelocity.y > 0f && !Input.GetButton("Jump"))
+            {
+                rb.AddForce(
+                    Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1f),
+                    ForceMode2D.Force
+                );
             }
         }
-        else
+
+        // ================= CAMERA POLISH =================
+        if (followCamera && isGrounded)
         {
-            if (footstepSource.isPlaying)
-                footstepSource.Stop();
+            float speed = Mathf.Abs(rb.linearVelocity.x);
+            if (speed > moveSpeed * 0.9f)
+            {
+                followCamera.Shake(0.015f);
+            }
         }
     }
+    void UpdateAnimator()
+    {
+        bool falling =
+            !isGrounded &&
+            rb.linearVelocity.y < -0.1f &&
+            !isJumping &&
+            !anim.GetBool("IsDoubleJumping");
 
+        // ✅ PURE INPUT-DRIVEN MOVEMENT
+        bool isMovingInput = Mathf.Abs(moveInput) > 0.01f;
 
+        anim.SetBool("IsGrounded", isGrounded);
+        anim.SetBool("IsMoving", isMovingInput);
+        anim.SetBool("IsJumping", isJumping);
+        anim.SetBool("IsFalling", falling);
+    }
+    void HandleFootstepSound()
+    {
+        if (!footstepSource || !walkClip) return;
+
+        bool shouldPlay =
+            isGrounded &&
+            Mathf.Abs(rb.linearVelocity.x) > 0.1f;
+
+        if (shouldPlay && !footstepSource.isPlaying)
+        {
+            footstepSource.clip = walkClip;
+            footstepSource.Play();
+        }
+        else if (!shouldPlay && footstepSource.isPlaying)
+        {
+            footstepSource.Stop();
+        }
+    }
 
     void PlayJumpSound()
     {
-        if (actionSource == null || jumpClip == null) return;
-        actionSource.PlayOneShot(jumpClip, 1f);
-    }
-
-
-    // ================= COLLISION =================
-
-    void OnCollisionEnter2D(Collision2D collision) => EvaluateCollisionContacts(collision);
-    void OnCollisionStay2D(Collision2D collision) => EvaluateCollisionContacts(collision);
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.collider != null)
-            groundContactSet.Remove(collision.collider);
-    }
-
-    void EvaluateCollisionContacts(Collision2D collision)
-    {
-        if (collision == null || collision.contacts == null) return;
-
-        foreach (ContactPoint2D cp in collision.contacts)
-        {
-            if (cp.normal.y >= groundNormalMinY)
-            {
-                groundContactSet.Add(collision.collider);
-                return;
-            }
-        }
-
-        groundContactSet.Remove(collision.collider);
-    }
-
-    void Flip()
-    {
-        facingRight = !facingRight;
-        Vector3 s = transform.localScale;
-        s.x *= -1;
-        transform.localScale = s;
+        if (actionSource && jumpClip)
+            actionSource.PlayOneShot(jumpClip);
     }
 
     void OnDrawGizmosSelected()
     {
-        if (!groundCheck) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+        if (groundCheck != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
+        }
+
+        if (wallCheck != null)
+        {
+            Vector2 dir = facingRight ? Vector2.right : Vector2.left;
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(
+                wallCheck.position,
+                wallCheck.position + (Vector3)(dir * wallCheckDistance)
+            );
+            Gizmos.DrawWireSphere(
+                wallCheck.position + (Vector3)(dir * wallCheckDistance),
+                0.05f
+            );
+        }
     }
 }

@@ -11,19 +11,20 @@ public class IntroCasualDialogue : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public Image speakerImage;
 
+
     [Header("Portraits")]
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
 
     [Header("Typing")]
-    public float typeSpeed = 0.035f;
+  
+    TMPTypewriter typewriter;
 
     bool waitingForInput;
-    bool isTyping;
+
 
     IEnumerator Start()
     {
-        // 🔒 SAFETY: wait one frame so UI is ready
         yield return null;
 
         if (dialoguePanel == null)
@@ -32,13 +33,14 @@ public class IntroCasualDialogue : MonoBehaviour
             yield break;
         }
 
+        typewriter = dialogueText.GetComponent<TMPTypewriter>();
+
         dialoguePanel.SetActive(true);
         dialogueText.text = "";
         speakerText.text = "";
 
         yield return StartCoroutine(DialogueSequence());
     }
-
     IEnumerator DialogueSequence()
     {
         yield return Speak("Kuttan", "Hey Abel. How are you?");
@@ -56,36 +58,37 @@ public class IntroCasualDialogue : MonoBehaviour
         speakerText.text = speaker;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
 
-        yield return StartCoroutine(TypeLine(line));
+        if (typewriter != null)
+            typewriter.Play(line);
+        else
+            dialogueText.text = line;
 
-        // ✅ ADD TO BACKLOG AFTER FULL LINE IS SHOWN
-        DialogueBacklogManager.Instance?.AddLine(speaker, line);
-
-        waitingForInput = true;
-
-        while (waitingForInput)
+        // Wait for input
+        while (true)
         {
             if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
-                waitingForInput = false;
+            {
+                // First input → finish typing
+                if (typewriter != null && typewriter.IsTyping())
+                {
+                    typewriter.Skip();
+                }
+                // Second input → continue
+                else
+                {
+                    break;
+                }
+            }
 
             yield return null;
         }
+
+        // Add to backlog AFTER line fully shown
+        DialogueBacklogManager.Instance?.AddLine(speaker, line);
 
         yield return new WaitForSeconds(0.15f);
     }
 
 
-    IEnumerator TypeLine(string line)
-    {
-        dialogueText.text = "";
-        isTyping = true;
 
-        foreach (char c in line)
-        {
-            dialogueText.text += c;
-            yield return new WaitForSeconds(typeSpeed);
-        }
-
-        isTyping = false;
-    }
 }

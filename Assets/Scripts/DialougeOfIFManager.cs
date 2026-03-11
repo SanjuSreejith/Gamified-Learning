@@ -36,7 +36,7 @@ public class BridgeDialogueSequenceController : MonoBehaviour
 
     /* ================= Dialogue ================= */
     public DialogueLine[] lines;
-
+    TMPTypewriter typewriter;
     /* ================= State ================= */
     int index;
     bool active;
@@ -90,7 +90,8 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             l.portrait = l.speaker == "Abel" ? abelPortrait : kuttanPortrait;
 
         terminalPanel.SetActive(false);
-       
+        typewriter = dialogueText.GetComponent<TMPTypewriter>();
+
     }
 
     void PrepareNPCsForDialogue()
@@ -184,8 +185,17 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         if (!active) return;
 
         if (waitingForInput && Input.GetKeyDown(KeyCode.Return))
-            NextLine();
-
+        {
+            // If text is still typing → finish it first
+            if (typewriter != null && typewriter.IsTyping())
+            {
+                typewriter.Skip();
+            }
+            else
+            {
+                NextLine();
+            }
+        }
         if (!terminalOpened) return;
 
         if (terminalState == TerminalState.Viewing && Input.GetKeyDown(KeyCode.E))
@@ -222,11 +232,16 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             return;
         }
 
-        DialogueLine line = lines[index]; 
+        DialogueLine line = lines[index];
 
         speakerText.text = line.speaker;
-        dialogueText.text = line.text;
         speakerImage.sprite = line.portrait;
+
+        // ▶ Smooth typewriter reveal
+        if (typewriter != null)
+            typewriter.Play(line.text);
+        else
+            dialogueText.text = line.text;
 
         DialogueBacklogManager.Instance?.AddLine(
             line.speaker,

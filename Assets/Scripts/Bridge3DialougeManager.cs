@@ -16,6 +16,7 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
     public Image speakerImage;
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
+    TMPTypewriter typewriter;
 
     /* ================= BRIDGE ================= */
     public BridgeBreak3Controller2D bridgeController;
@@ -53,6 +54,7 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
             fadePanel.alpha = 0;
             fadePanel.gameObject.SetActive(false);
         }
+        typewriter = dialogueText.GetComponent<TMPTypewriter>();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -106,9 +108,16 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
     void Update()
     {
         if (!active) return;
-
         if (waitingForDialogue && Input.GetKeyDown(KeyCode.Return))
         {
+            // First Enter → finish typing
+            if (typewriter != null && typewriter.IsTyping())
+            {
+                typewriter.Skip();
+                return;
+            }
+
+            // Second Enter → close dialogue
             waitingForDialogue = false;
             dialoguePanel.SetActive(false);
         }
@@ -223,12 +232,16 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
     {
         dialoguePanel.SetActive(true);
         speakerText.text = speaker;
-        dialogueText.text = text;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
+
+        if (typewriter != null)
+            typewriter.Play(text);
+        else
+            dialogueText.text = text;
+
         waitingForDialogue = true;
         DialogueBacklogManager.Instance?.AddLine(speaker, text);
     }
-
     /* ================= RESTORE ================= */
 
     void RestoreScene()

@@ -15,6 +15,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     public Image speakerImage;
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
+    TMPTypewriter typewriter;
 
     public GameObject terminalPanel;
     public TextMeshProUGUI terminalText;
@@ -79,6 +80,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
         jetpack.OnFlightEnd += OnFlightEnded;
         UpdateEnergyUI();
+        typewriter = dialogueText.GetComponent<TMPTypewriter>();
     }
 
     /* ================= FLIGHT HANDLING ================= */
@@ -731,21 +733,40 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
     void Speak(string who, string text)
     {
-        if (dialoguePanel != null)
-        {
-            dialoguePanel.SetActive(true);
-            speakerText.text = who;
-            dialogueText.text = text;
-            speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+        if (dialoguePanel == null) return;
 
-            DialogueBacklogManager.Instance?.AddLine(who, text);
-        }
+        dialoguePanel.SetActive(true);
+        speakerText.text = who;
+        speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+
+        if (typewriter != null)
+            typewriter.Play(text);
+        else
+            dialogueText.text = text;
+
+        DialogueBacklogManager.Instance?.AddLine(who, text);
     }
 
     IEnumerator Wait()
     {
-        while (Input.GetKey(KeyCode.Return)) yield return null;
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
+        while (true)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                // First Enter → finish typing
+                if (typewriter != null && typewriter.IsTyping())
+                {
+                    typewriter.Skip();
+                }
+                // Second Enter → continue
+                else
+                {
+                    break;
+                }
+            }
+            yield return null;
+        }
+
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
     }

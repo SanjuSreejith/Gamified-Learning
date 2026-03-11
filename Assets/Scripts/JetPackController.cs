@@ -2,59 +2,168 @@
 using System;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class JetpackController2D : MonoBehaviour
 {
-    public Transform[] landingPoints;
-    public float flySpeed = 6f;
+    public enum ControlMode
+    {
+        Manual,
+        Auto
+    }
 
-    int currentPoint = 1;        // player starts at point[0]
-    bool isFlying;
-    float lockedY;
+    [Header("Control Mode")]
+    public ControlMode controlMode = ControlMode.Manual;
+    public bool jetOnAwake = false;
+
+    [Header("Manual Flight")]
+    public float manualFlySpeed = 6f;
+    public float manualAcceleration = 8f;
+
+    [Header("Auto Flight")]
+    public Transform[] landingPoints;
+    public float autoFlySpeed = 6f;
+
     [Header("Audio")]
     public AudioSource jetpackAudio;
     public AudioClip jetpackLoopClip;
 
+    Rigidbody2D rb;
     PlayerJetpackAnimator2D animator;
 
+    float originalGravity;
+    bool isFlying;
+    int currentPoint = 1;
+
     public Action<bool> OnFlightEnd;
-    // true  = landed on checkpoint
-    // false = stopped mid-air (out of energy)
 
     void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<PlayerJetpackAnimator2D>();
+
+        originalGravity = rb.gravityScale;
+
+        if (controlMode == ControlMode.Manual && jetOnAwake)
+            StartManualFly();
     }
 
-    public void Equip()
+    void Update()
     {
-        currentPoint = 1;
-        isFlying = false;
+        if (controlMode == ControlMode.Manual && isFlying)
+            HandleManualFlight();
     }
 
     public bool IsFlying() => isFlying;
 
+    // ================= MANUAL =================
+
+    public void StartManualFly()
+    {
+        if (isFlying) return;
+
+        isFlying = true;
+
+        rb.gravityScale = 0f;
+        rb.linearVelocity = Vector2.zero;
+
+        StartJetpackSound();
+
+        if (animator != null)
+        {
+            animator.SetJetpack(true);
+            animator.StartFlying();
+        }
+    }
+
+    public void StopManualFly()
+    {
+        if (!isFlying) return;
+
+        isFlying = false;
+
+        rb.gravityScale = originalGravity;
+
+        StopJetpackSound();
+
+        if (animator != null)
+        {
+            animator.StopFlying();
+            animator.SetJetpack(false);
+        }
+    }
+
+    void HandleManualFlight()
+    {
+        float inputX = Input.GetAxisRaw("Horizontal");
+        float inputY = 0f;
+
+        if (Input.GetKey(KeyCode.W))
+            inputY = 1f;
+        else if (Input.GetKey(KeyCode.S))
+            inputY = -1f;
+
+        Vector2 targetVelocity = new Vector2(inputX, inputY) * manualFlySpeed;
+
+        rb.linearVelocity = Vector2.Lerp(
+            rb.linearVelocity,
+            targetVelocity,
+            manualAcceleration * Time.deltaTime
+        );
+
+        if (animator != null)
+            animator.UpdateXSpeed(rb.linearVelocity.x);
+    }
+
+    // ================= AUTO =================
+
     public void FlyToNextPoint(float travelPercent)
     {
+        if (controlMode != ControlMode.Auto) return;
         if (isFlying) return;
         if (landingPoints == null || currentPoint >= landingPoints.Length) return;
 
         StartCoroutine(FlyRoutine(travelPercent));
     }
-    public void FailFall()
-    {
-        StopAllCoroutines();
 
-        // 🔇 Stop jetpack sound
+    IEnumerator FlyRoutine(float travelPercent)
+    {
+        isFlying = true;
+        rb.gravityScale = 0f;
+
+        StartJetpackSound();
+
+        if (animator != null)
+            animator.StartFlying();
+
+        Vector2 start = transform.position;
+        Vector2 end = landingPoints[currentPoint].position;
+
+        float t = 0f;
+        float totalDistance = Vector2.Distance(start, end);
+
+        while (t < travelPercent)
+        {
+            t += (Time.deltaTime * autoFlySpeed) / totalDistance;
+            t = Mathf.Min(t, travelPercent);
+
+            Vector2 pos = Vector2.Lerp(start, end, t);
+            rb.MovePosition(pos);
+
+            yield return null;
+        }
+
+        rb.gravityScale = originalGravity;
+
+        if (animator != null)
+            animator.StopFlying();
+
         StopJetpackSound();
 
         isFlying = false;
-
-        if (animator != null)
-            animator.ResetMovement();
-
-        OnFlightEnd?.Invoke(false);
+        OnFlightEnd?.Invoke(true);
     }
 
+    // ================= SOUND =================
 
     void StartJetpackSound()
     {
@@ -72,56 +181,44 @@ public class JetpackController2D : MonoBehaviour
         if (jetpackAudio && jetpackAudio.isPlaying)
             jetpackAudio.Stop();
     }
-    IEnumerator FlyRoutine(float travelPercent)
+    // ================= LEGACY SUPPORT =================
+
+    // Reset jetpack state (used by lesson system)
+    public void Equip()
     {
-        isFlying = true;
+        currentPoint = 1;
+        isFlying = false;
 
-        // 🔊 Jetpack sound ON
-        StartJetpackSound();
+        rb.gravityScale = originalGravity;
+        rb.linearVelocity = Vector2.zero;
 
-        // ▶ Fly animation ON
-        if (animator != null)
-            animator.PlayFly();
-
-        Vector2 start = transform.position;
-        Vector2 end = landingPoints[currentPoint].position;
-        lockedY = start.y;
-
-        float t = 0f;
-        float totalDistance = Vector2.Distance(start, end);
-
-        while (t < travelPercent)
-        {
-            t += (Time.deltaTime * flySpeed) / totalDistance;
-            t = Mathf.Min(t, travelPercent);
-
-            Vector2 pos = Vector2.Lerp(start, end, t);
-            transform.position = new Vector2(pos.x, lockedY);
-
-            if (animator != null)
-                animator.UpdateXSpeed(end.x - transform.position.x);
-
-            yield return null;
-        }
-
-        bool success = Mathf.Approximately(travelPercent, 1f);
-
-        if (success)
-            currentPoint++; // reached checkpoint
-
-        // ⏹ Fly animation OFF
-        if (animator != null)
-            animator.ResetMovement();
-
-        // 🔇 Jetpack sound OFF
         StopJetpackSound();
 
-        isFlying = false;
-        OnFlightEnd?.Invoke(success);
+        if (animator != null)
+        {
+            animator.StopFlying();
+            animator.SetJetpack(false);
+        }
     }
 
-    public bool IsLastPointReached()
+    // Force fall (used when energy ends or fail state)
+    public void FailFall()
     {
-        return currentPoint >= landingPoints.Length;
+        StopAllCoroutines();
+
+        isFlying = false;
+
+        rb.gravityScale = originalGravity;
+
+        StopJetpackSound();
+
+        if (animator != null)
+        {
+            animator.StopFlying();
+            animator.SetJetpack(false);
+        }
+
+        OnFlightEnd?.Invoke(false);
     }
+
 }

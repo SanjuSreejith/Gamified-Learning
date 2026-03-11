@@ -20,6 +20,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI dialogueText;
+    TMPTypewriter typewriter;
     public Image speakerImage;
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
@@ -71,6 +72,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
             fadePanel.alpha = 0f;
             fadePanel.gameObject.SetActive(false);
         }
+        typewriter = dialogueText.GetComponent<TMPTypewriter>();
     }
 
     /* ================= TRIGGER ================= */
@@ -132,6 +134,14 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
         // Close dialogue
         if (waitingForDialogueClose && Input.GetKeyDown(KeyCode.Return))
         {
+            // First Enter → finish typing
+            if (typewriter != null && typewriter.IsTyping())
+            {
+                typewriter.Skip();
+                return;
+            }
+
+            // Second Enter → close dialogue
             waitingForDialogueClose = false;
             dialoguePanel.SetActive(false);
 
@@ -259,13 +269,17 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     }
 
     /* ================= DIALOGUE ================= */
-
     void Speak(string speaker, string text)
     {
         dialoguePanel.SetActive(true);
         speakerText.text = speaker;
-        dialogueText.text = text;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
+
+        if (typewriter != null)
+            typewriter.Play(text);
+        else
+            dialogueText.text = text;
+
         waitingForDialogueClose = true;
         DialogueBacklogManager.Instance?.AddLine(speaker, text);
     }

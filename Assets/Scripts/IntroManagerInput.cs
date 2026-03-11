@@ -19,9 +19,6 @@ public class IntroBotGuideController2D : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
 
-    [Header("Headlight")]
-    public GameObject headlightObject;
-
     /* ================= MOVEMENT ================= */
     [Header("Movement")]
     public float moveSpeed = 4.5f;
@@ -37,19 +34,17 @@ public class IntroBotGuideController2D : MonoBehaviour
 
     Rigidbody2D rb;
     Animator anim;
+
     bool isGrounded;
     bool moving;
     bool facingRight = true;
     bool dialogueFinished;
-
 
     int dialogueIndex;
 
     string[] introDialogue =
     {
         "Wait.",
-        "You need to wear your headlight.",
-        "This place isn’t safe in the dark.",
         "I’ll go ahead.",
         "You follow me."
     };
@@ -67,9 +62,6 @@ public class IntroBotGuideController2D : MonoBehaviour
         dialoguePanel.SetActive(true);
         dialogueIndex = 0;
         dialogueText.text = introDialogue[dialogueIndex];
-
-        if (headlightObject)
-            headlightObject.SetActive(false);
     }
 
     void Update()
@@ -96,7 +88,6 @@ public class IntroBotGuideController2D : MonoBehaviour
         {
             dialogueFinished = true;
 
-            // ✅ Hide panel ONCE when dialogue is over
             dialoguePanel.SetActive(false);
 
             StartCoroutine(MoveSequence());
@@ -104,16 +95,10 @@ public class IntroBotGuideController2D : MonoBehaviour
         }
 
         dialogueText.text = introDialogue[dialogueIndex];
-
-        // 🔦 Turn ON headlight at correct line
-        if (dialogueIndex == 1 && headlightObject)
-        {
-            headlightObject.SetActive(true);
-        }
     }
 
-
     /* ================= MOVE SEQUENCE ================= */
+
     IEnumerator MoveSequence()
     {
         moving = true;
@@ -121,36 +106,31 @@ public class IntroBotGuideController2D : MonoBehaviour
 
         float moveTime = 2f;
         float timer = 0f;
-        float direction = 1f; // moving right (change if needed)
+        float direction = 1f;
 
         Flip(direction);
 
         while (timer < moveTime)
         {
-            // ✅ Correct physics movement
             rb.linearVelocity = new Vector2(direction * moveSpeed, rb.linearVelocity.y);
 
-            // ✅ EnemyAI-style smart jump
             TrySmartJump(direction);
 
             timer += Time.deltaTime;
             yield return null;
         }
 
-        // ✅ Stop movement
         rb.linearVelocity = Vector2.zero;
         anim.SetBool("isWalking", false);
 
-        // ⏳ Small story pause (feels intentional)
         yield return new WaitForSeconds(teleportDelay);
 
-        // ✅ REAL teleport (no hiding, no disabling)
         rb.position = teleportTarget.position;
 
         moving = false;
     }
 
-    /* ================= SMART JUMP (EnemyAI style) ================= */
+    /* ================= SMART JUMP ================= */
 
     void TrySmartJump(float direction)
     {
@@ -199,6 +179,7 @@ public class IntroBotGuideController2D : MonoBehaviour
     void FlipSprite()
     {
         facingRight = !facingRight;
+
         Vector3 scale = transform.localScale;
         scale.x *= -1;
         transform.localScale = scale;

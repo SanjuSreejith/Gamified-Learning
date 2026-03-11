@@ -10,6 +10,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI dialogueText;
 
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;               // <-- NEW
+
     [Header("Reference to First Statue")]
     public StatueDialogueTriggerSystem2D firstStatue;
 
@@ -18,6 +21,8 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     [Header("Typing")]
     public float typeSpeed = 0.035f;
+    public KeyCode skipKey = KeyCode.Space;        // <-- NEW
+    public bool allowTypingSkip = true;            // <-- NEW
 
     [Header("Answer Logic")]
     [Range(0.6f, 0.9f)]
@@ -26,7 +31,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     [Header("Puzzle Parameters")]
     [Range(1, 3)] public int maxAttemptsPerQuestion = 2;
     public int questionsToPass = 2;
-
 
     [Header("Audio")]
     public AudioSource answerAudio;
@@ -72,6 +76,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     {
         switch (state)
         {
+            case State.StatueTalking:
+                CheckSkipTyping();                  // <-- NEW
+                break;
             case State.WaitingForContinue:
                 CheckContinueInput();
                 break;
@@ -93,15 +100,16 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         if (state != State.Idle) return;
         if (dialoguePanel == null) return;
 
+        // Ensure hint system is off at start
+        if (hintSystem) hintSystem.DisableHints();
+
         dialoguePanel.SetActive(true);
         speakerText.text = "Second Statue";
 
-        // Get performance from first statue
         AssessFirstStatuePerformance();
-
-        // Start with assessment dialogue
         StartCoroutine(AssessmentSequence());
     }
+
     void PlayAnswerSound(bool correct)
     {
         if (answerAudio == null) return;
@@ -117,7 +125,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         {
             int correctAnswers = firstStatue.CorrectAnswersCount;
 
-            // Determine performance level
             if (correctAnswers == 3)
             {
                 performance = PlayerPerformance.Perfect;
@@ -136,7 +143,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         }
         else
         {
-            // Default to average if no first statue reference
             performance = PlayerPerformance.Average;
             currentQuestions = GetAverageQuestions();
         }
@@ -151,12 +157,11 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         foreach (string line in assessmentLines)
         {
             yield return StartCoroutine(TypeLine(line));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
 
-        // Start teaching phase
         StartCoroutine(TeachingSequence());
     }
 
@@ -202,15 +207,13 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         foreach (string line in teachingLines)
         {
             yield return StartCoroutine(TypeLine(line));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
 
-        // Explain topics specific to each performance level
         yield return StartCoroutine(ExplainTopics());
 
-        // Start asking questions
         currentQuestionIndex = 0;
         currentAttempt = 0;
         questionsCorrect = 0;
@@ -225,67 +228,64 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         if (performance == PlayerPerformance.Poor)
         {
             yield return StartCoroutine(TypeLine("Let me explain each concept carefully:"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
 
-            // Explain print()
             yield return StartCoroutine(TypeLine("1. print() - displays text on screen"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("   Example: print('Hello') shows: Hello"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
 
-            // Explain variables
             yield return StartCoroutine(TypeLine("2. Variables - store information"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("   Format: name = value"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("   Example: score = 10"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
 
-            // Explain printing variables
             yield return StartCoroutine(TypeLine("3. Printing variables"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("   Example: x = 5; print(x) shows: 5"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
         else if (performance == PlayerPerformance.Average)
         {
             yield return StartCoroutine(TypeLine("Now I'll explain what we'll be testing:"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
 
             yield return StartCoroutine(TypeLine("We'll work with variables and print()"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("Remember: print() shows output"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("Variables store data: name = value"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
 
             yield return StartCoroutine(TypeLine("Important: print() can show both text and variables"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("Example: print('Score:', score)"));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSecondsRealtime(0.3f);
             yield return StartCoroutine(TypeLine("This prints: Score: [value of score]"));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
         else // Perfect
         {
             yield return StartCoroutine(TypeLine("You're ready for more advanced practice."));
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
 
         yield return StartCoroutine(TypeLine("Ready? Let's begin the questions."));
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSecondsRealtime(0.5f);
         state = State.WaitingForContinue;
         yield return new WaitUntil(() => state == State.StatueTalking);
     }
@@ -332,6 +332,18 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
         // Show question with hint in the same panel
         dialogueText.text = question.questionText + "\n(Hint: " + question.hint + ")\n> ";
+
+        // --- NEW: Set hints for the BotHintSystem ---
+        if (hintSystem)
+        {
+            string[] hints = new string[] { question.hint, question.detailedHint };
+            hintSystem.SetHints(hints);
+            hintSystem.EnableHints();
+        }
+
+        // Pause the game while waiting for answer
+        SetGamePaused(true);
+
         state = State.WaitingForAnswer;
     }
 
@@ -408,7 +420,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             }
         }
 
-        // Allow partial credit for average/poor performance
         if (performance != PlayerPerformance.Perfect)
         {
             float similarity = CalculateSimilarity(userAnswer, correctAnswer);
@@ -422,10 +433,8 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     {
         questionsCorrect++;
 
-        // 🔊 Correct answer sound
         PlayAnswerSound(true);
 
-        // Activate platform for this question
         if (currentQuestionIndex < puzzlePlatforms.Length && puzzlePlatforms[currentQuestionIndex] != null)
         {
             puzzlePlatforms[currentQuestionIndex].Resume();
@@ -446,7 +455,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     void HandleWrongAnswer(AdvancedQuestion question)
     {
-        // 🔊 Wrong answer sound
         PlayAnswerSound(false);
 
         if (currentAttempt < maxAttemptsPerQuestion)
@@ -468,7 +476,6 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             state = State.ReviewingAnswer;
         }
     }
-
 
     string GetProgressiveHint(AdvancedQuestion question, int attempt)
     {
@@ -497,17 +504,28 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
         foreach (char c in line)
         {
+            if (!isTyping)  // Skip pressed
+            {
+                dialogueText.text = line;
+                break;
+            }
+
             dialogueText.text += c;
-            yield return new WaitForSeconds(typeSpeed);
+            yield return new WaitForSecondsRealtime(typeSpeed);   // <-- CHANGED
         }
 
         isTyping = false;
 
-        // Only go to waiting if we're not in reviewing state
         if (state == State.StatueTalking)
         {
             state = State.WaitingForContinue;
         }
+    }
+
+    void CheckSkipTyping()   // <-- NEW
+    {
+        if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)
+            isTyping = false;
     }
 
     void CheckContinueInput()
@@ -516,7 +534,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         {
             if (state == State.WaitingForContinue)
             {
-                state = State.StatueTalking; // This will trigger the next line in the sequence
+                state = State.StatueTalking;
             }
         }
     }
@@ -536,6 +554,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
     // ---------------- CONCLUSION ----------------
     void ConcludePuzzle()
     {
+        // Disable hints before finishing
+        if (hintSystem) hintSystem.DisableHints();
+
         string conclusion = GetConclusionDialogue();
         StartStatueLine(conclusion);
         StartCoroutine(HidePanelDelayed());
@@ -561,16 +582,24 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     IEnumerator HidePanelDelayed()
     {
-        yield return new WaitForSeconds(2.2f);
+        yield return new WaitForSecondsRealtime(2.2f);   // <-- CHANGED
 
-        // Wait until typing is complete
         while (isTyping)
             yield return null;
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
 
+        // Unpause the game when puzzle fully ends
+        SetGamePaused(false);
+
         state = State.Idle;
+    }
+
+    // ---------------- PAUSE CONTROL ----------------   // <-- NEW
+    void SetGamePaused(bool paused)
+    {
+        Time.timeScale = paused ? 0f : 1f;
     }
 
     // ---------------- QUESTION POOLS ----------------
@@ -608,7 +637,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         };
     }
 
-    AdvancedQuestion[] GetAverageQuestions() 
+    AdvancedQuestion[] GetAverageQuestions()
     {
         return new AdvancedQuestion[]
         {
