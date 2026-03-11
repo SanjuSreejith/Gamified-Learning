@@ -6415,7 +6415,7 @@ SpriteRenderer:
   m_SortingOrder: -5
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1291202924252101130, guid: c0031ef4e35c27545acf730d09a4a4f9, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.2981131, g: 0.2981131, b: 0.2981131, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -7909,17 +7909,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &309373217 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3432686974169254336, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
-  m_PrefabInstance: {fileID: 760019527}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!4 &317489159 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
@@ -16363,7 +16352,7 @@ SpriteRenderer:
   m_SortingOrder: -5
   m_MaskInteraction: 0
   m_Sprite: {fileID: -1291202924252101130, guid: c0031ef4e35c27545acf730d09a4a4f9, type: 3}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0.2981131, g: 0.2981131, b: 0.2981131, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -22221,8 +22210,8 @@ MonoBehaviour:
     terminalPanel: {fileID: 14194790}
     terminalText: {fileID: 1723438024}
     dialoguePanel: {fileID: 1153826311}
-    speakerText: {fileID: 309373217}
-    dialogueText: {fileID: 1783892518}
+    speakerText: {fileID: 0}
+    dialogueText: {fileID: 0}
     speakerImage: {fileID: 428142753}
     abelPortrait: {fileID: 0}
     kuttanPortrait: {fileID: 0}
@@ -22661,8 +22650,8 @@ MonoBehaviour:
     terminalPanel: {fileID: 14194790}
     terminalText: {fileID: 1723438024}
     dialoguePanel: {fileID: 1153826311}
-    speakerText: {fileID: 309373217}
-    dialogueText: {fileID: 1783892518}
+    speakerText: {fileID: 0}
+    dialogueText: {fileID: 0}
     speakerImage: {fileID: 428142753}
     abelPortrait: {fileID: 0}
     kuttanPortrait: {fileID: 0}
@@ -29563,8 +29552,8 @@ MonoBehaviour:
     terminalPanel: {fileID: 14194790}
     terminalText: {fileID: 1723438024}
     dialoguePanel: {fileID: 1153826311}
-    speakerText: {fileID: 309373217}
-    dialogueText: {fileID: 1783892518}
+    speakerText: {fileID: 0}
+    dialogueText: {fileID: 0}
     speakerImage: {fileID: 428142753}
     abelPortrait: {fileID: 0}
     kuttanPortrait: {fileID: 0}
@@ -34696,7 +34685,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8767152486562788127, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 332.43942
+      value: 333.81
       objectReference: {fileID: 0}
     - target: {fileID: 8767152486562788127, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -37909,8 +37898,8 @@ MonoBehaviour:
     terminalPanel: {fileID: 14194790}
     terminalText: {fileID: 1723438024}
     dialoguePanel: {fileID: 1153826311}
-    speakerText: {fileID: 309373217}
-    dialogueText: {fileID: 1783892518}
+    speakerText: {fileID: 0}
+    dialogueText: {fileID: 0}
     speakerImage: {fileID: 428142753}
     abelPortrait: {fileID: 0}
     kuttanPortrait: {fileID: 0}
@@ -39269,7 +39258,7 @@ Transform:
   m_GameObject: {fileID: 1739029649}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 334.7, y: 0, z: 1}
+  m_LocalPosition: {x: 336.5, y: 0, z: 1}
   m_LocalScale: {x: 0.998, y: 0.998, z: 0.998}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -39607,17 +39596,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 9027514048236820042, guid: effb650189dc5714e9e9801b1cfb3991, type: 3}
   m_PrefabInstance: {fileID: 1753359278}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1783892518 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3344942873183005101, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
-  m_PrefabInstance: {fileID: 760019527}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1 &1801396568
 GameObject:
   m_ObjectHideFlags: 0

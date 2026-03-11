@@ -41,9 +41,10 @@ public class DialogueBacklogManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.B))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleBacklog();
+            return; // Optional: prevents other inputs this frame
         }
     }
 

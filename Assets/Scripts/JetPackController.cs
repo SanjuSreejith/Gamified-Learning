@@ -27,12 +27,12 @@ public class JetpackController2D : MonoBehaviour
     public AudioSource jetpackAudio;
     public AudioClip jetpackLoopClip;
 
-    Rigidbody2D rb;
-    PlayerJetpackAnimator2D animator;
+    private Rigidbody2D rb;
+    private PlayerJetpackAnimator2D animator;
 
-    float originalGravity;
-    bool isFlying;
-    int currentPoint = 1;
+    private float originalGravity;
+    private bool isFlying;
+    private int currentPoint = 0;               // FIX: start at 0 (first landing point)
 
     public Action<bool> OnFlightEnd;
 
@@ -120,12 +120,13 @@ public class JetpackController2D : MonoBehaviour
     {
         if (controlMode != ControlMode.Auto) return;
         if (isFlying) return;
-        if (landingPoints == null || currentPoint >= landingPoints.Length) return;
+        if (landingPoints == null || landingPoints.Length == 0) return;
+        if (currentPoint >= landingPoints.Length) return;   // no more points
 
         StartCoroutine(FlyRoutine(travelPercent));
     }
 
-    IEnumerator FlyRoutine(float travelPercent)
+    private IEnumerator FlyRoutine(float travelPercent)
     {
         isFlying = true;
         rb.gravityScale = 0f;
@@ -140,6 +141,8 @@ public class JetpackController2D : MonoBehaviour
 
         float t = 0f;
         float totalDistance = Vector2.Distance(start, end);
+        // Prevent division by zero if points are identical
+        if (totalDistance < 0.001f) totalDistance = 0.001f;
 
         while (t < travelPercent)
         {
@@ -151,6 +154,9 @@ public class JetpackController2D : MonoBehaviour
 
             yield return null;
         }
+
+        // FIX: advance to next landing point for future flights
+        currentPoint++;
 
         rb.gravityScale = originalGravity;
 
@@ -165,7 +171,7 @@ public class JetpackController2D : MonoBehaviour
 
     // ================= SOUND =================
 
-    void StartJetpackSound()
+    private void StartJetpackSound()
     {
         if (!jetpackAudio || !jetpackLoopClip) return;
 
@@ -176,17 +182,18 @@ public class JetpackController2D : MonoBehaviour
         }
     }
 
-    void StopJetpackSound()
+    private void StopJetpackSound()
     {
         if (jetpackAudio && jetpackAudio.isPlaying)
             jetpackAudio.Stop();
     }
+
     // ================= LEGACY SUPPORT =================
 
     // Reset jetpack state (used by lesson system)
     public void Equip()
     {
-        currentPoint = 1;
+        currentPoint = 0;           // FIX: reset to first point
         isFlying = false;
 
         rb.gravityScale = originalGravity;
@@ -220,5 +227,4 @@ public class JetpackController2D : MonoBehaviour
 
         OnFlightEnd?.Invoke(false);
     }
-
 }

@@ -12,7 +12,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     public TextMeshProUGUI terminalText;
 
     [Header("Hint System")]
-    public BotHintSystem hintSystem;                     // <-- NEW
+    public BotHintSystem hintSystem;
 
     /* ================= BRIDGE ================= */
     [Header("Bridge")]
@@ -40,7 +40,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     public CanvasGroup fadePanel;
     public float fadeSpeed = 2f;
 
-    /* ================= BEHAVIOR TOGGLES ================= */   // <-- NEW
+    /* ================= BEHAVIOR TOGGLES ================= */
     [Header("Behavior")]
     public bool teleportNPCsToHoldPoint = true;   // false = rush without fade
     public float rushSpeedMultiplier = 2f;        // (requires NPC support)
@@ -94,23 +94,31 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
                 "The condition must be a valid Python expression."
             });
         }
+
+        // Ensure time is running (in case it was left paused)
+        Time.timeScale = 1f;
     }
 
     /* ================= TRIGGER ================= */
-
+    // IMPORTANT: The player must have a Rigidbody2D and tag "Player".
+    // This object must have a Collider2D with "Is Trigger" checked.
     void OnTriggerEnter2D(Collider2D other)
     {
         if (active) return;
-        if (!other.CompareTag("Player")) return;
+        if (!other.CompareTag("Player"))
+        {
+            Debug.Log("Trigger entered by non-player: " + other.name);
+            return;
+        }
 
+        Debug.Log("Player detected! Starting bridge lesson.");
         active = true;
-        GetComponent<Collider2D>().enabled = false;
+        GetComponent<Collider2D>().enabled = false; // Disable trigger permanently
 
         StartCoroutine(PrepareScene());
     }
 
     /* ================= PREPARATION (FADE/TELEPORT OR RUSH) ================= */
-
     IEnumerator PrepareScene()
     {
         if (teleportNPCsToHoldPoint)
@@ -122,7 +130,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
             yield return StartCoroutine(RushToHoldPoint());
         }
 
-        // After NPCs are in place, start teaching
+        // INSTANT: No delay before starting teaching
         teachState = TeachState.Teaching;
         teachIndex = 0;
         ShowTeachingDialogue();
@@ -130,56 +138,70 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
 
     IEnumerator FadeAndTeleport()
     {
-        if (fadePanel)
+        // INSTANT FADE OUT (teleport happens immediately)
+        if (fadePanel != null)
         {
             fadePanel.gameObject.SetActive(true);
-            while (fadePanel.alpha < 1f)
-            {
-                fadePanel.alpha += Time.deltaTime * fadeSpeed;
-                yield return null;
-            }
+            fadePanel.alpha = 1f;  // Instant black
+            yield return null;      // Single frame
         }
 
-        // Teleport friendly NPCs
-        foreach (var npc in friendlyNPCs)
-            if (npc) npc.TeleportToHoldPoint(npcHoldPoint);
-
-        // Slow enemies
-        foreach (var enemy in enemies)
-            if (enemy) enemy.SetSlow(true, enemySlowMultiplier);
-
-        yield return new WaitForSeconds(0.15f);
-
-        if (fadePanel)
+        // INSTANT TELEPORT - happens while screen is black
+        if (friendlyNPCs != null)
         {
-            while (fadePanel.alpha > 0f)
-            {
-                fadePanel.alpha -= Time.deltaTime * fadeSpeed;
-                yield return null;
-            }
+            foreach (var npc in friendlyNPCs)
+                if (npc != null) npc.TeleportToHoldPoint(npcHoldPoint);
+        }
+
+        // INSTANT SLOW ENEMIES
+        if (enemies != null)
+        {
+            foreach (var enemy in enemies)
+                if (enemy != null) enemy.SetSlow(true, enemySlowMultiplier);
+        }
+
+        // REMOVED: yield return new WaitForSeconds(0.15f);
+        // NO DELAY - teleport is instant
+
+        // INSTANT FADE IN
+        if (fadePanel != null)
+        {
+            fadePanel.alpha = 0f;  // Instant clear
+            yield return null;      // Single frame
             fadePanel.gameObject.SetActive(false);
         }
     }
-
     IEnumerator RushToHoldPoint()
     {
         // Slow enemies immediately
-        foreach (var enemy in enemies)
-            if (enemy) enemy.SetSlow(true, enemySlowMultiplier);
+        if (enemies != null)
+        {
+            foreach (var enemy in enemies)
+                if (enemy != null) enemy.SetSlow(true, enemySlowMultiplier);
+        }
 
         // Tell each NPC to move to the hold point
-        foreach (var npc in friendlyNPCs)
+        if (friendlyNPCs != null)
         {
-            if (npc == null) continue;
-            npc.MoveToHoldPoint(npcHoldPoint);
-            // (Optional: if NPC script supports speed multiplier, set it here)
+            foreach (var npc in friendlyNPCs)
+            {
+                if (npc == null) continue;
+                npc.MoveToHoldPoint(npcHoldPoint);
+                // (Optional: if NPC script supports speed multiplier, set it here)
+            }
         }
 
-        // Wait until all NPCs have arrived
-        while (!AreNPCsAtHoldPoint())
+        // Wait until all NPCs have arrived, with a timeout (5 seconds)
+        float timeout = 5f;
+        float timer = 0f;
+        while (!AreNPCsAtHoldPoint() && timer < timeout)
         {
-            yield return null; // check every frame
+            timer += Time.deltaTime;
+            yield return null;
         }
+
+        if (timer >= timeout)
+            Debug.LogWarning("RushToHoldPoint timed out – some NPCs may not have reached the hold point.");
 
         // Brief pause for visual coherence
         yield return new WaitForSeconds(0.2f);
@@ -187,6 +209,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
 
     bool AreNPCsAtHoldPoint()
     {
+        if (friendlyNPCs == null) return true;
         foreach (var npc in friendlyNPCs)
         {
             if (npc == null) continue;
@@ -364,6 +387,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     /* ================= DIALOGUE ================= */
     void Speak(string speaker, string text)
     {
+        if (dialoguePanel == null) return;
         dialoguePanel.SetActive(true);
         speakerText.text = speaker;
         speakerImage.sprite = speaker == "Abel" ? abelPortrait : kuttanPortrait;
@@ -385,13 +409,19 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
 
     void RestoreScene()
     {
-        foreach (var enemy in enemies)
-            if (enemy) enemy.SetSlow(false, 1f);
+        if (enemies != null)
+        {
+            foreach (var enemy in enemies)
+                if (enemy != null) enemy.SetSlow(false, 1f);
+        }
 
-        foreach (var npc in friendlyNPCs)
-            if (npc) npc.ReleaseFromHoldPoint();
+        if (friendlyNPCs != null)
+        {
+            foreach (var npc in friendlyNPCs)
+                if (npc != null) npc.ReleaseFromHoldPoint();
+        }
 
-        // Ensure time is unpaused at the very end (just in case)
+        // Ensure time is unpaused at the very end
         if (pauseGameDuringDialogue)
             Time.timeScale = 1f;
     }
