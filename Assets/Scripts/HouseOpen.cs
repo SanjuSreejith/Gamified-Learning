@@ -31,6 +31,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     [Header("Player Control")]
     public MonoBehaviour playerMovementScript;
+    [Header("Completion Save")]
+    public bool markSceneCompleted = true;
 
     enum State
     {
@@ -103,9 +105,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void Start()
     {
-        boardPanel.SetActive(false);
-        terminalPanel.SetActive(false);
-        lockPanel.SetActive(false);
+        if (boardPanel) boardPanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
+        if (lockPanel) lockPanel.SetActive(false);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -135,9 +137,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         StopAllCoroutines();
 
-        boardPanel.SetActive(false);
-        terminalPanel.SetActive(false);
-        lockPanel.SetActive(false);
+        if (boardPanel) boardPanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
+        if (lockPanel) lockPanel.SetActive(false);
 
         if (hintSystem)
             hintSystem.DisableHints();
@@ -174,28 +176,37 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         dialogueIndex = 0;
         dialogueActive = true;
 
-        boardPanel.SetActive(true);
-        boardText.text = activeDialogue[dialogueIndex];
+        if (boardPanel) boardPanel.SetActive(true);
+
+        string line = activeDialogue[dialogueIndex];
+        boardText.text = line;
+
+        if (DialogueBacklogManager.Instance != null)
+            DialogueBacklogManager.Instance.AddLine("Kuttan", line);
 
         StartCoroutine(DialogueRoutine());
     }
 
     IEnumerator DialogueRoutine()
     {
-        yield return new WaitUntil(() =>
-            Input.GetKeyDown(KeyCode.Return));
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
 
         while (dialogueIndex < activeDialogue.Length - 1)
         {
             dialogueIndex++;
-            boardText.text = activeDialogue[dialogueIndex];
 
-            yield return new WaitUntil(() =>
-                Input.GetKeyDown(KeyCode.Return));
+            string line = activeDialogue[dialogueIndex];
+            boardText.text = line;
+
+            if (DialogueBacklogManager.Instance != null)
+                DialogueBacklogManager.Instance.AddLine("Guide", line);
+
+            yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
         }
 
         dialogueActive = false;
-        boardPanel.SetActive(false);
+
+        if (boardPanel) boardPanel.SetActive(false);
 
         if (state == State.Teaching)
             state = State.WaitingForTerminal;
@@ -209,7 +220,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void OpenPythonTerminal()
     {
-        terminalPanel.SetActive(true);
+        if (terminalPanel) terminalPanel.SetActive(true);
+
         pythonInput = "";
         terminalText.text = "> ";
         state = State.TypingPython;
@@ -239,16 +251,13 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void SubmitPython()
     {
-        terminalPanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
+
         SetPaused(false);
 
         if (RemoveSpaces(pythonInput) == RemoveSpaces(CORRECT_CODE))
         {
             PlaySound(correctSound);
-
-            if (hintSystem)
-                hintSystem.SetHints(lockHints);
-
             StartCoroutine(OpenLockAfterDialogue());
         }
         else
@@ -262,13 +271,22 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     IEnumerator OpenLockAfterDialogue()
     {
         StartDialogue(lockDialogue);
+
         yield return new WaitUntil(() => !dialogueActive);
+
+        if (hintSystem)
+        {
+            hintSystem.SetHints(lockHints);
+            hintSystem.EnableHints();
+        }
+
         OpenLockTerminal();
     }
 
     void OpenLockTerminal()
     {
-        lockPanel.SetActive(true);
+        if (lockPanel) lockPanel.SetActive(true);
+
         lockInput = "";
         lockText.text = "Enter Password";
         state = State.TypingLock;
@@ -300,7 +318,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     {
         if (lockInput == LOCK_PASSWORD)
         {
-            lockPanel.SetActive(false);
+            if (lockPanel) lockPanel.SetActive(false);
+
             SetPaused(false);
 
             StartCoroutine(SuccessSequence());
@@ -315,6 +334,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     IEnumerator SuccessSequence()
     {
         StartDialogue(successDialogue);
+
         yield return new WaitUntil(() => !dialogueActive);
 
         if (hintSystem)
@@ -322,9 +342,20 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         PlaySound(doorOpenSound);
 
-        yield return new WaitForSeconds(1f);
-
+        yield return new WaitForSeconds(1f); 
+        MarkSceneCompleted();
         SceneManager.LoadScene(nextSceneName);
+
+    }
+    void MarkSceneCompleted()
+    {
+        if (!markSceneCompleted) return;
+
+        string sceneName = SceneManager.GetActiveScene().name;
+        string key = "SceneCompleted_" + sceneName;
+
+        PlayerPrefs.SetInt(key, 1);
+        PlayerPrefs.Save();
     }
 
     void PlaySound(AudioClip clip)

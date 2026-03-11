@@ -8,6 +8,7 @@ using System.Collections;
 public class IntroBotGuideController2D : MonoBehaviour
 {
     /* ================= REFERENCES ================= */
+
     [Header("References")]
     public Transform groundCheck;
     public Transform frontCheck;
@@ -15,15 +16,18 @@ public class IntroBotGuideController2D : MonoBehaviour
     public LayerMask groundLayer;
 
     /* ================= UI ================= */
+
     [Header("UI")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
 
     /* ================= MOVEMENT ================= */
+
     [Header("Movement")]
     public float moveSpeed = 4.5f;
 
     /* ================= JUMP ================= */
+
     [Header("Jump")]
     public float jumpForce = 7.5f;
     public float wallCheckDistance = 0.4f;
@@ -59,9 +63,19 @@ public class IntroBotGuideController2D : MonoBehaviour
 
     void Start()
     {
-        dialoguePanel.SetActive(true);
+        StartCoroutine(StartIntro());
+    }
+
+    IEnumerator StartIntro()
+    {
+        yield return new WaitForSeconds(0.2f);
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(true);
+
         dialogueIndex = 0;
-        dialogueText.text = introDialogue[dialogueIndex];
+
+        ShowDialogue(introDialogue[dialogueIndex]);
     }
 
     void Update()
@@ -73,10 +87,20 @@ public class IntroBotGuideController2D : MonoBehaviour
             AdvanceDialogue();
         }
 
-        anim.SetBool("isGrounded", isGrounded);
+        if (anim != null)
+            anim.SetBool("isGrounded", isGrounded);
     }
 
     /* ================= DIALOGUE ================= */
+
+    void ShowDialogue(string line)
+    {
+        if (dialogueText != null)
+            dialogueText.text = line;
+
+        if (DialogueBacklogManager.Instance != null)
+            DialogueBacklogManager.Instance.AddLine("Kuttan", line);
+    }
 
     void AdvanceDialogue()
     {
@@ -88,13 +112,14 @@ public class IntroBotGuideController2D : MonoBehaviour
         {
             dialogueFinished = true;
 
-            dialoguePanel.SetActive(false);
+            if (dialoguePanel != null)
+                dialoguePanel.SetActive(false);
 
             StartCoroutine(MoveSequence());
             return;
         }
 
-        dialogueText.text = introDialogue[dialogueIndex];
+        ShowDialogue(introDialogue[dialogueIndex]);
     }
 
     /* ================= MOVE SEQUENCE ================= */
@@ -102,7 +127,9 @@ public class IntroBotGuideController2D : MonoBehaviour
     IEnumerator MoveSequence()
     {
         moving = true;
-        anim.SetBool("isWalking", true);
+
+        if (anim != null)
+            anim.SetBool("isWalking", true);
 
         float moveTime = 2f;
         float timer = 0f;
@@ -121,11 +148,14 @@ public class IntroBotGuideController2D : MonoBehaviour
         }
 
         rb.linearVelocity = Vector2.zero;
-        anim.SetBool("isWalking", false);
+
+        if (anim != null)
+            anim.SetBool("isWalking", false);
 
         yield return new WaitForSeconds(teleportDelay);
 
-        rb.position = teleportTarget.position;
+        if (teleportTarget != null)
+            rb.position = teleportTarget.position;
 
         moving = false;
     }
@@ -152,13 +182,17 @@ public class IntroBotGuideController2D : MonoBehaviour
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
-        anim.SetTrigger("Jump");
+
+        if (anim != null)
+            anim.SetTrigger("Jump");
     }
 
     /* ================= GROUND CHECK ================= */
 
     void CheckGround()
     {
+        if (groundCheck == null) return;
+
         isGrounded = Physics2D.OverlapCircle(
             groundCheck.position,
             groundRadius,

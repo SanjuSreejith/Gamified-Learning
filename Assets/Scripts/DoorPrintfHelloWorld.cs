@@ -35,6 +35,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     // ================= SCENE =================
     public string nextSceneName;
 
+    // ================= HINT SYSTEM =================
+    public BotHintSystem botHintSystem;
+
+    // ================= DIALOGUE BACKLOG =================
+    public DialogueBacklogManager backlogManager;
+
     // ================= STATE =================
     enum GameState
     {
@@ -55,6 +61,30 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     string currentInput = "";
     bool introCompleted;
     string[] activeDialogue;
+
+    // ================= HINTS =================
+    string[] teachingHints = {
+        "Python uses print()",
+        "Text must be inside double quotes",
+        "No semicolons at the end"
+    };
+
+    string[] inputTerminalHints = {
+        "Type: print(\"Welcome\")",
+        "Remember double quotes",
+        "Press Enter to submit"
+    };
+
+    string[] feedbackHints = {
+        "Check your syntax",
+        "Use print with parentheses",
+        "Text must be exactly 'Welcome'"
+    };
+
+    string[] successHints = {
+        "Correct! The door will open",
+        "You can now proceed"
+    };
 
     // ================= PYTHON DIALOGUES =================
     string[] introDialogue =
@@ -96,6 +126,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         outputTerminalText.text =
             "PYTHON OUTPUT TERMINAL\n" +
             "----------------------\n\n";
+
+        if (botHintSystem == null)
+            botHintSystem = FindObjectOfType<BotHintSystem>();
+
+        if (backlogManager == null)
+            backlogManager = FindObjectOfType<DialogueBacklogManager>();
     }
 
     // ================= UPDATE =================
@@ -149,6 +185,16 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         dialogueIndex = 0;
         currentState = state;
         boardText.text = activeDialogue[dialogueIndex];
+
+        // Add first line to backlog (speaker: Kuttan)
+        backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
+
+        // Set hints for teaching dialogue
+        if (state == GameState.TeachingDialogue && botHintSystem != null)
+        {
+            botHintSystem.SetHints(teachingHints);
+            botHintSystem.EnableHints();
+        }
     }
 
     void HandleDialogueAdvance()
@@ -160,6 +206,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         if (dialogueIndex < activeDialogue.Length)
         {
             boardText.text = activeDialogue[dialogueIndex];
+            backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
         }
         else
         {
@@ -168,9 +215,17 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
             if (currentState == GameState.TeachingDialogue ||
                 currentState == GameState.FeedbackDialogue)
+            {
+                // Disable hints before opening input terminal
+                botHintSystem?.DisableHints();
                 OpenInputTerminal();
+            }
             else if (currentState == GameState.SuccessDialogue)
+            {
+                // Disable hints before fading
+                botHintSystem?.DisableHints();
                 StartCoroutine(FadeAndChangeScene());
+            }
         }
     }
 
@@ -181,6 +236,16 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         inputTerminalPanel.SetActive(true);
         inputText.text = "> ";
         currentState = GameState.InputTerminal;
+
+        // Pause the game
+        Time.timeScale = 0f;
+
+        // Set hints for input terminal
+        if (botHintSystem != null)
+        {
+            botHintSystem.SetHints(inputTerminalHints);
+            botHintSystem.EnableHints();
+        }
     }
 
     void HandleTyping()
@@ -209,8 +274,15 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     void SubmitInput()
     {
         inputTerminalPanel.SetActive(false);
+
+        // Unpause the game
+        Time.timeScale = 1f;
+
         outputTerminalText.text += "> " + currentInput + "\n";
         attemptCount++;
+
+        // Add player input to backlog (speaker: Kuttan)
+        backlogManager?.AddLine("Kuttan", currentInput);
 
         List<string> errors = ValidatePythonPrint(currentInput);
 
@@ -286,12 +358,30 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         dialogueIndex = 0;
         currentState = GameState.FeedbackDialogue;
         boardText.text = activeDialogue[dialogueIndex];
+
+        // Add first error line to backlog
+        backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
+
+        // Set hints for feedback
+        if (botHintSystem != null)
+        {
+            botHintSystem.SetHints(feedbackHints);
+            botHintSystem.EnableHints();
+        }
     }
 
     // ================= SUCCESS =================
     void HandleSuccess()
     {
         outputTerminalText.text += "Welcome\n\n";
+
+        // Set hints for success
+        if (botHintSystem != null)
+        {
+            botHintSystem.SetHints(successHints);
+            botHintSystem.EnableHints();
+        }
+
         StartDialogue(successDialogue, GameState.SuccessDialogue);
     }
 
@@ -306,11 +396,26 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             audioSource.PlayOneShot(typeSymbol);
     }
 
+    // ================= SCENE COMPLETION =================
+    void MarkSceneCompleted()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
+        PlayerPrefs.Save();
+        Debug.Log("Scene marked as completed: " + sceneName);
+    }
+
     // ================= FADE =================
     IEnumerator FadeAndChangeScene()
     {
         currentState = GameState.Transition;
         fadeCanvas.blocksRaycasts = true;
+
+        // Mark this scene as completed before leaving
+        MarkSceneCompleted();
+
+        // Ensure time is unpaused (in case something went wrong)
+        Time.timeScale = 1f;
 
         float t = 0;
         while (t < fadeDuration)
