@@ -16,6 +16,9 @@ public class BridgeDialogueSequenceController : MonoBehaviour
     public GameObject terminalPanel;
     public TextMeshProUGUI terminalText;
 
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;
+
     /* ================= Portraits ================= */
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
@@ -25,14 +28,18 @@ public class BridgeDialogueSequenceController : MonoBehaviour
     public NPCSmartFollower2D[] friendlyNPCs;
     public EnemyAI2D_Smart[] enemies;
     public Transform npcHoldPoint; // where Abel & Kuttan should stop
+
     public float enemySlowMultiplier = 0.25f;
     [Header("Fade")]
     public CanvasGroup fadePanel;
     public float fadeSpeed = 2f;
     [Header("Bridge")]
     public BridgeBreakController2D bridgeController;
-
-
+    [Header("NPC Behavior")]
+    public bool teleportNPCsToHoldPoint = true; // false = rush to hold point without fade
+    public float rushSpeedMultiplier = 2f;      // speed multiplier during rush (needs NPC support)
+    [Header("Pause")]
+    public bool pauseGameDuringDialogue = true; // freeze time when dialogue/terminal is active
 
     /* ================= Dialogue ================= */
     public DialogueLine[] lines;
@@ -92,14 +99,44 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         terminalPanel.SetActive(false);
         typewriter = dialogueText.GetComponent<TMPTypewriter>();
 
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(new string[]
+            {
+                "The 'if' statement checks if a condition is true.",
+                "The number after '>' is the bridge's weight limit.",
+                "Indentation (the spaces) tells Python which code belongs to the if.",
+                "If people_count exceeds the limit, the bridge breaks."
+            });
+        }
     }
 
     void PrepareNPCsForDialogue()
     {
-        StartCoroutine(FadeAndTeleportNPCs());
+        StartCoroutine(PrepareSequence());
     }
 
-    IEnumerator FadeAndTeleportNPCs()
+    IEnumerator PrepareSequence()
+    {
+        if (teleportNPCsToHoldPoint)
+        {
+            // --- Fade + Teleport ---
+            yield return StartCoroutine(FadeAndTeleport());
+        }
+        else
+        {
+            // --- Rush to hold point (no fade) ---
+            yield return StartCoroutine(RushToHoldPoint());
+        }
+
+        // All NPCs are now at the hold point → start dialogue
+        npcsReady = true;
+        dialoguePanel.SetActive(true);
+        index = 0;
+        ShowLine();
+    }
+
+    IEnumerator FadeAndTeleport()
     {
         // Fade out
         fadePanel.gameObject.SetActive(true);
@@ -131,15 +168,37 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             fadePanel.alpha -= Time.deltaTime * fadeSpeed;
             yield return null;
         }
-
         fadePanel.alpha = 0f;
         fadePanel.gameObject.SetActive(false);
+    }
 
-        // Allow dialogue to start
-        npcsReady = true;
-        dialoguePanel.SetActive(true);
-        index = 0;
-        ShowLine();
+    IEnumerator RushToHoldPoint()
+    {
+        // Slow enemies immediately
+        foreach (var enemy in enemies)
+        {
+            if (enemy == null) continue;
+            enemy.SetSlow(true, enemySlowMultiplier);
+        }
+
+        // Tell each NPC to move to the hold point (they will use their forced‑hold movement)
+        foreach (var npc in friendlyNPCs)
+        {
+            if (npc == null) continue;
+            npc.MoveToHoldPoint(npcHoldPoint);
+            // OPTIONAL: If you want them to move faster during rush, you'll need to add a method to
+            // NPCSmartFollower2D to set a speed multiplier while in forced hold.
+            // For now, they move at base speed * 0.6f (as hardcoded in NPCSmartFollower2D).
+        }
+
+        // Wait until all NPCs are close enough to the hold point
+        while (!AreNPCsAtHoldPoint())
+        {
+            yield return null; // check every frame
+        }
+
+        // Brief pause for visual coherence
+        yield return new WaitForSeconds(0.2f);
     }
 
     bool AreNPCsAtHoldPoint()
@@ -156,7 +215,7 @@ public class BridgeDialogueSequenceController : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
 
-        // 🔒 Disable trigger so it can NEVER fire again
+        // Disable trigger so it can never fire again
         GetComponent<Collider2D>().enabled = false;
 
         if (active) return;
@@ -164,38 +223,26 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         active = true;
         npcsReady = false;
 
-        PrepareNPCsForDialogue(); // fade + teleport + slow enemies
+        PrepareNPCsForDialogue(); // starts either fade+teleport or rush
     }
 
     void Update()
     {
-        // Wait for NPCs to reach hold point before starting dialogue
-        if (active && !npcsReady)
-        {
-            if (AreNPCsAtHoldPoint())
-            {
-                npcsReady = true;
-                dialoguePanel.SetActive(true);
-                index = 0;
-                ShowLine();
-            }
-            return;
-        }
-
         if (!active) return;
 
+        // During preparation (fade/rush) we don't handle dialogue input
+        if (!npcsReady) return;
+
+        // Dialogue input handling
         if (waitingForInput && Input.GetKeyDown(KeyCode.Return))
         {
-            // If text is still typing → finish it first
             if (typewriter != null && typewriter.IsTyping())
-            {
                 typewriter.Skip();
-            }
             else
-            {
                 NextLine();
-            }
         }
+
+        // Terminal handling
         if (!terminalOpened) return;
 
         if (terminalState == TerminalState.Viewing && Input.GetKeyDown(KeyCode.E))
@@ -215,6 +262,10 @@ public class BridgeDialogueSequenceController : MonoBehaviour
 
         if (waitingToCloseReaction && Input.GetKeyDown(KeyCode.Return))
         {
+            // Unpause before closing final reaction
+            if (pauseGameDuringDialogue)
+                Time.timeScale = 1f;
+
             dialoguePanel.SetActive(false);
             waitingToCloseReaction = false;
             RestoreEnemies();
@@ -237,23 +288,22 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         speakerText.text = line.speaker;
         speakerImage.sprite = line.portrait;
 
-        // ▶ Smooth typewriter reveal
         if (typewriter != null)
             typewriter.Play(line.text);
         else
             dialogueText.text = line.text;
 
-        DialogueBacklogManager.Instance?.AddLine(
-            line.speaker,
-            line.text
-        );
+        DialogueBacklogManager.Instance?.AddLine(line.speaker, line.text);
 
         UpdateHighlightMode();
         UpdateTerminal();
 
         waitingForInput = true;
-    }
 
+        // Pause the game when dialogue becomes active
+        if (pauseGameDuringDialogue && index == 0) // only set on first line
+            Time.timeScale = 0f;
+    }
 
     void NextLine()
     {
@@ -269,6 +319,12 @@ public class BridgeDialogueSequenceController : MonoBehaviour
         terminalPanel.SetActive(true);
         terminalState = TerminalState.Viewing;
         UpdateTerminal();
+
+        if (hintSystem != null)
+            hintSystem.EnableHints();
+
+        // Terminal is now active → keep game paused
+        // (timeScale already 0 from dialogue)
     }
 
     /* ================= Highlight ================= */
@@ -321,15 +377,20 @@ public class BridgeDialogueSequenceController : MonoBehaviour
 
     void ConfirmAndClose()
     {
+        if (hintSystem != null)
+            hintSystem.DisableHints();
+
         terminalState = TerminalState.Closed;
         terminalPanel.SetActive(false);
 
-        // 🔥 APPLY PYTHON CONDITION TO REAL BRIDGE
         bridgeController.EvaluateCondition(conditionValue);
+
+        // Unpause before showing reaction dialogue
+        if (pauseGameDuringDialogue)
+            Time.timeScale = 1f;
 
         ReactToLogic();
     }
-
 
     void UpdateTerminal()
     {
@@ -378,6 +439,10 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             Speak("Kuttan", "That number feels dangerous…");
 
         waitingToCloseReaction = true;
+
+        // Pause again for reaction dialogue
+        if (pauseGameDuringDialogue)
+            Time.timeScale = 0f;
     }
 
     void Speak(string speaker, string text)

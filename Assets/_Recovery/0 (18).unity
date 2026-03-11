@@ -614,7 +614,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   npcType: 0
   player: {fileID: 659620510}
-  playerRb: {fileID: 1460152169}
+  playerRb: {fileID: 659620516}
   groundCheck: {fileID: 52738573}
   frontCheck: {fileID: 1859835627}
   groundLayer:
@@ -7347,6 +7347,11 @@ MonoBehaviour:
   maxMemoryPoints: 24
   memorySpacing: 0.5
   groundRadius: 0.25
+--- !u!50 &659620516 stripped
+Rigidbody2D:
+  m_CorrespondingSourceObject: {fileID: 1455887707116289373, guid: 69a72a992035eb14ea9d6500a5881a38, type: 3}
+  m_PrefabInstance: {fileID: 659620507}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &668760791
 GameObject:
   m_ObjectHideFlags: 0
@@ -15568,7 +15573,7 @@ MonoBehaviour:
   fadePanel: {fileID: 1850622940}
   fadeSpeed: 0.5
   bridgeController: {fileID: 1621664053}
-  teleportNPCsToHoldPoint: 1
+  teleportNPCsToHoldPoint: 0
   rushSpeedMultiplier: 2
   pauseGameDuringDialogue: 1
   lines: []
@@ -27411,10 +27416,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 308804179}
     m_Modifications:
-    - target: {fileID: 6000684324274539983, guid: 63c197acb57f4ad4aaefb65c3db2980f, type: 3}
-      propertyPath: m_UpdateMode
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 7027247561940289492, guid: 63c197acb57f4ad4aaefb65c3db2980f, type: 3}
       propertyPath: m_Name
       value: HintPanel
@@ -27889,7 +27890,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   terminalPanel: {fileID: 778883833}
   terminalText: {fileID: 1813136762}
-  hintSystem: {fileID: 1628652342}
   bridgeController: {fileID: 852094451}
   dialoguePanel: {fileID: 193733901}
   speakerText: {fileID: 166459345}
@@ -27910,9 +27910,6 @@ MonoBehaviour:
   enemySlowMultiplier: 0.25
   fadePanel: {fileID: 1850622940}
   fadeSpeed: 2
-  teleportNPCsToHoldPoint: 0
-  rushSpeedMultiplier: 2
-  pauseGameDuringDialogue: 1
 --- !u!1 &1984401272
 GameObject:
   m_ObjectHideFlags: 0

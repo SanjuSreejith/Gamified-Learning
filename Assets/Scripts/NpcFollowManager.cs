@@ -39,6 +39,10 @@ public class NPCSmartFollower2D : MonoBehaviour
     public float maxSafeDropHeight = 3.5f;
     public float playerBelowTolerance = 0.3f;
 
+    [Header("Gap Crossing")]
+    public float maxGapWidth = 2.5f;
+    public float gapJumpDelay = 0.2f;
+
     [Header("Group Behavior")]
     public float separationRadius = 0.8f;
     public float separationStrength = 1.2f;
@@ -69,6 +73,9 @@ public class NPCSmartFollower2D : MonoBehaviour
     float targetSpeed;
     float stuckTimer;
     float lastX;
+
+    // Gap crossing timer
+    float gapStuckTimer;
 
     // Distance cache
     float cachedAbsDistance;
@@ -154,7 +161,8 @@ public class NPCSmartFollower2D : MonoBehaviour
 
     // ---------------- FOLLOW ----------------
     void FollowPlayer()
-    {   // Forced hold logic (used by dialogues / cutscenes)
+    {
+        // Forced hold logic (used by dialogues / cutscenes)
         if (forcedHold && holdPoint != null)
         {
             float dx = holdPoint.position.x - transform.position.x;
@@ -169,6 +177,7 @@ public class NPCSmartFollower2D : MonoBehaviour
             HandleFlip(Mathf.Sign(dx));
             return;
         }
+
         if (cachedAbsDistance <= currentStopDistance)
         {
             SmoothMove(0);
@@ -182,13 +191,33 @@ public class NPCSmartFollower2D : MonoBehaviour
 
         if (predictedPlayerSpeed < 0.3f && cachedAbsDistance < catchUpDistance)
             speed *= 0.55f;
+
+        // ---------- EDGE / GAP HANDLING ----------
         if (IsEdgeAhead(cachedDirection) && isGrounded)
         {
-            // ✅ Allow drop-down if player is below and ahead
+            // Drop down if player is below and ahead
             if (ShouldDropDown(cachedDirection))
             {
-                // Step off the edge smoothly
                 SmoothMove(cachedDirection * baseMoveSpeed * 0.8f);
+                return;
+            }
+
+            bool playerAhead = (cachedDirection == Mathf.Sign(player.position.x - transform.position.x))
+                               && cachedAbsDistance > currentStopDistance;
+
+            if (playerAhead && CanCrossGap(cachedDirection))
+            {
+                gapStuckTimer += Time.fixedDeltaTime;
+                if (gapStuckTimer >= gapJumpDelay)
+                {
+                    Jump();
+                    gapStuckTimer = 0f;
+                }
+                else
+                {
+                    // Creep forward slowly while preparing to jump
+                    SmoothMove(cachedDirection * baseMoveSpeed * 0.3f);
+                }
                 return;
             }
 
@@ -199,6 +228,9 @@ public class NPCSmartFollower2D : MonoBehaviour
                 return;
             }
         }
+
+        // Reset gap timer if not in a gap situation
+        gapStuckTimer = 0f;
 
         float separation = GetSeparationOffset();
         targetSpeed = cachedDirection * speed + separation;
@@ -219,6 +251,18 @@ public class NPCSmartFollower2D : MonoBehaviour
         );
 
         rb.linearVelocity = new Vector2(newX, rb.linearVelocity.y);
+    }
+
+    // ---------------- GAP CROSSING CHECK ----------------
+    bool CanCrossGap(float direction)
+    {
+        // Cast a ray forward & down to see if there's ground on the other side of the gap
+        Vector2 rayOrigin = (Vector2)transform.position + Vector2.right * direction * (edgeForwardOffset + 0.2f);
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, maxSafeDropHeight, groundLayer);
+        if (!hit) return false;   // no ground within safe drop range
+
+        float gapWidth = Mathf.Abs(hit.point.x - transform.position.x);
+        return gapWidth <= maxGapWidth;
     }
 
     // ---------------- SMART JUMP ----------------
@@ -244,6 +288,7 @@ public class NPCSmartFollower2D : MonoBehaviour
             stuckTimer = 0f;
         }
     }
+
     bool ShouldDropDown(float direction)
     {
         if (!player) return false;
@@ -268,6 +313,7 @@ public class NPCSmartFollower2D : MonoBehaviour
         // If ground exists within safe drop distance → OK to drop
         return hit.collider != null;
     }
+
     void Jump()
     {
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
@@ -276,6 +322,7 @@ public class NPCSmartFollower2D : MonoBehaviour
         jumpCount++;
         isJumping = true; // start jump animation
     }
+
     // ---------------- EDGE ----------------
     bool IsEdgeAhead(float direction)
     {
@@ -415,6 +462,7 @@ public class NPCSmartFollower2D : MonoBehaviour
     {
         currentStopDistance = Random.Range(minStopDistance, maxStopDistance);
     }
+
     void HandleAnimations()
     {
         float speed = Mathf.Abs(rb.linearVelocity.x);
@@ -427,6 +475,7 @@ public class NPCSmartFollower2D : MonoBehaviour
         if (npcType == NPCType.Abel)
             anim.SetBool("isJumping", isJumping);
     }
+
     // ---------------- HOLD / TELEPORT API ----------------
 
     public void MoveToHoldPoint(Transform point)
@@ -463,6 +512,7 @@ public class NPCSmartFollower2D : MonoBehaviour
 
         return Mathf.Abs(transform.position.x - holdPoint.position.x) < 0.25f;
     }
+
     void OnDrawGizmosSelected()
     {
         // -------- Ground Check --------
@@ -494,6 +544,14 @@ public class NPCSmartFollower2D : MonoBehaviour
             edgeOrigin,
             edgeOrigin + Vector2.down * edgeCheckDistance
         );
+
+        // -------- Gap Check Visual (new) --------
+        if (Application.isPlaying)
+        {
+            Gizmos.color = Color.cyan;
+            Vector2 rayOrigin = (Vector2)transform.position + Vector2.right * dirX * (edgeForwardOffset + 0.2f);
+            Gizmos.DrawLine(rayOrigin, rayOrigin + Vector2.down * maxSafeDropHeight);
+        }
 
         // -------- Separation Radius --------
         Gizmos.color = new Color(0f, 0.6f, 1f, 0.4f);

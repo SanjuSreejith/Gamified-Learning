@@ -1416,11 +1416,14 @@ MonoBehaviour:
   speakerText: {fileID: 114329106}
   dialogueText: {fileID: 1276322251}
   fadePanel: {fileID: 894752637}
+  hintSystem: {fileID: 1496643354}
   secondStatue: {fileID: 827744632}
   firstStatue: {fileID: 1144608218}
   teleportDestination: {fileID: 976360481}
   player: {fileID: 1486565531}
   typeSpeed: 0.035
+  skipKey: 32
+  allowTypingSkip: 1
   fadeSpeed: 1.5
   questionsToPass: 3
   perfectThreshold: 5
