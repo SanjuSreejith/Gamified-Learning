@@ -3990,6 +3990,11 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 3325189817780946271, guid: 1656db72904a04b47825cea0af393486, type: 3}
   m_PrefabInstance: {fileID: 1460152168}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &383008174 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3479467144966247760, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+  m_PrefabInstance: {fileID: 552734225}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &405387099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5273,12 +5278,25 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6249648742607070698, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
   m_PrefabInstance: {fileID: 552734225}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 383008174}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+--- !u!114 &515910340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383008174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e040e88790c554478cf8f2e983f9782, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TMPTypewriter
+  letterDelay: 0.035
 --- !u!1001 &516067145
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6126,7 +6144,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3479467144966247760, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 515910340}
   m_SourcePrefab: {fileID: 100100000, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
 --- !u!1001 &556673385
 PrefabInstance:
@@ -16414,6 +16435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1628652343}
   - component: {fileID: 1628652342}
+  - component: {fileID: 1628652344}
   m_Layer: 0
   m_Name: HintSystem
   m_TagString: Untagged
@@ -16440,21 +16462,33 @@ MonoBehaviour:
   cooldownTime: 20
   refillMessageTime: 3
   refillMessage: Hint system recharging...
---- !u!4 &1628652343
-Transform:
+--- !u!224 &1628652343
+RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1628652341}
-  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 53.06174, y: 3.68128, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 53.06174, y: 3.68128}
+  m_SizeDelta: {x: 200, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1628652344
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1628652341}
+  m_CullTransparentMesh: 1
 --- !u!1 &1630200512
 GameObject:
   m_ObjectHideFlags: 0

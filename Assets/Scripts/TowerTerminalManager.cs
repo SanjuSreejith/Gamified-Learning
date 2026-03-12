@@ -405,7 +405,6 @@ public class TowerController : MonoBehaviour
         currentDialogueCoroutine = null;
         TryResumeGame();
     }
-
     void ShowDialogue(string speaker, string text)
     {
         ui.dialoguePanel.SetActive(true);
@@ -418,16 +417,19 @@ public class TowerController : MonoBehaviour
             ui.speakerImage.sprite = speaker == "Abel" ? ui.abelPortrait : ui.kuttanPortrait;
         }
 
+        // 📝 Add the line to the backlog (full text, not typed)
+        if (DialogueBacklogManager.Instance != null)
+            DialogueBacklogManager.Instance.AddLine(speaker, text);
+
         if (typewriter != null)
         {
-            typewriter.Play(text);
+            typewriter.Play(text); // starts letter‑by‑letter effect
         }
         else if (ui.dialogueText != null)
         {
             ui.dialogueText.text = text;
         }
     }
-
     #endregion
 
     #region Terminal System
