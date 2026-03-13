@@ -48,9 +48,8 @@ public class AbelIntroNPC : MonoBehaviour
     [Header("Player Performance")]
     public OverallPerformance playerPerformance;
 
-    // --- NEW: Hint System ---
     [Header("Hint System")]
-    public BotHintSystem hintSystem;   // Reference to the hint UI system
+    public BotHintSystem hintSystem;
 
     bool waitingForContinue;
     bool waitingForTerminalInput;
@@ -78,21 +77,17 @@ public class AbelIntroNPC : MonoBehaviour
 
     void Start()
     {
-        dialoguePanel.SetActive(false);
-        terminalPanel.SetActive(false);
-        energyPanel.SetActive(false);
-        if (energyText != null)
-        {
-            energyText.text = "ENERGY : 0%";
-        }
-
-        if (jetpackUI != null)
+        // Ensure UI elements start disabled
+        if (dialoguePanel) dialoguePanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
+        if (energyPanel) energyPanel.SetActive(false);
+        if (energyText) energyText.text = "ENERGY : 0%";
+        if (jetpackUI)
         {
             jetpackUI.alpha = 0;
             jetpackUI.gameObject.SetActive(false);
         }
-
-        if (fadeCanvas != null)
+        if (fadeCanvas)
         {
             fadeCanvas.alpha = 0;
             fadeCanvas.gameObject.SetActive(false);
@@ -107,6 +102,14 @@ public class AbelIntroNPC : MonoBehaviour
 
     public void StartDialogue()
     {
+        Debug.Log("AbelIntroNPC StartDialogue called");
+
+        if (!dialoguePanel)
+        {
+            Debug.LogError("[AbelIntroNPC] Dialogue panel not assigned!");
+            return;
+        }
+
         dialoguePanel.SetActive(true);
         speakerText.text = "???";
         StartCoroutine(DialogueSequence());
@@ -114,6 +117,8 @@ public class AbelIntroNPC : MonoBehaviour
 
     void UpdateEnergyTextAnimated()
     {
+        if (!energySlider || !energyText) return;
+
         float value01 = energySlider.maxValue > 1
             ? energySlider.value / maxEnergy
             : energySlider.value;
@@ -190,7 +195,6 @@ public class AbelIntroNPC : MonoBehaviour
             "INPUT MODULE : BROKEN\n" +
             "OUTPUT MODULE : BROKEN\n\n> ";
 
-        // --- NEW: Initialize hint system ---
         if (hintSystem != null)
         {
             string[] hints = new string[]
@@ -240,22 +244,16 @@ public class AbelIntroNPC : MonoBehaviour
             changed = true;
         }
 
-        // --- NEW: Update hint system with completion status ---
         if (changed && hintSystem != null)
         {
             string[] updatedHints = new string[2];
             updatedHints[0] = inputFixed ? "✓ Fix input module (done)" : "Fix input module: type 'input'";
             updatedHints[1] = outputFixed ? "✓ Fix output module (done)" : "Fix output module: type 'print'";
             hintSystem.SetHints(updatedHints);
-
-            // Optionally mark each hint as complete if the system supports it
-            // e.g., hintSystem.SetHintCompletion(0, inputFixed);
-            // e.g., hintSystem.SetHintCompletion(1, outputFixed);
         }
 
         if (inputFixed && outputFixed)
         {
-            // --- NEW: All steps complete — disable hints ---
             if (hintSystem != null)
                 hintSystem.DisableHints();
 
@@ -264,7 +262,7 @@ public class AbelIntroNPC : MonoBehaviour
         }
     }
 
-    // ---------------- ENERGY SET ----------------
+    // ---------------- ENERGY SET (FIXED) ----------------
     IEnumerator EnergySequence()
     {
         currentState = State.EnergySet;
@@ -274,29 +272,28 @@ public class AbelIntroNPC : MonoBehaviour
 
         energyPanel.SetActive(true);
 
-        // Reset state
+        // Reset slider
         energySlider.value = 0;
         energyText.transform.localScale = Vector3.one;
         UpdateEnergyTextAnimated();
 
-        // Charging loop
-        while (true)
+        // 🟢 AUTO-FILL the slider over 2 seconds
+        float fillDuration = 2f;
+        float elapsed = 0f;
+        while (elapsed < fillDuration)
         {
-            float value01 = energySlider.maxValue > 1
-                ? energySlider.value / maxEnergy
-                : energySlider.value;
-
+            // Increase slider value gradually
+            energySlider.value = Mathf.Lerp(0, energySlider.maxValue, elapsed / fillDuration);
             UpdateEnergyTextAnimated();
-
-            if (value01 >= 0.99f)
-                break;
-
+            elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // Final lock
+        // Ensure it's exactly full
         energySlider.value = energySlider.maxValue;
+        UpdateEnergyTextAnimated();
 
+        // Final lock
         energyText.transform.localScale = Vector3.one;
         energyText.color = highEnergyColor;
         energyText.text = "ENERGY SET";
@@ -345,6 +342,8 @@ public class AbelIntroNPC : MonoBehaviour
 
     IEnumerator ShowJetpackUI()
     {
+        if (!jetpackUI) yield break;
+
         jetpackUI.gameObject.SetActive(true);
         float t = 0;
         while (t < 1)
@@ -358,26 +357,48 @@ public class AbelIntroNPC : MonoBehaviour
 
     IEnumerator Speak(string line)
     {
+        // Limit dialogue to 2 lines max
+        string[] splitLines = line.Split('\n');
+
+        if (splitLines.Length > 2)
+        {
+            line = splitLines[0] + "\n" + splitLines[1];
+        }
+
         dialogueText.text = "";
+
+        // Typing effect
         foreach (char c in line)
         {
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                dialogueText.text = line;
+                break;
+            }
+
             dialogueText.text += c;
             yield return new WaitForSeconds(typeSpeed);
         }
 
-        dialogueText.text += "\n[Press Enter]";
         waitingForContinue = true;
 
         while (waitingForContinue)
         {
-            if (Input.GetKeyDown(KeyCode.Return))
+            if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
                 waitingForContinue = false;
+
             yield return null;
         }
     }
 
     IEnumerator FadeAndLoad()
     {
+        if (!fadeCanvas)
+        {
+            SceneManager.LoadScene(nextSceneName);
+            yield break;
+        }
+
         fadeCanvas.gameObject.SetActive(true);
         float t = 0;
         while (t < 1)

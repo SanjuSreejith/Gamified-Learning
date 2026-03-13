@@ -38,6 +38,7 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
     public bool teleportNPCsToHoldPoint = true;   // false = rush without fade
     public float rushSpeedMultiplier = 2f;        // (requires NPC support)
     public bool pauseGameDuringDialogue = true;   // freeze time when dialogue/terminal is active
+    public Collider2D block;
 
     /* ================= STATE ================= */
     bool active;
@@ -317,7 +318,15 @@ public class AdvancedBridgeTerminalController_Bridge3 : MonoBehaviour
         bridgeController.SetCondition(ifLine);
 
         Speak("Abel", "Good. The bridge now listens.");
+
         RestoreScene();
+
+        // ✅ DISABLE BLOCK AFTER SUCCESS
+        if (block != null)
+        {
+            block.enabled = false;
+            Debug.Log("Bridge 3 lesson completed. Block disabled.");
+        }
     }
 
     /* ================= DIALOGUE ================= */

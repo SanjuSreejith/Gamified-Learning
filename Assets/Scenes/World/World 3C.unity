@@ -3362,7 +3362,7 @@ Transform:
   m_GameObject: {fileID: 976360479}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 28.8, y: 21.9, z: 0}
+  m_LocalPosition: {x: 28.291, y: 21.577, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4445,6 +4445,7 @@ GameObject:
   - component: {fileID: 1179034913}
   - component: {fileID: 1179034912}
   - component: {fileID: 1179034911}
+  - component: {fileID: 1179034915}
   m_Layer: 8
   m_Name: GameOver
   m_TagString: Untagged
@@ -4586,6 +4587,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1179034915
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1179034910}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41e03bdd0320c4f4daf89133a3242e6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameOverTrigger
+  gameOverLayerName: GameOver
 --- !u!1001 &1180243039
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4768,7 +4782,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1207743113
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5051,11 +5065,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 28.11
+      value: 5.86
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 21.47
+      value: -0.73
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.z
@@ -17757,7 +17771,7 @@ RectTransform:
   m_Father: {fileID: 1686397787}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -0.000030517578, y: 0}
   m_SizeDelta: {x: 0.000015259, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -17832,7 +17846,7 @@ RectTransform:
   m_Father: {fileID: 420964880}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -3.7999954, y: 0.00001335144}
   m_SizeDelta: {x: 12.031, y: -9.845}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -18837,6 +18851,10 @@ PrefabInstance:
       propertyPath: abelNPC
       value: 
       objectReference: {fileID: 1584956314}
+    - target: {fileID: 4320632291134915174, guid: 69a72a992035eb14ea9d6500a5881a38, type: 3}
+      propertyPath: triggerOnce
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5852217759930406515, guid: 69a72a992035eb14ea9d6500a5881a38, type: 3}
       propertyPath: m_Controller
       value: 

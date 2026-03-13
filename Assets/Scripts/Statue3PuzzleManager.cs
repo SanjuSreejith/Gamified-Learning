@@ -13,8 +13,8 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public CanvasGroup fadePanel;
 
-    [Header("Hint System")]                     // <-- NEW
-    public BotHintSystem hintSystem;             // <-- NEW
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;
 
     [Header("References")]
     public AdaptiveStatuePuzzle2D secondStatue;
@@ -24,8 +24,8 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     [Header("Typing")]
     public float typeSpeed = 0.035f;
-    public KeyCode skipKey = KeyCode.Space;      // <-- NEW
-    public bool allowTypingSkip = true;           // <-- NEW
+    public KeyCode skipKey = KeyCode.Space;
+    public bool allowTypingSkip = true;
     public float fadeSpeed = 1.5f;
 
     [Header("Puzzle Parameters")]
@@ -66,7 +66,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     State state = State.Idle;
     OverallPerformance overallPerformance;
-    private Coroutine typingCoroutine;
+    private Coroutine typingCoroutine;          // <-- Tracks current typing coroutine
     private bool isTyping = false;
     private List<string> currentDialogueChunks = new List<string>();
     private int currentChunkIndex = 0;
@@ -104,6 +104,14 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             fadePanel.alpha = 0;
             fadePanel.gameObject.SetActive(false);
         }
+
+        // Safety: if no questions are assigned, log error but don't crash
+        if (masterQuestions == null || masterQuestions.Length == 0 ||
+            competentQuestions == null || competentQuestions.Length == 0 ||
+            noviceQuestions == null || noviceQuestions.Length == 0)
+        {
+            Debug.LogError("FinalStatuePuzzle2D: One or more question arrays are empty! Use 'Setup Default Questions' in the context menu.");
+        }
     }
 
     void Update()
@@ -121,7 +129,8 @@ public class FinalStatuePuzzle2D : MonoBehaviour
                 HandleAnswerTyping();
                 break;
             case State.ReviewingAnswer:
-                if (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0))
+                // Only allow continue when typing is finished
+                if (!isTyping && (Input.GetKeyDown(KeyCode.Return) || Input.GetMouseButtonDown(0)))
                 {
                     NextQuestionOrConclude();
                 }
@@ -135,7 +144,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         if (state != State.Idle) return;
         if (dialoguePanel == null) return;
 
-        // Ensure hint system is off at start
         if (hintSystem) hintSystem.DisableHints();
 
         dialoguePanel.SetActive(true);
@@ -173,6 +181,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         else
         {
             overallPerformance = OverallPerformance.Struggling;
+            currentQuestions = new FinalQuestion[0]; // empty array to avoid null ref
         }
 
         Debug.Log($"Overall Performance: {overallPerformance}, Total Correct from Previous: {totalCorrectFromPrevious}");
@@ -222,18 +231,27 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         foreach (string line in greetingLines)
         {
             yield return StartCoroutine(TypeLineWithContinue(line));
-            yield return new WaitForSecondsRealtime(0.1f);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(0.1f);
 
             state = State.IntroductionWaiting;
             waitForContinue = true;
             yield return new WaitUntil(() => !waitForContinue);
 
-            yield return new WaitForSecondsRealtime(0.1f);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(0.1f);
         }
 
         currentQuestionIndex = 0;
         questionsCorrect = 0;
-        AskQuestion();
+
+        // If no questions (struggling), go directly to teaching
+        if (currentQuestions == null || currentQuestions.Length == 0)
+        {
+            StartTeachingScene();
+        }
+        else
+        {
+            AskQuestion();
+        }
     }
 
     string[] GetGreetingDialogue()
@@ -295,17 +313,23 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             return;
         }
 
+        // Stop any ongoing typing
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+        isTyping = false;
+
         typedInput = "";
         FinalQuestion question = currentQuestions[currentQuestionIndex];
 
-        // --- NEW: Set hints for the BotHintSystem ---
         if (hintSystem != null)
         {
             hintSystem.SetHints(new string[] { question.hint });
             hintSystem.EnableHints();
         }
 
-        // Pause the game while waiting for answer
         SetGamePaused(true);
 
         dialogueText.text = question.questionText + "\n> ";
@@ -592,7 +616,6 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     // ----------------- CONCLUSION -----------------
     void ShowConclusion()
     {
-        // Disable hints before finishing
         if (hintSystem) hintSystem.DisableHints();
 
         state = State.Conclusion;
@@ -602,6 +625,10 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     string GetConclusionDialogue()
     {
+        // Safety: if no questions, treat as failure
+        if (currentQuestions == null || currentQuestions.Length == 0)
+            return "You need more practice with input and output operations.\nLet me guide you through a focused tutorial...";
+
         float successRate = (float)questionsCorrect / currentQuestions.Length;
 
         switch (overallPerformance)
@@ -629,6 +656,13 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     void DetermineFinalOutcome()
     {
+        // Safety: if no questions, go to teaching
+        if (currentQuestions == null || currentQuestions.Length == 0)
+        {
+            StartTeachingScene();
+            return;
+        }
+
         float successRate = (float)questionsCorrect / currentQuestions.Length;
 
         switch (overallPerformance)
@@ -655,6 +689,25 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     // ----------------- TELEPORT -----------------
     void StartTeleport()
     {
+        if (teleportDestination == null)
+        {
+            Debug.LogError("Teleport destination is not assigned! Cannot teleport.");
+            // Fallback: just end puzzle
+            SetGamePaused(false);
+            dialoguePanel.SetActive(false);
+            state = State.Idle;
+            return;
+        }
+
+        if (player == null)
+        {
+            Debug.LogError("Player reference is not assigned! Cannot teleport.");
+            SetGamePaused(false);
+            dialoguePanel.SetActive(false);
+            state = State.Idle;
+            return;
+        }
+
         state = State.Teleporting;
         StartCoroutine(TeleportSequence());
     }
@@ -663,7 +716,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     {
         string finalMessage = GetFinalTeleportMessage();
         yield return StartCoroutine(TypeLineWithContinue(finalMessage));
-        yield return new WaitForSecondsRealtime(1.2f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(1.2f);
 
         if (fadePanel != null)
         {
@@ -671,43 +724,41 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             float t = 0f;
             while (t < 1f)
             {
+                t += Time.unscaledDeltaTime * fadeSpeed;
                 fadePanel.alpha = Mathf.Lerp(0f, 1f, t);
-                t += Time.deltaTime * fadeSpeed;
                 yield return null;
             }
             fadePanel.alpha = 1f;
         }
 
-        yield return new WaitForSecondsRealtime(0.2f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(0.2f);
 
         if (followCam != null) followCam.UnlockX();
 
-        if (player != null && teleportDestination != null)
-        {
-            player.transform.position = teleportDestination.position;
-            player.transform.rotation = teleportDestination.rotation;
-        }
+        // Perform teleport
+        player.transform.position = teleportDestination.position;
+        player.transform.rotation = teleportDestination.rotation;
 
         yield return null;
 
         if (followCam != null) followCam.SnapToTarget();
 
-        yield return new WaitForSecondsRealtime(0.25f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(0.25f);
 
         if (fadePanel != null)
         {
             float t = 0f;
             while (t < 1f)
             {
+                t += Time.unscaledDeltaTime * fadeSpeed;
                 fadePanel.alpha = Mathf.Lerp(1f, 0f, t);
-                t += Time.deltaTime * fadeSpeed;
                 yield return null;
             }
             fadePanel.alpha = 0f;
             fadePanel.gameObject.SetActive(false);
         }
 
-        // Unpause the game when puzzle fully ends
+        // Unpause the game
         SetGamePaused(false);
 
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
@@ -739,7 +790,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     IEnumerator TransitionToTeaching()
     {
         yield return StartCoroutine(TypeLineWithContinue("Let's visit the Past for focused practice..."));
-        yield return new WaitForSecondsRealtime(1.5f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(1.5f);
 
         if (fadePanel != null)
         {
@@ -747,23 +798,34 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             float timer = 0;
             while (timer < 1)
             {
+                timer += Time.unscaledDeltaTime * fadeSpeed;
                 fadePanel.alpha = Mathf.Lerp(0, 1, timer);
-                timer += Time.deltaTime * fadeSpeed;
                 yield return null;
             }
             fadePanel.alpha = 1;
         }
 
-        yield return new WaitForSecondsRealtime(1f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(1f);
 
-        // Unpause before loading scene (optional, scene load will reset timescale anyway)
         SetGamePaused(false);
-
         SceneManager.LoadScene(tutorialSceneName);
     }
 
-    // ----------------- IMPROVED TYPING SYSTEM -----------------
+    // ----------------- TYPING SYSTEM -----------------
     IEnumerator TypeLineWithContinue(string fullText)
+    {
+        // Stop any previous typing coroutine
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+        typingCoroutine = StartCoroutine(TypeLineWithContinueCoroutine(fullText));
+        yield return typingCoroutine;
+        typingCoroutine = null;
+    }
+
+    IEnumerator TypeLineWithContinueCoroutine(string fullText)
     {
         isTyping = true;
         currentDialogueChunks.Clear();
@@ -797,6 +859,18 @@ public class FinalStatuePuzzle2D : MonoBehaviour
     }
 
     IEnumerator TypeLineWithPagination(string line)
+    {
+        if (typingCoroutine != null)
+        {
+            StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
+        }
+        typingCoroutine = StartCoroutine(TypeLineWithPaginationCoroutine(line));
+        yield return typingCoroutine;
+        typingCoroutine = null;
+    }
+
+    IEnumerator TypeLineWithPaginationCoroutine(string line)
     {
         isTyping = true;
         currentDialogueChunks.Clear();
@@ -838,14 +912,14 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         foreach (char c in chunk)
         {
-            if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)   // <-- NEW
+            if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)
             {
                 dialogueText.text = chunk;
                 break;
             }
 
             dialogueText.text += c;
-            yield return new WaitForSecondsRealtime(typeSpeed);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(typeSpeed);
         }
 
         if (currentChunkIndex < currentDialogueChunks.Count - 1)
@@ -862,14 +936,14 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
         foreach (char c in chunk)
         {
-            if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)   // <-- NEW
+            if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)
             {
                 dialogueText.text = chunk;
                 break;
             }
 
             dialogueText.text += c;
-            yield return new WaitForSecondsRealtime(typeSpeed);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(typeSpeed);
         }
 
         if (currentChunkIndex < currentDialogueChunks.Count - 1)
@@ -882,9 +956,11 @@ public class FinalStatuePuzzle2D : MonoBehaviour
 
     void ContinueDialogue()
     {
+        // If currently typing, skip to end of current chunk
         if (isTyping && typingCoroutine != null)
         {
             StopCoroutine(typingCoroutine);
+            typingCoroutine = null;
             isTyping = false;
 
             if (currentDialogueChunks.Count > 0 && currentChunkIndex > 0)
@@ -909,18 +985,14 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         }
     }
 
-    // ----------------- PAUSE CONTROL ----------------   // <-- NEW
+    // ----------------- PAUSE CONTROL -----------------
     void SetGamePaused(bool paused)
     {
         Time.timeScale = paused ? 0f : 1f;
     }
 
-
-  
-
-
-// ----------------- EDITOR SETUP -----------------
-[ContextMenu("Setup Default Questions")]
+    // ----------------- EDITOR SETUP -----------------
+    [ContextMenu("Setup Default Questions")]
     void SetupDefaultQuestions()
     {
         masterQuestions = new FinalQuestion[]

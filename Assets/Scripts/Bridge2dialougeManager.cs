@@ -45,7 +45,7 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     public bool teleportNPCsToHoldPoint = true;   // false = rush without fade
     public float rushSpeedMultiplier = 2f;        // (requires NPC support)
     public bool pauseGameDuringDialogue = true;   // freeze time when dialogue/terminal is active
-
+    public Collider2D block;
     /* ================= STATE ================= */
     bool active;
     bool editing;
@@ -365,7 +365,6 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
     }
 
     /* ================= VALIDATION ================= */
-
     void ValidateAndExecute()
     {
         if (string.IsNullOrWhiteSpace(conditionInput))
@@ -382,8 +381,14 @@ public class AdvancedBridgeTerminalController : MonoBehaviour
         teachState = TeachState.None;
 
         RestoreScene();
-    }
 
+        // ✅ DISABLE BLOCK AFTER LESSON COMPLETES
+        if (block != null)
+        {
+            block.enabled = false;
+            Debug.Log("Bridge lesson completed. Block disabled.");
+        }
+    }
     /* ================= DIALOGUE ================= */
     void Speak(string speaker, string text)
     {

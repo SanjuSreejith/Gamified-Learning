@@ -40,6 +40,8 @@ public class BridgeDialogueSequenceController : MonoBehaviour
     public float rushSpeedMultiplier = 2f;      // speed multiplier during rush (needs NPC support)
     [Header("Pause")]
     public bool pauseGameDuringDialogue = true; // freeze time when dialogue/terminal is active
+    [Header("Block")]
+    public Collider2D block;
 
     /* ================= Dialogue ================= */
     public DialogueLine[] lines;
@@ -270,6 +272,7 @@ public class BridgeDialogueSequenceController : MonoBehaviour
             waitingToCloseReaction = false;
             RestoreEnemies();
             RestoreNPCs();
+            block.gameObject.SetActive(false); // remove block after sequence ends
             active = false;
         }
     }
