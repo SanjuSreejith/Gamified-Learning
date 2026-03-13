@@ -21,9 +21,10 @@ public class TerminalVariableExercise : MonoBehaviour
     public Sprite warningFace;
 
     [Header("Dialogue")]
-    public bool autoSkipDialogue = true;
+    public bool autoSkipDialogue = false;               // False = wait for Enter
     public float dialogueSpeed = 0.03f;
     public float autoSkipDelay = 0.4f;
+    public KeyCode advanceKey = KeyCode.Return;         // Key to advance dialogue
 
     [Header("Cursor")]
     public float cursorBlinkRate = 0.5f;
@@ -46,6 +47,10 @@ public class TerminalVariableExercise : MonoBehaviour
     [Header("Scene Transition")]
     public string nextSceneName = "GameScene";
     public float sceneChangeDelay = 2f;
+
+    // --- Hint System ---
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;   // Reference to the hint UI
 
     // ================= INTERNAL =================
     string input = "";
@@ -87,6 +92,13 @@ public class TerminalVariableExercise : MonoBehaviour
         taskBuffer = "";
         outputBuffer = "";
         currentOutputLines = 0;
+
+        // Enable hints and show first task
+        if (hintSystem != null)
+        {
+            hintSystem.EnableHints();
+            UpdateHintForStep();
+        }
 
         StartCoroutine(Flow());
     }
@@ -152,7 +164,27 @@ public class TerminalVariableExercise : MonoBehaviour
         }
 
         taskBuffer += "\n";
+
+        // Update hint when task changes
+        UpdateHintForStep();
+
         RefreshTerminal();
+    }
+
+    // Helper to update hint text based on current step
+    void UpdateHintForStep()
+    {
+        if (hintSystem == null) return;
+
+        string hintText = step switch
+        {
+            1 => "TASK 1: Create a variable 'name' with value \"Alex\"",
+            2 => "TASK 2: Create a variable 'age' with value 25",
+            3 => "TASK 3: Create a variable 'is_ready' with value True",
+            4 => "TASK 4: Create a variable 'energy_level' with value 0.5",
+            _ => "Exercise in progress"
+        };
+        hintSystem.SetHints(new string[] { hintText });
     }
 
     // ================= SUBMIT =================
@@ -334,6 +366,12 @@ public class TerminalVariableExercise : MonoBehaviour
             yield return Say("You survived. Improvement awaits.");
 
         yield return Say("The system trusts you now.");
+
+        // Mark scene as completed and disable hints
+        MarkSceneCompleted();
+        if (hintSystem != null)
+            hintSystem.DisableHints();
+
         yield return new WaitForSeconds(sceneChangeDelay);
         SceneManager.LoadScene(nextSceneName);
     }
@@ -379,6 +417,7 @@ public class TerminalVariableExercise : MonoBehaviour
         waitingForAdvance = true;
         dialogueText.text = "";
 
+        // Type out the message
         foreach (char c in msg)
         {
             dialogueText.text += c;
@@ -386,9 +425,14 @@ public class TerminalVariableExercise : MonoBehaviour
         }
 
         if (autoSkipDialogue)
+        {
             yield return new WaitForSeconds(autoSkipDelay);
+        }
         else
+        {
+            // Wait until the player presses the advance key
             yield return new WaitUntil(() => !waitingForAdvance);
+        }
 
         waitingForAdvance = false;
     }
@@ -396,8 +440,12 @@ public class TerminalVariableExercise : MonoBehaviour
     void HandleDialogueAdvance()
     {
         if (!waitingForAdvance || autoSkipDialogue) return;
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space))
+
+        // Check for mouse click OR the configured advance key
+        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
+        {
             waitingForAdvance = false;
+        }
     }
 
     void PlayTypingSound(char c)
@@ -428,5 +476,17 @@ public class TerminalVariableExercise : MonoBehaviour
             4 => "energy_level = 0.5",
             _ => ""
         };
+    }
+
+    // Mark the scene as completed
+    void MarkSceneCompleted()
+    {
+        // Example using PlayerPrefs
+        PlayerPrefs.SetInt("TerminalVariableExerciseCompleted", 1);
+        PlayerPrefs.Save();
+        Debug.Log("TerminalVariableExercise marked as completed.");
+
+        // Alternatively, call a GameManager:
+        // GameManager.Instance.CompleteExercise("TerminalVariable");
     }
 }

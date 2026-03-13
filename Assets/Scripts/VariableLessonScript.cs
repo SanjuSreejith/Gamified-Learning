@@ -25,30 +25,14 @@ public class TerminalVariableLesson : MonoBehaviour
     public float dialogueSpeed = 0.035f;
 
     [Header("Dialogue Control (DEV OPTION)")]
-    public bool autoAdvanceDialogue = true;
+    public bool autoAdvanceDialogue = true;      // kept for compatibility, but now overridden by Enter wait
     public KeyCode advanceKey = KeyCode.Return;
 
-    string currentInput = "";
-    bool inputEnabled;
-    bool cursorVisible = true;
-    Coroutine cursorRoutine;
     [Header("ID Card UI")]
     public GameObject idCardPanel;
     public TextMeshProUGUI idNameText;
     public TextMeshProUGUI idAgeText;
     public Animator idCardAnimator;
-
-
-    string playerName;
-    int playerAge;
-
-    int step = 0;
-
-    bool waitingForAdvance;
-    bool skipRequested;
-
-    bool waitingForConfirmation;
-    bool waitingForCorrectionChoice;
 
     [Header("Typing Audio")]
     public AudioSource typingAudio;
@@ -56,7 +40,28 @@ public class TerminalVariableLesson : MonoBehaviour
     public AudioClip typeSpace;
     public AudioClip typeBackspace;
 
+    [Header("Exercise")]
     public TerminalVariableExercise exerciseScript;
+
+    // --- NEW: Hint System ---
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;   // Reference to the hint UI
+
+    string currentInput = "";
+    bool inputEnabled;
+    bool cursorVisible = true;
+    Coroutine cursorRoutine;
+
+    string playerName;
+    int playerAge;
+
+    int step = 0;           // 1=name, 2=age, 3=confirmation, etc.
+
+    bool waitingForAdvance;
+    bool skipRequested;
+
+    bool waitingForConfirmation;
+    bool waitingForCorrectionChoice;
 
     void Start()
     {
@@ -139,6 +144,11 @@ public class TerminalVariableLesson : MonoBehaviour
 
         SetFace(idleFace);
         yield return Speak("What’s your name?");
+
+        // --- NEW: Set first hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
+
         EnableInput();
         step = 1;
     }
@@ -217,10 +227,12 @@ public class TerminalVariableLesson : MonoBehaviour
 
         SetFace(idleFace);
         yield return Speak("Now tell me your age.");
+
+        // --- NEW: Update hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
+
         EnableInput();
-
-    
-
         step = 2;
     }
 
@@ -246,10 +258,13 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("Are these details correct?");
         yield return Speak("Type yes or no.");
 
+        // --- NEW: Update hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Type 'yes' or 'no'" });
+
         EnableInput();
         step = 3;
         waitingForConfirmation = true;
-     
     }
 
     IEnumerator HandleConfirmationYes()
@@ -257,6 +272,11 @@ public class TerminalVariableLesson : MonoBehaviour
         SetFace(happyFace);
         yield return AddSystemLine("details_confirmed = True");
         yield return Speak("True means proceed.");
+
+        // --- NEW: Update hint for next step (optional) ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Now we'll learn about floats" });
+
         StartCoroutine(ContinueWithFloat());
     }
 
@@ -269,6 +289,10 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("What should we change?");
         yield return Speak("Type: name or age");
 
+        // --- NEW: Update hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Type 'name' or 'age'" });
+
         waitingForCorrectionChoice = true;
         EnableInput();
     }
@@ -276,14 +300,23 @@ public class TerminalVariableLesson : MonoBehaviour
     IEnumerator ReenterName()
     {
         yield return Speak("Alright, enter your name again.");
+
+        // --- NEW: Update hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
+
         EnableInput();
         step = 1;
-
     }
 
     IEnumerator ReenterAge()
     {
         yield return Speak("Okay, enter your age again.");
+
+        // --- NEW: Update hint ---
+        if (hintSystem != null)
+            hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
+
         EnableInput();
         step = 2;
     }
@@ -308,6 +341,12 @@ public class TerminalVariableLesson : MonoBehaviour
         SetFace(proudFace);
         yield return Speak("You just learned Python basics.");
         yield return Speak("Now let’s practice.");
+
+        // --- NEW: Lesson complete — disable hints and mark scene ---
+        if (hintSystem != null)
+            hintSystem.DisableHints();
+
+        MarkSceneCompleted();
 
         if (exerciseScript != null)
             exerciseScript.StartExercise();
@@ -364,12 +403,14 @@ public class TerminalVariableLesson : MonoBehaviour
     }
 
     // ================= DIALOGUE =================
+    // Modified to wait for Enter key after message is fully displayed
     IEnumerator Speak(string msg)
     {
         dialogueText.text = "";
         waitingForAdvance = true;
         skipRequested = false;
 
+        // Type out the message
         foreach (char c in msg)
         {
             if (skipRequested)
@@ -382,34 +423,43 @@ public class TerminalVariableLesson : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        yield return new WaitForSeconds(0.4f);
-        waitingForAdvance = false;
+        // Wait for player to press Enter (or the advance key)
+        // We keep waitingForAdvance true until key press
+        while (waitingForAdvance)
+        {
+            // Check for advance input (handled in Update via HandleDialogueAdvance)
+            yield return null;
+        }
+
+        // Small pause before next line
+        yield return new WaitForSeconds(0.1f);
     }
 
     void HandleDialogueAdvance()
     {
         if (!waitingForAdvance) return;
 
+        // If any advance input is detected, clear the wait flag
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
-            skipRequested = true;
+        {
+            waitingForAdvance = false;
+            skipRequested = true;   // also skip typing if still in progress
+        }
     }
+
+    // ================= ID CARD =================
     void ShowIDCardName(string name)
     {
-      
         idNameText.text = name;
         idAgeText.text = "--";
-
     }
+
     void UpdateIDCardAge(int age)
     {
-     
-
         idAgeText.text = age.ToString();
-
-   
     }
 
-
+    // ================= UTILITIES =================
     void SetFace(Sprite face)
     {
         if (botFaceImage && face)
@@ -426,5 +476,17 @@ public class TerminalVariableLesson : MonoBehaviour
             typingAudio.PlayOneShot(typeSpace);
         else if (typeLetter)
             typingAudio.PlayOneShot(typeLetter);
+    }
+
+    // --- NEW: Mark the scene as completed ---
+    void MarkSceneCompleted()
+    {
+        // Example: set a PlayerPrefs flag
+        PlayerPrefs.SetInt("TerminalVariableLessonCompleted", 1);
+        PlayerPrefs.Save();
+        Debug.Log("TerminalVariableLesson marked as completed.");
+
+        // Alternatively, you could call a GameManager method:
+        // GameManager.Instance.CompleteLesson("TerminalVariable");
     }
 }

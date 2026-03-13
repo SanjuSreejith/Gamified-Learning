@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -25,17 +25,13 @@ public class AbelIntroNPC : MonoBehaviour
     [Header("Energy Controller")]
     public GameObject energyPanel;
     public Slider energySlider;
-
     public TextMeshProUGUI energyText;
-
-
     public float maxEnergy = 100f;
 
-
     // Color stages
-    public Color lowEnergyColor = new Color(1f, 0.25f, 0.25f);   // Red
-    public Color midEnergyColor = new Color(1f, 0.8f, 0.25f);    // Yellow
-    public Color highEnergyColor = new Color(0.25f, 1f, 0.4f);   // Green
+    public Color lowEnergyColor = new Color(1f, 0.25f, 0.25f);
+    public Color midEnergyColor = new Color(1f, 0.8f, 0.25f);
+    public Color highEnergyColor = new Color(0.25f, 1f, 0.4f);
 
     // Animation
     public float pulseSpeed = 4f;
@@ -52,6 +48,9 @@ public class AbelIntroNPC : MonoBehaviour
     [Header("Player Performance")]
     public OverallPerformance playerPerformance;
 
+    // --- NEW: Hint System ---
+    [Header("Hint System")]
+    public BotHintSystem hintSystem;   // Reference to the hint UI system
 
     bool waitingForContinue;
     bool waitingForTerminalInput;
@@ -112,6 +111,7 @@ public class AbelIntroNPC : MonoBehaviour
         speakerText.text = "???";
         StartCoroutine(DialogueSequence());
     }
+
     void UpdateEnergyTextAnimated()
     {
         float value01 = energySlider.maxValue > 1
@@ -152,10 +152,9 @@ public class AbelIntroNPC : MonoBehaviour
         }
     }
 
-
     IEnumerator DialogueSequence()
     {
-        yield return Speak("…So, you made it.");
+        yield return Speak("â€¦So, you made it.");
 
         speakerText.text = "Abel";
 
@@ -166,9 +165,9 @@ public class AbelIntroNPC : MonoBehaviour
 
         yield return Speak("NULL is attacking this world.");
 
-        yield return Speak("Let’s set the energy meter.");
+        yield return Speak("Letâ€™s set the energy meter.");
 
-        yield return Speak("Oh—sorry.");
+        yield return Speak("Ohâ€”sorry.");
         yield return Speak("The system is corrupted.");
 
         yield return Speak(
@@ -190,6 +189,18 @@ public class AbelIntroNPC : MonoBehaviour
             "SYSTEM ERROR\n" +
             "INPUT MODULE : BROKEN\n" +
             "OUTPUT MODULE : BROKEN\n\n> ";
+
+        // --- NEW: Initialize hint system ---
+        if (hintSystem != null)
+        {
+            string[] hints = new string[]
+            {
+                "Fix input module: type 'input'",
+                "Fix output module: type 'print'"
+            };
+            hintSystem.SetHints(hints);
+            hintSystem.EnableHints();
+        }
     }
 
     void HandleTerminalTyping()
@@ -216,17 +227,38 @@ public class AbelIntroNPC : MonoBehaviour
         string cmd = typedInput.Trim().ToLower();
         typedInput = "";
 
+        bool changed = false;
+
         if (!inputFixed && cmd.Contains("input"))
         {
             inputFixed = true;
+            changed = true;
         }
         else if (inputFixed && !outputFixed && cmd.Contains("print"))
         {
             outputFixed = true;
+            changed = true;
+        }
+
+        // --- NEW: Update hint system with completion status ---
+        if (changed && hintSystem != null)
+        {
+            string[] updatedHints = new string[2];
+            updatedHints[0] = inputFixed ? "âœ“ Fix input module (done)" : "Fix input module: type 'input'";
+            updatedHints[1] = outputFixed ? "âœ“ Fix output module (done)" : "Fix output module: type 'print'";
+            hintSystem.SetHints(updatedHints);
+
+            // Optionally mark each hint as complete if the system supports it
+            // e.g., hintSystem.SetHintCompletion(0, inputFixed);
+            // e.g., hintSystem.SetHintCompletion(1, outputFixed);
         }
 
         if (inputFixed && outputFixed)
         {
+            // --- NEW: All steps complete â€” disable hints ---
+            if (hintSystem != null)
+                hintSystem.DisableHints();
+
             terminalPanel.SetActive(false);
             StartCoroutine(EnergySequence());
         }
@@ -280,15 +312,14 @@ public class AbelIntroNPC : MonoBehaviour
         if (isMorning)
         {
             yield return Speak(
-                "It’s night.\n" +
-                
+                "Itâ€™s night.\n" +
                 "We can wait till tomorrow."
             );
         }
         else
         {
             yield return Speak("Come.");
-            yield return Speak("Let’s go out.");
+            yield return Speak("Letâ€™s go out.");
         }
 
         yield return FadeAndLoad();
@@ -305,9 +336,9 @@ public class AbelIntroNPC : MonoBehaviour
             case OverallPerformance.Competent:
                 return new[] { "You pushed through uncertainty." };
             case OverallPerformance.Novice:
-                return new[] { "You hesitated—but continued." };
+                return new[] { "You hesitatedâ€”but continued." };
             case OverallPerformance.Struggling:
-                return new[] { "You struggled—but survived." };
+                return new[] { "You struggledâ€”but survived." };
         }
         return new string[0];
     }
