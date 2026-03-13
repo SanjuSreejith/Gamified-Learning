@@ -33,15 +33,16 @@ public class JetpackController2D : MonoBehaviour
     public float maxPitch = 1.5f;
     public float minVolume = 0.3f;
     public float maxVolume = 1f;
-    public AnimationCurve speedToPitchCurve = AnimationCurve.Linear(0, 0.8f, 1, 1.5f); // optional
+    public AnimationCurve speedToPitchCurve = AnimationCurve.Linear(0, 0.8f, 1, 1.5f);
     public AnimationCurve speedToVolumeCurve = AnimationCurve.Linear(0, 0.3f, 1, 1f);
 
     private Rigidbody2D rb;
     private PlayerJetpackAnimator2D animator;
+    private SpriteRenderer sr;
 
     private float originalGravity;
     private bool isFlying;
-    private int currentPoint = 0;               // start at 0 (first landing point)
+    private int currentPoint = 0;
 
     public Action<bool> OnFlightEnd;
 
@@ -49,6 +50,7 @@ public class JetpackController2D : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         animator = GetComponent<PlayerJetpackAnimator2D>();
+        sr = GetComponent<SpriteRenderer>();
 
         originalGravity = rb.gravityScale;
 
@@ -61,6 +63,7 @@ public class JetpackController2D : MonoBehaviour
         if (controlMode == ControlMode.Manual && isFlying)
         {
             HandleManualFlight();
+
             if (modulateSoundWithSpeed)
                 ModulateSoundBySpeed(rb.linearVelocity.magnitude / manualFlySpeed);
         }
@@ -123,8 +126,12 @@ public class JetpackController2D : MonoBehaviour
             manualAcceleration * Time.deltaTime
         );
 
+        // Update animator
         if (animator != null)
             animator.UpdateXSpeed(rb.linearVelocity.x);
+
+        // Flip sprite
+        HandleFlip(rb.linearVelocity.x);
     }
 
     // ================= AUTO =================
@@ -134,7 +141,7 @@ public class JetpackController2D : MonoBehaviour
         if (controlMode != ControlMode.Auto) return;
         if (isFlying) return;
         if (landingPoints == null || landingPoints.Length == 0) return;
-        if (currentPoint >= landingPoints.Length) return;   // no more points
+        if (currentPoint >= landingPoints.Length) return;
 
         StartCoroutine(FlyRoutine(travelPercent));
     }
@@ -164,10 +171,12 @@ public class JetpackController2D : MonoBehaviour
             Vector2 pos = Vector2.Lerp(start, end, t);
             rb.MovePosition(pos);
 
+            // Flip during auto movement
+            HandleFlip(end.x - transform.position.x);
+
             if (modulateSoundWithSpeed)
             {
-                // In auto mode, we can modulate based on constant speed factor
-                float speedFactor = autoFlySpeed / manualFlySpeed; // relative to manual max
+                float speedFactor = autoFlySpeed / manualFlySpeed;
                 ModulateSoundBySpeed(Mathf.Clamp01(speedFactor));
             }
 
@@ -185,6 +194,24 @@ public class JetpackController2D : MonoBehaviour
 
         isFlying = false;
         OnFlightEnd?.Invoke(true);
+    }
+
+    // ================= FLIP =================
+
+    void HandleFlip(float xSpeed)
+    {
+        if (sr == null) return;
+
+        if (xSpeed > 0.05f)
+        {
+            sr.flipX = false;
+            FollowingCamera.Instance?.SetFacingDirection(true);
+        }
+        else if (xSpeed < -0.05f)
+        {
+            sr.flipX = true;
+            FollowingCamera.Instance?.SetFacingDirection(false);
+        }
     }
 
     // ================= SOUND =================
@@ -206,11 +233,10 @@ public class JetpackController2D : MonoBehaviour
             jetpackAudio.Stop();
     }
 
-    private void ModulateSoundBySpeed(float speedFactor) // speedFactor between 0 and 1
+    private void ModulateSoundBySpeed(float speedFactor)
     {
         if (!jetpackAudio) return;
 
-        // Use curves if assigned, otherwise simple lerp
         if (speedToPitchCurve != null && speedToPitchCurve.keys.Length > 0)
             jetpackAudio.pitch = speedToPitchCurve.Evaluate(speedFactor);
         else

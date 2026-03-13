@@ -31,6 +31,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     [Header("Player Control")]
     public MonoBehaviour playerMovementScript;
+
     [Header("Completion Save")]
     public bool markSceneCompleted = true;
 
@@ -51,8 +52,18 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     string pythonInput = "";
     string lockInput = "";
 
+    bool pythonConfigured = false;
+
     const string CORRECT_CODE = "password = int(input())";
     const string LOCK_PASSWORD = "59";
+
+    string[] lockHints =
+    {
+        "Look at the platforms carefully.",
+        "Each platform group represents a number.",
+        "First platform set = first digit.",
+        "Second platform set = second digit."
+    };
 
     string[] pythonHints =
     {
@@ -60,13 +71,6 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         "input() returns text.",
         "Convert text to number using int().",
         "Example: password = int(input())"
-    };
-
-    string[] lockHints =
-    {
-        "The password is a number.",
-        "The correct number was mentioned earlier.",
-        "Try entering 59."
     };
 
     readonly string[] teachingDialogue =
@@ -94,6 +98,14 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         "Good. The program worked.",
         "Because of int(), the lock accepts numbers.",
         "Enter the password."
+    };
+
+    readonly string[] botLockHints =
+    {
+        "Hmm… the password isn't written anywhere.",
+        "Maybe the platforms around us mean something.",
+        "Count the first platform group carefully.",
+        "Then check the second one."
     };
 
     readonly string[] successDialogue =
@@ -141,23 +153,35 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (terminalPanel) terminalPanel.SetActive(false);
         if (lockPanel) lockPanel.SetActive(false);
 
-        if (hintSystem)
-            hintSystem.DisableHints();
-
-        state = State.Idle;
         dialogueActive = false;
 
         SetPaused(false);
+
+        if (pythonConfigured)
+            state = State.WaitingForTerminal;
+        else
+            state = State.Idle;
     }
 
     void Update()
     {
         if (dialogueActive) return;
 
+        if (state == State.TypingLock && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseLockTerminal();
+            return;
+        }
+
         if (state == State.WaitingForTerminal)
         {
-            if (playerInside && Input.GetKeyDown(KeyCode.Alpha1))
+            if (!playerInside) return;
+
+            if (Input.GetKeyDown(KeyCode.Alpha1) && !pythonConfigured)
                 OpenPythonTerminal();
+
+            if (Input.GetKeyDown(KeyCode.E) && pythonConfigured)
+                OpenLockTerminal();
         }
 
         if (state == State.TypingPython)
@@ -178,11 +202,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         if (boardPanel) boardPanel.SetActive(true);
 
-        string line = activeDialogue[dialogueIndex];
-        boardText.text = line;
+        boardText.text = activeDialogue[dialogueIndex];
 
-        if (DialogueBacklogManager.Instance != null)
-            DialogueBacklogManager.Instance.AddLine("Kuttan", line);
+        AddToBacklog(activeDialogue[dialogueIndex]);
 
         StartCoroutine(DialogueRoutine());
     }
@@ -195,11 +217,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         {
             dialogueIndex++;
 
-            string line = activeDialogue[dialogueIndex];
-            boardText.text = line;
+            boardText.text = activeDialogue[dialogueIndex];
 
-            if (DialogueBacklogManager.Instance != null)
-                DialogueBacklogManager.Instance.AddLine("Guide", line);
+            AddToBacklog(activeDialogue[dialogueIndex]);
 
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
         }
@@ -210,6 +230,12 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         if (state == State.Teaching)
             state = State.WaitingForTerminal;
+    }
+
+    void AddToBacklog(string text)
+    {
+        if (DialogueBacklogManager.Instance != null)
+            DialogueBacklogManager.Instance.AddLine("Kuttan", text);
     }
 
     void SetPaused(bool pause)
@@ -227,6 +253,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         state = State.TypingPython;
 
         SetPaused(true);
+
+        DialogueBacklogManager.Instance?.AddLine("System", "Python terminal opened.");
     }
 
     void HandlePythonTyping()
@@ -257,11 +285,17 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         if (RemoveSpaces(pythonInput) == RemoveSpaces(CORRECT_CODE))
         {
+            pythonConfigured = true;
+
+            DialogueBacklogManager.Instance?.AddLine("System", "Python code accepted.");
+
             PlaySound(correctSound);
             StartCoroutine(OpenLockAfterDialogue());
         }
         else
         {
+            DialogueBacklogManager.Instance?.AddLine("System", "Python code rejected.");
+
             PlaySound(wrongSound);
             StartDialogue(wrongDialogue);
             state = State.WaitingForTerminal;
@@ -280,6 +314,10 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             hintSystem.EnableHints();
         }
 
+        StartDialogue(botLockHints);
+
+        yield return new WaitUntil(() => !dialogueActive);
+
         OpenLockTerminal();
     }
 
@@ -292,6 +330,17 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         state = State.TypingLock;
 
         SetPaused(true);
+
+        DialogueBacklogManager.Instance?.AddLine("System", "Door lock terminal opened.");
+    }
+
+    void CloseLockTerminal()
+    {
+        if (lockPanel) lockPanel.SetActive(false);
+
+        SetPaused(false);
+
+        state = State.WaitingForTerminal;
     }
 
     void HandleLockTyping()
@@ -318,6 +367,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     {
         if (lockInput == LOCK_PASSWORD)
         {
+            DialogueBacklogManager.Instance?.AddLine("System", "Password accepted.");
+
             if (lockPanel) lockPanel.SetActive(false);
 
             SetPaused(false);
@@ -326,6 +377,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         }
         else
         {
+            DialogueBacklogManager.Instance?.AddLine("System", "Incorrect password.");
+
             lockInput = "";
             lockText.text = "Enter Password";
         }
@@ -342,11 +395,15 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         PlaySound(doorOpenSound);
 
-        yield return new WaitForSeconds(1f); 
-        MarkSceneCompleted();
-        SceneManager.LoadScene(nextSceneName);
+        DialogueBacklogManager.Instance?.AddLine("System", "Door opened.");
 
+        yield return new WaitForSeconds(1f);
+
+        MarkSceneCompleted();
+
+        SceneManager.LoadScene(nextSceneName);
     }
+
     void MarkSceneCompleted()
     {
         if (!markSceneCompleted) return;
