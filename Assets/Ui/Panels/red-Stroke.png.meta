@@ -1,16 +1,10 @@
 fileFormatVersion: 2
-guid: c3497434ef472c842932433df23d7fb9
+guid: 7213495a65cfda6408899a8e55620cd6
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7987475130731585184
-    second: Backlog Btns_0
-  - first:
-      213: 3865235046034236690
-    second: Backlog Btns_1
-  - first:
-      213: -4791672638023439786
-    second: Backlog Btns_2
+      213: -684886451401409472
+    second: red-Stroke_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -145,13 +139,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Backlog Btns_0
+      name: red-Stroke_0
       rect:
         serializedVersion: 2
-        x: 104
-        y: 222
-        width: 282
-        height: 276
+        x: 0
+        y: 0
+        width: 3393
+        height: 1508
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -160,52 +154,30 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0612a7420b9c62190800000000000000
-      internalID: -7987475130731585184
+      spriteID: 04cbdb0b66bce76f0800000000000000
+      internalID: -684886451401409472
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Backlog Btns_1
+      name: red-Stroke_1
       rect:
         serializedVersion: 2
-        x: 426
+        x: 0
         y: 0
-        width: 426
-        height: 698
+        width: 3393
+        height: 1508
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 215e244abc214a530800000000000000
-      internalID: 3865235046034236690
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Backlog Btns_2
-      rect:
-        serializedVersion: 2
-        x: 852
-        y: 0
-        width: 426
-        height: 698
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 65a67a28f1f808db0800000000000000
-      internalID: -4791672638023439786
+      spriteID: 11638c76c3149ed4f950fe2ee8086a90
+      internalID: -837337660
       vertices: []
       indices: 
       edges: []
@@ -214,7 +186,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: bff17529afb5c3348914891af4673e64
+    spriteID: 1d7153d2a0c8a364da0c1b2e5c2f88da
     internalID: 0
     vertices: []
     indices: 
@@ -222,13 +194,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":3.0,"y":1.0},"gridSpriteSize":{"x":426.0,"y":698.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Backlog Btns_0: -7987475130731585184
-      Backlog Btns_1: 3865235046034236690
-      Backlog Btns_2: -4791672638023439786
+      red-Stroke_0: -684886451401409472
+      red-Stroke_1: -837337660
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
