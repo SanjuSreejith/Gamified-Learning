@@ -43,9 +43,15 @@ public class TerminalVariableLesson : MonoBehaviour
     [Header("Exercise")]
     public TerminalVariableExercise exerciseScript;
 
-    // --- NEW: Hint System ---
     [Header("Hint System")]
     public BotHintSystem hintSystem;   // Reference to the hint UI
+
+    [Header("Player Profile")]
+    public PlayerProfileManager profileManager; // Reference to update UI after saving
+
+    // PlayerPrefs keys (matching PlayerProfileManager)
+    const string NAME_KEY = "PlayerName";
+    const string AGE_KEY = "PlayerAge";
 
     string currentInput = "";
     bool inputEnabled;
@@ -145,7 +151,7 @@ public class TerminalVariableLesson : MonoBehaviour
         SetFace(idleFace);
         yield return Speak("What’s your name?");
 
-        // --- NEW: Set first hint ---
+        // Set first hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
 
@@ -228,7 +234,7 @@ public class TerminalVariableLesson : MonoBehaviour
         SetFace(idleFace);
         yield return Speak("Now tell me your age.");
 
-        // --- NEW: Update hint ---
+        // Update hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
 
@@ -258,7 +264,7 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("Are these details correct?");
         yield return Speak("Type yes or no.");
 
-        // --- NEW: Update hint ---
+        // Update hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Type 'yes' or 'no'" });
 
@@ -273,7 +279,10 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return AddSystemLine("details_confirmed = True");
         yield return Speak("True means proceed.");
 
-        // --- NEW: Update hint for next step (optional) ---
+        // --- SAVE THE PLAYER'S NAME AND AGE TO PLAYER PREFS ---
+        SavePlayerProfile();
+
+        // Update hint for next step
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Now we'll learn about floats" });
 
@@ -289,7 +298,7 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("What should we change?");
         yield return Speak("Type: name or age");
 
-        // --- NEW: Update hint ---
+        // Update hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Type 'name' or 'age'" });
 
@@ -301,7 +310,7 @@ public class TerminalVariableLesson : MonoBehaviour
     {
         yield return Speak("Alright, enter your name again.");
 
-        // --- NEW: Update hint ---
+        // Update hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
 
@@ -313,12 +322,29 @@ public class TerminalVariableLesson : MonoBehaviour
     {
         yield return Speak("Okay, enter your age again.");
 
-        // --- NEW: Update hint ---
+        // Update hint
         if (hintSystem != null)
             hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
 
         EnableInput();
         step = 2;
+    }
+
+    // ================= SAVE PLAYER PROFILE =================
+    void SavePlayerProfile()
+    {
+        // Save to PlayerPrefs
+        PlayerPrefs.SetString(NAME_KEY, playerName);
+        PlayerPrefs.SetInt(AGE_KEY, playerAge);
+        PlayerPrefs.Save();
+
+        Debug.Log($"Player profile saved: {playerName}, Age: {playerAge}");
+
+        // Update the PlayerProfileManager UI if assigned
+        if (profileManager != null)
+        {
+            profileManager.RefreshUI();
+        }
     }
 
     // ================= PYTHON FLOAT =================
@@ -342,7 +368,7 @@ public class TerminalVariableLesson : MonoBehaviour
         yield return Speak("You just learned Python basics.");
         yield return Speak("Now let’s practice.");
 
-        // --- NEW: Lesson complete — disable hints and mark scene ---
+        // Lesson complete — disable hints and mark scene
         if (hintSystem != null)
             hintSystem.DisableHints();
 
@@ -403,7 +429,6 @@ public class TerminalVariableLesson : MonoBehaviour
     }
 
     // ================= DIALOGUE =================
-    // Modified to wait for Enter key after message is fully displayed
     IEnumerator Speak(string msg)
     {
         dialogueText.text = "";
@@ -423,15 +448,12 @@ public class TerminalVariableLesson : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        // Wait for player to press Enter (or the advance key)
-        // We keep waitingForAdvance true until key press
+        // Wait for player to press Enter
         while (waitingForAdvance)
         {
-            // Check for advance input (handled in Update via HandleDialogueAdvance)
             yield return null;
         }
 
-        // Small pause before next line
         yield return new WaitForSeconds(0.1f);
     }
 
@@ -439,11 +461,10 @@ public class TerminalVariableLesson : MonoBehaviour
     {
         if (!waitingForAdvance) return;
 
-        // If any advance input is detected, clear the wait flag
         if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
         {
             waitingForAdvance = false;
-            skipRequested = true;   // also skip typing if still in progress
+            skipRequested = true;
         }
     }
 
@@ -478,15 +499,13 @@ public class TerminalVariableLesson : MonoBehaviour
             typingAudio.PlayOneShot(typeLetter);
     }
 
-    // --- NEW: Mark the scene as completed ---
     void MarkSceneCompleted()
     {
-        // Example: set a PlayerPrefs flag
-        PlayerPrefs.SetInt("TerminalVariableLessonCompleted", 1);
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
+        // Also save with alternative key format for compatibility
+        PlayerPrefs.SetInt("SceneCompleted_" + sceneName, 1);
         PlayerPrefs.Save();
         Debug.Log("TerminalVariableLesson marked as completed.");
-
-        // Alternatively, you could call a GameManager method:
-        // GameManager.Instance.CompleteLesson("TerminalVariable");
     }
 }

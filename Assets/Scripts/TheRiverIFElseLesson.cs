@@ -2,6 +2,7 @@
 using TMPro;
 using Unity.AppUI.UI;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.VolumeComponent;
 
@@ -126,19 +127,16 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     IEnumerator FinalArrivalDialogue()
     {
         yield return new WaitForSeconds(0.4f);
-
         Speak("Abel", "You're a little late… we were wondering.");
         yield return Wait();
-
         Speak("Kuttan", "We already crossed ahead.");
         yield return Wait();
-
         Speak("Abel", "You don't need the jetpack anymore. Let's go.");
         yield return Wait();
 
+        MarkSceneCompleted();   // <-- ADD THIS LINE
         DisableJetpack();
     }
-
     IEnumerator FallDialogue()
     {
         yield return Wait();
@@ -769,5 +767,13 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
+    }
+    void MarkSceneCompleted()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
+        // or use the other pattern: "SceneCompleted_" + sceneName
+        PlayerPrefs.Save();
+        Debug.Log("Scene marked as completed: " + sceneName);
     }
 }

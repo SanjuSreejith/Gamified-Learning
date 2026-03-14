@@ -393,6 +393,7 @@ public class AbelIntroNPC : MonoBehaviour
 
     IEnumerator FadeAndLoad()
     {
+        MarkSceneCompleted();   // <-- ADD THIS LINE
         if (!fadeCanvas)
         {
             SceneManager.LoadScene(nextSceneName);
@@ -408,5 +409,13 @@ public class AbelIntroNPC : MonoBehaviour
             yield return null;
         }
         SceneManager.LoadScene(nextSceneName);
+    }
+    void MarkSceneCompleted()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
+        // or use the other pattern: "SceneCompleted_" + sceneName
+        PlayerPrefs.Save();
+        Debug.Log("Scene marked as completed: " + sceneName);
     }
 }
