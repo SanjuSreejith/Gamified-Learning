@@ -1,16 +1,19 @@
 fileFormatVersion: 2
-guid: c3497434ef472c842932433df23d7fb9
+guid: 53ab18819a735034ea0d22d31e5fc029
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7987475130731585184
-    second: Backlog Btns_0
+      213: 4763415714078566847
+    second: banner_0
   - first:
-      213: 3865235046034236690
-    second: Backlog Btns_1
+      213: 546739087842343011
+    second: banner_1
   - first:
-      213: -4791672638023439786
-    second: Backlog Btns_2
+      213: -5474182060984311160
+    second: banner_2
+  - first:
+      213: -3283267078752028349
+    second: banner_3
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -145,67 +148,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Backlog Btns_0
+      name: banner_0
       rect:
         serializedVersion: 2
-        x: 104
-        y: 222
-        width: 282
-        height: 276
+        x: 0
+        y: 971
+        width: 522
+        height: 63
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0612a7420b9c62190800000000000000
-      internalID: -7987475130731585184
+      spriteID: fb9aa23ba5d0b1240800000000000000
+      internalID: 4763415714078566847
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Backlog Btns_1
+      name: banner_1
       rect:
         serializedVersion: 2
-        x: 426
-        y: 0
-        width: 426
-        height: 698
+        x: 0
+        y: 654
+        width: 522
+        height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 215e244abc214a530800000000000000
-      internalID: 3865235046034236690
+      spriteID: 368f9abbd48669700800000000000000
+      internalID: 546739087842343011
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Backlog Btns_2
+      name: banner_2
       rect:
         serializedVersion: 2
-        x: 852
-        y: 0
-        width: 426
-        height: 698
+        x: 0
+        y: 316
+        width: 522
+        height: 64
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 65a67a28f1f808db0800000000000000
-      internalID: -4791672638023439786
+      spriteID: 882e6334b6cc704b0800000000000000
+      internalID: -5474182060984311160
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: banner_3
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 522
+        height: 63
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3493044ccfd7f62d0800000000000000
+      internalID: -3283267078752028349
       vertices: []
       indices: 
       edges: []
@@ -214,7 +239,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: bff17529afb5c3348914891af4673e64
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -222,13 +247,12 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     spriteCustomMetadata:
-      entries:
-      - key: SpriteEditor.SliceSettings
-        value: '{"sliceOnImport":false,"gridCellCount":{"x":3.0,"y":1.0},"gridSpriteSize":{"x":426.0,"y":698.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":2,"keepEmptyRects":false,"isAlternate":false}'
+      entries: []
     nameFileIdTable:
-      Backlog Btns_0: -7987475130731585184
-      Backlog Btns_1: 3865235046034236690
-      Backlog Btns_2: -4791672638023439786
+      banner_0: 4763415714078566847
+      banner_1: 546739087842343011
+      banner_2: -5474182060984311160
+      banner_3: -3283267078752028349
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
