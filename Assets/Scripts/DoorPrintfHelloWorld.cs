@@ -41,6 +41,10 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     // ================= DIALOGUE BACKLOG =================
     public DialogueBacklogManager backlogManager;
 
+    // ================= TUTORIAL LOCK =================
+    [Header("Tutorial Lock")]
+    public bool tutorialActive = true;
+
     // ================= STATE =================
     enum GameState
     {
@@ -114,7 +118,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         "Proceed."
     };
 
-    // ================= START =================
     void Start()
     {
         boardPanel.SetActive(false);
@@ -134,9 +137,10 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             backlogManager = FindObjectOfType<DialogueBacklogManager>();
     }
 
-    // ================= UPDATE =================
     void Update()
     {
+        if (tutorialActive) return;
+
         HandleDistance();
 
         if (currentState == GameState.InputTerminal)
@@ -151,45 +155,48 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         }
     }
 
-    // ================= DISTANCE =================
     void HandleDistance()
     {
         float dist = Vector3.Distance(player.position, transform.position);
 
-        if (dist <= interactDistance && currentState == GameState.Idle)
+        if (dist <= interactDistance)
         {
-            boardPanel.SetActive(true);
+            if (currentState == GameState.Idle)
+            {
+                boardPanel.SetActive(true);
 
-            if (!introCompleted)
-                StartDialogue(introDialogue, GameState.IntroDialogue);
-            else
-                boardText.text = "Press 1 to try again.";
+                if (!introCompleted)
+                    StartDialogue(introDialogue, GameState.IntroDialogue);
+                else
+                    boardText.text = "Press 1 to try again.";
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                if (!introCompleted)
+                    StartDialogue(teachingDialogue, GameState.TeachingDialogue);
+                else
+                    OpenInputTerminal();
+            }
         }
-
-        if (dist > interactDistance && currentState == GameState.Idle)
-            boardPanel.SetActive(false);
-
-        if (dist <= interactDistance && Input.GetKeyDown(KeyCode.Alpha1))
+        else
         {
-            if (!introCompleted)
-                StartDialogue(teachingDialogue, GameState.TeachingDialogue);
-            else
-                OpenInputTerminal();
+            if (currentState == GameState.Idle)
+                boardPanel.SetActive(false);
         }
     }
 
-    // ================= DIALOGUE =================
     void StartDialogue(string[] dialogue, GameState state)
     {
+        boardPanel.SetActive(true);
+
         activeDialogue = dialogue;
         dialogueIndex = 0;
         currentState = state;
         boardText.text = activeDialogue[dialogueIndex];
 
-        // Add first line to backlog (speaker: Kuttan)
         backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
 
-        // Set hints for teaching dialogue
         if (state == GameState.TeachingDialogue && botHintSystem != null)
         {
             botHintSystem.SetHints(teachingHints);
@@ -216,20 +223,17 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             if (currentState == GameState.TeachingDialogue ||
                 currentState == GameState.FeedbackDialogue)
             {
-                // Disable hints before opening input terminal
                 botHintSystem?.DisableHints();
                 OpenInputTerminal();
             }
             else if (currentState == GameState.SuccessDialogue)
             {
-                // Disable hints before fading
                 botHintSystem?.DisableHints();
                 StartCoroutine(FadeAndChangeScene());
             }
         }
     }
 
-    // ================= INPUT TERMINAL =================
     void OpenInputTerminal()
     {
         currentInput = "";
@@ -237,10 +241,8 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         inputText.text = "> ";
         currentState = GameState.InputTerminal;
 
-        // Pause the game
         Time.timeScale = 0f;
 
-        // Set hints for input terminal
         if (botHintSystem != null)
         {
             botHintSystem.SetHints(inputTerminalHints);
@@ -270,18 +272,14 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         }
     }
 
-    // ================= SUBMIT =================
     void SubmitInput()
     {
         inputTerminalPanel.SetActive(false);
-
-        // Unpause the game
         Time.timeScale = 1f;
 
         outputTerminalText.text += "> " + currentInput + "\n";
         attemptCount++;
 
-        // Add player input to backlog (speaker: Kuttan)
         backlogManager?.AddLine("Kuttan", currentInput);
 
         List<string> errors = ValidatePythonPrint(currentInput);
@@ -292,53 +290,23 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             ShowErrors(errors);
     }
 
-    // ================= PYTHON VALIDATION =================
     List<string> ValidatePythonPrint(string raw)
     {
         List<string> errors = new List<string>();
         string s = raw.Trim();
 
-        // Semicolon check
-        if (s.EndsWith(";"))
-            errors.Add("Python does not use semicolons.");
-
-        // print() existence & case
-        if (s.StartsWith("Print") || s.StartsWith("PRINT"))
-            errors.Add("Python is case-sensitive. Use `print`, not `Print`.");
-
         if (!s.StartsWith("print"))
             errors.Add("Use the `print()` function.");
 
-        // Parentheses
-        int open = s.IndexOf('(');
-        int close = s.LastIndexOf(')');
-        if (open == -1 || close == -1 || close < open)
-            errors.Add("print must use parentheses `()`.");
+        if (!s.Contains("(") || !s.Contains(")"))
+            errors.Add("print must use parentheses.");
 
-        // Quotes
-        int quoteCount = 0;
-        foreach (char c in s)
-            if (c == '"') quoteCount++;
-
-        if (quoteCount == 0)
-            errors.Add("Text must be inside double quotes.");
-        else if (quoteCount == 1)
-            errors.Add("Missing one double quote `\"`.");
-
-        // Content
-        if (quoteCount >= 2)
-        {
-            int q1 = s.IndexOf('"');
-            int q2 = s.LastIndexOf('"');
-            string inside = s.Substring(q1 + 1, q2 - q1 - 1);
-            if (inside != "Welcome")
-                errors.Add("The text must be exactly: Welcome!");
-        }
+        if (!s.Contains("\""))
+            errors.Add("Text must be inside quotes.");
 
         return errors;
     }
 
-    // ================= FEEDBACK =================
     void ShowErrors(List<string> errors)
     {
         outputTerminalText.text += "Runtime Errors:\n\n";
@@ -358,34 +326,14 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         dialogueIndex = 0;
         currentState = GameState.FeedbackDialogue;
         boardText.text = activeDialogue[dialogueIndex];
-
-        // Add first error line to backlog
-        backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
-
-        // Set hints for feedback
-        if (botHintSystem != null)
-        {
-            botHintSystem.SetHints(feedbackHints);
-            botHintSystem.EnableHints();
-        }
     }
 
-    // ================= SUCCESS =================
     void HandleSuccess()
     {
         outputTerminalText.text += "Welcome\n\n";
-
-        // Set hints for success
-        if (botHintSystem != null)
-        {
-            botHintSystem.SetHints(successHints);
-            botHintSystem.EnableHints();
-        }
-
         StartDialogue(successDialogue, GameState.SuccessDialogue);
     }
 
-    // ================= SOUND =================
     void PlayTypingSound(char c)
     {
         if (char.IsLetter(c))
@@ -396,25 +344,11 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             audioSource.PlayOneShot(typeSymbol);
     }
 
-    // ================= SCENE COMPLETION =================
-    void MarkSceneCompleted()
-    {
-        string sceneName = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
-        PlayerPrefs.Save();
-        Debug.Log("Scene marked as completed: " + sceneName);
-    }
-
-    // ================= FADE =================
     IEnumerator FadeAndChangeScene()
     {
         currentState = GameState.Transition;
         fadeCanvas.blocksRaycasts = true;
 
-        // Mark this scene as completed before leaving
-        MarkSceneCompleted();
-
-        // Ensure time is unpaused (in case something went wrong)
         Time.timeScale = 1f;
 
         float t = 0;
