@@ -69953,6 +69953,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 358453138}
     - target: {fileID: 2592776104170574292, guid: e8f1c0a3da494e24b8b8480918b535d4, type: 3}
+      propertyPath: rewardCoins
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 2592776104170574292, guid: e8f1c0a3da494e24b8b8480918b535d4, type: 3}
       propertyPath: checkpointID
       value: 4
       objectReference: {fileID: 0}

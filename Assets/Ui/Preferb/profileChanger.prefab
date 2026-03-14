@@ -1,0 +1,76 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3061049769277244537
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7167641129372320361}
+  - component: {fileID: 6051362060982385585}
+  m_Layer: 0
+  m_Name: profileChanger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7167641129372320361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061049769277244537}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 468.7294, y: 202.52834, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6051362060982385585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3061049769277244537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 812f75651fee9514397948c3612383ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  changeProfilePanel: {fileID: 0}
+  profileDisplay: {fileID: 0}
+  defaultProfiles:
+  - {fileID: 1882511497126436190, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -5941719109716155153, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -7434590313126315587, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: 5919838873952053120, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -8000084105389349508, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -5288398112335384601, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -1538309785370277938, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: 455747187535858066, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  - {fileID: -7232485609332265869, guid: db6f17c032df5d54fad0014636cf9e38, type: 3}
+  customBorders:
+  - {fileID: 0}
+  - {fileID: 0}
+  customButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  selectionTicks:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
