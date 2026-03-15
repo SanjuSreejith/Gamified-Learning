@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 5a8ce96cacff9884ebfbc15371bf8d5f
+guid: 065aa74d3a9a67947a5b4f3086f451d1
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -8004568219659775380
-    second: cave down_0
-  - first:
-      213: -6765633445815760275
-    second: cave down_1
+      213: 793266176706883271
+    second: BgFor_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -101,19 +98,6 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   - serializedVersion: 4
     buildTarget: Android
-    maxTextureSize: 8192
-    resizeAlgorithm: 0
-    textureFormat: 47
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 1
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WindowsStoreApps
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
@@ -129,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: cave down_0
+      name: BgFor_0
       rect:
         serializedVersion: 2
-        x: 524
+        x: 0
         y: 0
-        width: 291
-        height: 166
+        width: 3024
+        height: 1376
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -144,74 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c625cce3d9f0ae090800000000000000
-      internalID: -8004568219659775380
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: cave down_1
-      rect:
-        serializedVersion: 2
-        x: 82
-        y: 0
-        width: 442
-        height: 528
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d6a46a51a34ab12a0800000000000000
-      internalID: -6765633445815760275
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: cave down_2
-      rect:
-        serializedVersion: 2
-        x: 941
-        y: 0
-        width: 272
-        height: 581
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8d36617e0e37c254297a4fbcfe7b27fb
-      internalID: -1073996723
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: cave down_3
-      rect:
-        serializedVersion: 2
-        x: 808
-        y: 461
-        width: 132
-        height: 68
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ae7f24f384c54af4c8381ab664f474c0
-      internalID: 1917588752
+      spriteID: 7ce22f2826f320b00800000000000000
+      internalID: 793266176706883271
       vertices: []
       indices: 
       edges: []
@@ -220,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 30556afb216cd604090c20b6e7f98ed0
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -230,10 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      cave down_0: -8004568219659775380
-      cave down_1: -6765633445815760275
-      cave down_2: -1073996723
-      cave down_3: 1917588752
+      BgFor_0: 793266176706883271
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
