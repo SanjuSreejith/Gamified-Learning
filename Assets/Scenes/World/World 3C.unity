@@ -740,7 +740,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!225 &307326709
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -3339,7 +3339,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &894752636
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3688,6 +3688,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Panel
       objectReference: {fileID: 0}
+    - target: {fileID: 3281144271035785219, guid: 94c2cbb1934b8ca46af5a2fa470a516f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3864637486786359521, guid: 94c2cbb1934b8ca46af5a2fa470a516f, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -3862,6 +3866,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1207743116}
     m_Modifications:
+    - target: {fileID: 2999927248901023221, guid: c82473303954dc246b2d2e394309b63f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 376.5442
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999927248901023221, guid: c82473303954dc246b2d2e394309b63f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 167.7068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999927248901023221, guid: c82473303954dc246b2d2e394309b63f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 5.8627
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999927248901023221, guid: c82473303954dc246b2d2e394309b63f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 44.132633
+      objectReference: {fileID: 0}
     - target: {fileID: 4056695141734819107, guid: c82473303954dc246b2d2e394309b63f, type: 3}
       propertyPath: m_Name
       value: 'Terminal Panel '
@@ -5000,6 +5020,7 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 328900689}
   - {fileID: 725880212}
   - {fileID: 1347982433}
   - {fileID: 1033870188}
@@ -5007,7 +5028,6 @@ RectTransform:
   - {fileID: 307326712}
   - {fileID: 275265804}
   - {fileID: 1164868011}
-  - {fileID: 328900689}
   - {fileID: 1272074691}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

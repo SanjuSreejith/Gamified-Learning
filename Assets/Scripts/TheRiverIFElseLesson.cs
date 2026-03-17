@@ -34,6 +34,8 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
     public int playerEnergy = 100;
     const int ENERGY_RATE = 4;
+    [Header("Fade System")]
+    public StartFadeOut fadeController;
     string WithCursor(string text, bool active)
     {
         return active ? text + "<color=#FFD54F>|</color>" : text;
@@ -69,7 +71,14 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     const string INDENT = "    ";
     const string USER_COLOR = "#4FC3F7";   // blue for player input
 
+    /* ================= SCENE TRANSITION ================= */
+    [Header("Scene Transition")]
+    public string nextSceneName;
+    public float sceneDelay = 2f;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public AudioClip sceneEndSound;
 
     void Reset() => GetComponent<Collider2D>().isTrigger = true;
 
@@ -127,15 +136,39 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     IEnumerator FinalArrivalDialogue()
     {
         yield return new WaitForSeconds(0.4f);
+
         Speak("Abel", "You're a little late… we were wondering.");
         yield return Wait();
+
         Speak("Kuttan", "We already crossed ahead.");
         yield return Wait();
+
         Speak("Abel", "You don't need the jetpack anymore. Let's go.");
         yield return Wait();
 
-        MarkSceneCompleted();   // <-- ADD THIS LINE
+        MarkSceneCompleted();
         DisableJetpack();
+        // 🔊 Play sound
+        if (audioSource != null && sceneEndSound != null)
+        {
+            audioSource.PlayOneShot(sceneEndSound);
+        }
+
+        // 🌑 Fade to black
+        if (fadeController != null)
+        {
+            yield return StartCoroutine(fadeController.FadeIn());
+        }
+        else
+        {
+            yield return new WaitForSeconds(sceneDelay);
+        }
+
+        // 🎬 Load next scene
+        if (!string.IsNullOrEmpty(nextSceneName))
+        {
+            SceneManager.LoadScene(nextSceneName);
+        }
     }
     IEnumerator FallDialogue()
     {
