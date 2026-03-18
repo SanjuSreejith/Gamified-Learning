@@ -5946,7 +5946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6443273068993854568, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6580606038509495909, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_IsActive
@@ -6002,7 +6002,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9179378168933192906, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -10223,7 +10223,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!225 &1011200108
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -14658,23 +14658,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.635733
+      value: 0.63573295
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.137694
+      value: 0.13769399
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 165.62
+      value: -1.81
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.18
+      value: -2.871
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.08
+      value: -0.07999999
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalRotation.w
@@ -70174,8 +70174,8 @@ SceneRoots:
   - {fileID: 1289041443}
   - {fileID: 1061226025}
   - {fileID: 145565527}
-  - {fileID: 1460152168}
   - {fileID: 849521174}
+  - {fileID: 1460152168}
   - {fileID: 2330362019324131969}
   - {fileID: 2199012497589965851}
   - {fileID: 552734225}

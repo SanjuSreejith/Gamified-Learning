@@ -24,15 +24,13 @@ public class TerminalVariableLesson : MonoBehaviour
     [Header("Dialogue Settings")]
     public float dialogueSpeed = 0.035f;
 
-    [Header("Dialogue Control (DEV OPTION)")]
-    public bool autoAdvanceDialogue = true;      // kept for compatibility, but now overridden by Enter wait
+    [Header("Dialogue Control")]
     public KeyCode advanceKey = KeyCode.Return;
 
     [Header("ID Card UI")]
     public GameObject idCardPanel;
     public TextMeshProUGUI idNameText;
     public TextMeshProUGUI idAgeText;
-    public Animator idCardAnimator;
 
     [Header("Typing Audio")]
     public AudioSource typingAudio;
@@ -44,12 +42,11 @@ public class TerminalVariableLesson : MonoBehaviour
     public TerminalVariableExercise exerciseScript;
 
     [Header("Hint System")]
-    public BotHintSystem hintSystem;   // Reference to the hint UI
+    public BotHintSystem hintSystem;
 
     [Header("Player Profile")]
-    public PlayerProfileManager profileManager; // Reference to update UI after saving
+    public PlayerProfileManager profileManager;
 
-    // PlayerPrefs keys (matching PlayerProfileManager)
     const string NAME_KEY = "PlayerName";
     const string AGE_KEY = "PlayerAge";
 
@@ -61,7 +58,7 @@ public class TerminalVariableLesson : MonoBehaviour
     string playerName;
     int playerAge;
 
-    int step = 0;           // 1=name, 2=age, 3=confirmation, etc.
+    int step = 0;
 
     bool waitingForAdvance;
     bool skipRequested;
@@ -120,40 +117,33 @@ public class TerminalVariableLesson : MonoBehaviour
     IEnumerator TerminalBoot()
     {
         yield return AddSystemLine(">>> MEMORY OS v0.1 <<<");
-        yield return AddSystemLine("Booting core modules...");
-        yield return AddSystemLine("Python runtime active");
+        yield return AddSystemLine("Rebuilding safe environment...");
+        yield return AddSystemLine("Bypassing NULL detection...");
+        yield return AddSystemLine("Python runtime active ✔");
         yield return AddSystemLine("----------------------------");
 
         SetFace(thinkingFace);
-        yield return Speak("That was close…");
-        yield return Speak("He almost noticed you.");
-
-        yield return Speak("The terminal you just saw…");
-        yield return Speak("That world belongs to NULL now.");
-
-        yield return Speak("I can’t exist there.");
-        yield return Speak("He controls everything in that space.");
+        yield return Speak("...That was close.");
+        yield return Speak("He almost detected you.");
 
         yield return Speak("This place is different.");
-        yield return Speak("It’s a learning core.");
+        yield return Speak("This is a learning core.");
 
-        yield return Speak("As long as you’re learning…");
-        yield return Speak("NULL can’t see you.");
+        yield return Speak("As long as you learn...");
+        yield return Speak("You stay hidden.");
 
-        yield return Speak("…Okay.");
-        yield return Speak("You’re safe now.");
+        SetFace(happyFace);
+        yield return Speak("You're safe here 🙂");
 
-        yield return Speak("Oh… hey.");
-        yield return Speak("I don’t get visitors often.");
-        yield return Speak("But I’m glad you’re here.");
-        yield return Speak("Let’s start simple.");
+        yield return Speak("I'm Kuttan.");
+        yield return Speak("I'll guide you.");
 
         SetFace(idleFace);
-        yield return Speak("What’s your name?");
+        yield return Speak("Let's start simple.");
 
-        // Set first hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
+        yield return Speak("What should I call you?");
+
+        hintSystem?.SetHints(new string[] { "Enter your name" });
 
         EnableInput();
         step = 1;
@@ -163,7 +153,9 @@ public class TerminalVariableLesson : MonoBehaviour
     void SubmitInput()
     {
         if (string.IsNullOrWhiteSpace(currentInput)) return;
+
         AppendLine($"> {currentInput}");
+        AppendLine("[Processing...]");
 
         if (step == 1)
         {
@@ -176,7 +168,7 @@ public class TerminalVariableLesson : MonoBehaviour
             if (!int.TryParse(currentInput, out playerAge))
             {
                 SetFace(warningFace);
-                AppendLine("! SYSTEM: Enter a valid number");
+                AppendLine("! Enter a valid number");
                 currentInput = "";
                 return;
             }
@@ -188,26 +180,11 @@ public class TerminalVariableLesson : MonoBehaviour
             string ans = currentInput.ToLower();
             DisableInput();
 
-            if (ans == "yes" || ans == "true")
-                StartCoroutine(HandleConfirmationYes());
-            else if (ans == "no" || ans == "false")
-                StartCoroutine(HandleConfirmationNo());
+            if (ans == "yes") StartCoroutine(HandleConfirmationYes());
+            else if (ans == "no") StartCoroutine(HandleConfirmationNo());
             else
             {
-                AppendLine("! SYSTEM: Type yes or no");
-                EnableInput();
-            }
-        }
-        else if (waitingForCorrectionChoice)
-        {
-            string choice = currentInput.ToLower();
-            DisableInput();
-
-            if (choice == "name") StartCoroutine(ReenterName());
-            else if (choice == "age") StartCoroutine(ReenterAge());
-            else
-            {
-                AppendLine("! SYSTEM: Type name or age");
+                AppendLine("! Type yes or no");
                 EnableInput();
             }
         }
@@ -215,34 +192,30 @@ public class TerminalVariableLesson : MonoBehaviour
         currentInput = "";
     }
 
-    // ================= PYTHON STRING =================
+    // ================= NAME =================
     IEnumerator HandleName()
     {
         SetFace(happyFace);
-        yield return Speak($"Nice to meet you, {playerName}!");
+
+        yield return Speak($"Nice. {playerName}… I like that.");
+
         ShowIDCardName(playerName);
-        yield return Speak("In Python, text is easy.");
 
-        yield return Speak("You don’t declare types.");
-        yield return AddSystemLine($"name = \"{playerName}\"");
+        yield return AddSystemLine($"[Assigning] name = \"{playerName}\"");
+        yield return AddSystemLine("✔ Stored");
 
-        yield return Speak("Python understands it automatically.");
-        yield return Speak("Clean. Simple.");
+        yield return Speak("That's a variable.");
+        yield return Speak("Python just understands it.");
 
         yield return TerminalRefresh();
 
-        SetFace(idleFace);
-        yield return Speak("Now tell me your age.");
-
-        // Update hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
+        yield return Speak("Now your age?");
 
         EnableInput();
         step = 2;
     }
 
-    // ================= PYTHON INT + BOOL =================
+    // ================= AGE =================
     IEnumerator HandleAge()
     {
         SetFace(thinkingFace);
@@ -250,23 +223,23 @@ public class TerminalVariableLesson : MonoBehaviour
         if (playerAge < 0 || playerAge > 150)
         {
             SetFace(warningFace);
-            yield return Speak("That doesn’t look right.");
+            yield return Speak("That seems off.");
             EnableInput();
             yield break;
         }
 
-        yield return AddSystemLine($"age = {playerAge}");
+        yield return AddSystemLine($"[Assigning] age = {playerAge}");
+        yield return AddSystemLine("✔ Stored");
+
         UpdateIDCardAge(playerAge);
-        yield return Speak("Numbers don’t need a type either.");
+
+        yield return Speak("Numbers are simple.");
+        yield return Speak("No quotes needed.");
 
         yield return TerminalRefresh();
 
-        yield return Speak("Are these details correct?");
-        yield return Speak("Type yes or no.");
-
-        // Update hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Type 'yes' or 'no'" });
+        yield return Speak("Everything correct?");
+        yield return Speak("yes / no");
 
         EnableInput();
         step = 3;
@@ -275,116 +248,39 @@ public class TerminalVariableLesson : MonoBehaviour
 
     IEnumerator HandleConfirmationYes()
     {
-        SetFace(happyFace);
-        yield return AddSystemLine("details_confirmed = True");
-        yield return Speak("True means proceed.");
+        SetFace(proudFace);
 
-        // --- SAVE THE PLAYER'S NAME AND AGE TO PLAYER PREFS ---
+        yield return AddSystemLine("[CONFIRMED ✔]");
+        yield return Speak("Nice. Saved.");
+
         SavePlayerProfile();
 
-        // Update hint for next step
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Now we'll learn about floats" });
-
-        StartCoroutine(ContinueWithFloat());
-    }
-
-    IEnumerator HandleConfirmationNo()
-    {
-        SetFace(thinkingFace);
-        yield return AddSystemLine("details_confirmed = False");
-        yield return Speak("Smart move.");
-
-        yield return Speak("What should we change?");
-        yield return Speak("Type: name or age");
-
-        // Update hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Type 'name' or 'age'" });
-
-        waitingForCorrectionChoice = true;
-        EnableInput();
-    }
-
-    IEnumerator ReenterName()
-    {
-        yield return Speak("Alright, enter your name again.");
-
-        // Update hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Enter your name (letters, digits, underscore allowed)" });
-
-        EnableInput();
-        step = 1;
-    }
-
-    IEnumerator ReenterAge()
-    {
-        yield return Speak("Okay, enter your age again.");
-
-        // Update hint
-        if (hintSystem != null)
-            hintSystem.SetHints(new string[] { "Enter your age (digits only)" });
-
-        EnableInput();
-        step = 2;
-    }
-
-    // ================= SAVE PLAYER PROFILE =================
-    void SavePlayerProfile()
-    {
-        // Save to PlayerPrefs
-        PlayerPrefs.SetString(NAME_KEY, playerName);
-        PlayerPrefs.SetInt(AGE_KEY, playerAge);
-        PlayerPrefs.Save();
-
-        Debug.Log($"Player profile saved: {playerName}, Age: {playerAge}");
-
-        // Update the PlayerProfileManager UI if assigned
-        if (profileManager != null)
-        {
-            profileManager.RefreshUI();
-        }
-    }
-
-    // ================= PYTHON FLOAT =================
-    IEnumerator ContinueWithFloat()
-    {
-        SetFace(thinkingFace);
-        yield return Speak("Decimals are just numbers too.");
-
-        yield return AddSystemLine("stability = 0.85");
-        yield return Speak("Python treats it as a float.");
-
-        yield return TerminalRefresh();
-
-        yield return AddSystemLine("FINAL MEMORY STATE");
-        yield return AddSystemLine($"name = \"{playerName}\"");
-        yield return AddSystemLine($"age = {playerAge}");
-        yield return AddSystemLine("details_confirmed = True");
-        yield return AddSystemLine("stability = 0.85");
-
-        SetFace(proudFace);
-        yield return Speak("You just learned Python basics.");
-        yield return Speak("Now let’s practice.");
-
-        // Lesson complete — disable hints and mark scene
-        if (hintSystem != null)
-            hintSystem.DisableHints();
-
-        MarkSceneCompleted();
+        yield return Speak("You learned variables.");
+        yield return Speak("Let’s go further.");
 
         if (exerciseScript != null)
             exerciseScript.StartExercise();
     }
 
+    IEnumerator HandleConfirmationNo()
+    {
+        yield return Speak("Alright.");
+        yield return Speak("Restarting input.");
+
+        EnableInput();
+        step = 1;
+    }
+
     // ================= TERMINAL =================
     IEnumerator TerminalRefresh()
     {
-        yield return AddSystemLine("Syncing memory...");
+        yield return AddSystemLine("Syncing...");
         yield return new WaitForSeconds(0.3f);
+
         terminalText.text = "";
-        yield return AddSystemLine("Terminal ready.");
+
+        yield return AddSystemLine("✔ Updated");
+        yield return AddSystemLine("Ready.");
     }
 
     IEnumerator AddSystemLine(string line)
@@ -435,7 +331,6 @@ public class TerminalVariableLesson : MonoBehaviour
         waitingForAdvance = true;
         skipRequested = false;
 
-        // Type out the message
         foreach (char c in msg)
         {
             if (skipRequested)
@@ -448,39 +343,22 @@ public class TerminalVariableLesson : MonoBehaviour
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        // Wait for player to press Enter
         while (waitingForAdvance)
-        {
             yield return null;
-        }
-
-        yield return new WaitForSeconds(0.1f);
     }
 
     void HandleDialogueAdvance()
     {
         if (!waitingForAdvance) return;
 
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
+        if (Input.GetKeyDown(advanceKey))
         {
             waitingForAdvance = false;
             skipRequested = true;
         }
     }
 
-    // ================= ID CARD =================
-    void ShowIDCardName(string name)
-    {
-        idNameText.text = name;
-        idAgeText.text = "--";
-    }
-
-    void UpdateIDCardAge(int age)
-    {
-        idAgeText.text = age.ToString();
-    }
-
-    // ================= UTILITIES =================
+    // ================= UTIL =================
     void SetFace(Sprite face)
     {
         if (botFaceImage && face)
@@ -499,13 +377,23 @@ public class TerminalVariableLesson : MonoBehaviour
             typingAudio.PlayOneShot(typeLetter);
     }
 
-    void MarkSceneCompleted()
+    void ShowIDCardName(string name)
     {
-        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
-        // Also save with alternative key format for compatibility
-        PlayerPrefs.SetInt("SceneCompleted_" + sceneName, 1);
+        idNameText.text = name;
+        idAgeText.text = "--";
+    }
+
+    void UpdateIDCardAge(int age)
+    {
+        idAgeText.text = age.ToString();
+    }
+
+    void SavePlayerProfile()
+    {
+        PlayerPrefs.SetString(NAME_KEY, playerName);
+        PlayerPrefs.SetInt(AGE_KEY, playerAge);
         PlayerPrefs.Save();
-        Debug.Log("TerminalVariableLesson marked as completed.");
+
+        profileManager?.RefreshUI();
     }
 }

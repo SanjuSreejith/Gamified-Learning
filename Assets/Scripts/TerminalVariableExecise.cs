@@ -7,7 +7,6 @@ using System.Globalization;
 
 public class TerminalVariableExercise : MonoBehaviour
 {
-    // ================= UI =================
     [Header("UI")]
     public TextMeshProUGUI terminalText;
     public TextMeshProUGUI dialogueText;
@@ -21,36 +20,28 @@ public class TerminalVariableExercise : MonoBehaviour
     public Sprite warningFace;
 
     [Header("Dialogue")]
-    public bool autoSkipDialogue = false;               // False = wait for Enter
     public float dialogueSpeed = 0.03f;
-    public float autoSkipDelay = 0.4f;
-    public KeyCode advanceKey = KeyCode.Return;         // Key to advance dialogue
+    public KeyCode advanceKey = KeyCode.Return;
 
     [Header("Cursor")]
     public float cursorBlinkRate = 0.5f;
 
-    [Header("Terminal Management")]
-    public int maxLinesBeforeClear = 5;
-    private int currentOutputLines = 0;
-
-    [Header("Typing Audio")]
+    [Header("Audio")]
     public AudioSource typingAudio;
     public AudioClip typeLetter;
     public AudioClip typeSpace;
     public AudioClip typeBackspace;
 
-    [Header("Feedback Audio")]
     public AudioSource feedbackAudio;
     public AudioClip correctSound;
     public AudioClip errorSound;
 
-    [Header("Scene Transition")]
+    [Header("Scene")]
     public string nextSceneName = "GameScene";
     public float sceneChangeDelay = 2f;
 
-    // --- Hint System ---
     [Header("Hint System")]
-    public BotHintSystem hintSystem;   // Reference to the hint UI
+    public BotHintSystem hintSystem;
 
     // ================= INTERNAL =================
     string input = "";
@@ -70,7 +61,6 @@ public class TerminalVariableExercise : MonoBehaviour
     string outputBuffer = "";
 
     bool waitingForAdvance;
-    bool isClearingTerminal = false;
 
     // ================= START =================
     void Start()
@@ -89,16 +79,10 @@ public class TerminalVariableExercise : MonoBehaviour
         mistakesThisStep = 0;
         input = "";
         finished = false;
-        taskBuffer = "";
         outputBuffer = "";
-        currentOutputLines = 0;
 
-        // Enable hints and show first task
-        if (hintSystem != null)
-        {
-            hintSystem.EnableHints();
-            UpdateHintForStep();
-        }
+        hintSystem?.EnableHints();
+        UpdateHintForStep();
 
         StartCoroutine(Flow());
     }
@@ -106,9 +90,9 @@ public class TerminalVariableExercise : MonoBehaviour
     // ================= FLOW =================
     IEnumerator Flow()
     {
-        yield return Say("Now you will write Python.");
-        yield return Say("No types. No semicolons.");
-        yield return Say("Press ENTER to submit.");
+        yield return Say("Now it's your turn.");
+        yield return Say("Think before you type.");
+        yield return Say("Use F1 if you're stuck.");
 
         BuildTask();
         EnableInput();
@@ -119,7 +103,7 @@ public class TerminalVariableExercise : MonoBehaviour
     {
         HandleDialogueAdvance();
 
-        if (!inputEnabled || finished || isClearingTerminal) return;
+        if (!inputEnabled || finished) return;
 
         foreach (char c in Input.inputString)
         {
@@ -145,56 +129,67 @@ public class TerminalVariableExercise : MonoBehaviour
     // ================= TASK =================
     void BuildTask()
     {
-        taskBuffer = $"TASK {step}/{TOTAL_TASKS} (Python):\n";
+        taskBuffer = $"[ TASK {step}/{TOTAL_TASKS} ]\n";
 
         switch (step)
         {
-            case 1:
-                taskBuffer += "Store a name\nValue: \"Alex\"\nVariable: name\n";
-                break;
-            case 2:
-                taskBuffer += "Store age\nValue: 25\nVariable: age\n";
-                break;
-            case 3:
-                taskBuffer += "Store readiness\nValue: True\nVariable: is_ready\n";
-                break;
-            case 4:
-                taskBuffer += "Store energy level\nValue: 0.5\nVariable: energy_level\n";
-                break;
+            case 1: taskBuffer += "Store name \"Arya\" → name\n"; break;
+            case 2: taskBuffer += "Store number 25 → age\n"; break;
+            case 3: taskBuffer += "Store state True → is_ready\n"; break;
+            case 4: taskBuffer += "Store decimal 10.5 → energy_level\n"; break;
         }
 
         taskBuffer += "\n";
 
-        // Update hint when task changes
         UpdateHintForStep();
-
         RefreshTerminal();
     }
 
-    // Helper to update hint text based on current step
+    // ================= SMART HINT SYSTEM =================
     void UpdateHintForStep()
     {
         if (hintSystem == null) return;
 
-        string hintText = step switch
+        string hint = step switch
         {
-            1 => "TASK 1: Create a variable 'name' with value \"Alex\"",
-            2 => "TASK 2: Create a variable 'age' with value 25",
-            3 => "TASK 3: Create a variable 'is_ready' with value True",
-            4 => "TASK 4: Create a variable 'energy_level' with value 0.5",
-            _ => "Exercise in progress"
+            1 => "Use a variable and assign a string value",
+            2 => "Assign a number (no quotes)",
+            3 => "Boolean values are True/False",
+            4 => "Decimal numbers use dot (.)",
+            _ => ""
         };
-        hintSystem.SetHints(new string[] { hintText });
+
+        hintSystem.SetHints(new string[] { hint });
+    }
+
+    void UpdateHintAfterMistake()
+    {
+        if (hintSystem == null) return;
+
+        string hint = step switch
+        {
+            1 => "Format: variable = \"text\"",
+            2 => "Format: variable = number",
+            3 => "Format: variable = True",
+            4 => "Format: variable = decimal",
+            _ => ""
+        };
+
+        hintSystem.SetHints(new string[] { hint });
     }
 
     // ================= SUBMIT =================
     void Submit()
     {
         string currentInput = input;
-        AppendOutput($"> {currentInput}");
+
+        // 🔥 CLEAR TERMINAL EACH ATTEMPT
+        outputBuffer = "";
+
+        AppendOutput("> Executing...");
         input = "";
 
-        CompilerResult result = ValidatePython(step, currentInput);
+        var result = ValidatePython(step, currentInput);
 
         if (result.success)
         {
@@ -205,94 +200,74 @@ public class TerminalVariableExercise : MonoBehaviour
         {
             totalMistakes++;
             mistakesThisStep++;
+
+            UpdateHintAfterMistake(); // 🔥 dynamic hint
+
             StartCoroutine(ExplainMistake(result));
         }
     }
 
-    // ================= COMPILER =================
     struct CompilerResult
     {
         public bool success;
         public string error;
-        public string reference;
     }
 
     CompilerResult ValidatePython(int step, string raw)
     {
         string s = raw.Trim();
 
-        if (s.Contains(";"))
-            return Error("Python does not use semicolons.", GetReferenceCode(step));
+        if (!s.Contains("="))
+            return Error("Missing '='");
 
-        int eqIndex = s.IndexOf('=');
-        if (eqIndex == -1)
-            return Error("Assignment requires '='.", GetReferenceCode(step));
-
-        string variable = s.Substring(0, eqIndex).Trim();
-        string value = s.Substring(eqIndex + 1).Trim();
-
-        if (string.IsNullOrEmpty(variable) || string.IsNullOrEmpty(value))
-            return Error("Invalid assignment format.", GetReferenceCode(step));
+        var parts = s.Split('=');
+        string variable = parts[0].Trim();
+        string value = parts[1].Trim();
 
         switch (step)
         {
             case 1:
-                if (variable != "name")
-                    return Error("Variable must be `name`.", GetReferenceCode(step));
-                if (!(value.StartsWith("\"") && value.EndsWith("\"")))
-                    return Error("Strings must be in quotes.", GetReferenceCode(step));
-                if (value[1..^1] != "Alex")
-                    return Error("Value must be \"Alex\".", GetReferenceCode(step));
+                if (variable != "name") return Error("Wrong variable");
+                if (value != "\"Arya\"") return Error("Wrong value");
                 break;
 
             case 2:
-                if (variable != "age")
-                    return Error("Variable must be `age`.", GetReferenceCode(step));
-                if (!int.TryParse(value, out int age) || age != 25)
-                    return Error("Age must be 25.", GetReferenceCode(step));
+                if (variable != "age") return Error("Wrong variable");
+                if (value != "25") return Error("Wrong number");
                 break;
 
             case 3:
-                if (variable != "is_ready")
-                    return Error("Variable must be `is_ready`.", GetReferenceCode(step));
-                if (value != "True")
-                    return Error("Boolean must be True.", GetReferenceCode(step));
+                if (variable != "is_ready") return Error("Wrong variable");
+                if (value != "True") return Error("Wrong boolean");
                 break;
 
             case 4:
-                if (variable != "energy_level")
-                    return Error("Variable must be `energy_level`.", GetReferenceCode(step));
-                if (!float.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out float f) || Mathf.Abs(f - 0.5f) > 0.001f)
-                    return Error("Energy must be 0.5.", GetReferenceCode(step));
+                if (variable != "energy_level") return Error("Wrong variable");
+                if (value != "10.5") return Error("Wrong decimal");
                 break;
         }
 
         return new CompilerResult { success = true };
     }
 
-    // ================= DIALOGUE BRANCHING =================
+    // ================= FEEDBACK =================
     IEnumerator ExplainMistake(CompilerResult r)
     {
         DisableInput();
-        SetFace(mistakesThisStep >= 2 ? warningFace : thinkingFace);
 
-        if (feedbackAudio && errorSound)
-            feedbackAudio.PlayOneShot(errorSound);
+        SetFace(warningFace);
+        feedbackAudio?.PlayOneShot(errorSound);
 
-        AppendOutput("Error");
+        AppendOutput("✖ Failed");
+
         yield return Say(r.error);
 
         if (mistakesThisStep == 1)
-            yield return Say("Slow down. Read the task carefully.");
+            yield return Say("Look carefully.");
         else if (mistakesThisStep == 2)
-            yield return Say("You're repeating the same mistake.");
+            yield return Say("You're close.");
         else
-            yield return Say("Focus. Precision matters here.");
-
-        AppendOutput(" " + r.reference);
-
-        if (currentOutputLines >= maxLinesBeforeClear)
-            yield return ClearTerminalOutput();
+            yield return Say("Press F1 for help.");
 
         EnableInput();
     }
@@ -301,23 +276,12 @@ public class TerminalVariableExercise : MonoBehaviour
     {
         DisableInput();
 
-        if (feedbackAudio && correctSound)
-            feedbackAudio.PlayOneShot(correctSound);
-
+        feedbackAudio?.PlayOneShot(correctSound);
         SetFace(happyFace);
-        AppendOutput(" Correct");
 
-        if (totalMistakes == 0)
-            yield return Say("Perfect execution.");
-        else if (totalMistakes < 3)
-            yield return Say("Good. You're learning.");
-        else
-            yield return Say("You got it. Keep sharpening.");
+        AppendOutput("✔ Success");
 
-        if (currentOutputLines >= maxLinesBeforeClear)
-            yield return ClearTerminalOutput();
-        else
-            AppendOutput("---");
+        yield return Say("Nice.");
 
         step++;
 
@@ -328,59 +292,45 @@ public class TerminalVariableExercise : MonoBehaviour
             yield break;
         }
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.3f);
+
         BuildTask();
         EnableInput();
     }
 
-    IEnumerator ClearTerminalOutput()
-    {
-        isClearingTerminal = true;
-        DisableInput();
-
-        AppendOutput("...clearing...");
-        yield return new WaitForSeconds(0.3f);
-
-        outputBuffer = "";
-        currentOutputLines = 0;
-        taskBuffer = "";
-        BuildTask();
-
-        yield return new WaitForSeconds(0.2f);
-        isClearingTerminal = false;
-    }
-
-    // ================= FINISH =================
     IEnumerator Finish()
     {
         SetFace(proudFace);
 
         int accuracy = Mathf.RoundToInt(Mathf.Clamp01(1f - totalMistakes / 8f) * 100f);
-        yield return Say($"Accuracy: {accuracy}%");
 
-        if (accuracy >= 90)
-            yield return Say("You think like a programmer.");
-        else if (accuracy >= 70)
-            yield return Say("Solid foundation. Keep practicing.");
-        else
-            yield return Say("You survived. Improvement awaits.");
+        AppendOutput($"Accuracy: {accuracy}%");
 
-        yield return Say("The system trusts you now.");
+        yield return Say("You understand variables.");
 
-        // Mark scene as completed and disable hints
         MarkSceneCompleted();
-        if (hintSystem != null)
-            hintSystem.DisableHints();
+
+        hintSystem?.DisableHints();
 
         yield return new WaitForSeconds(sceneChangeDelay);
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    // ================= SAVE =================
+    void MarkSceneCompleted()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+
+        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
+        PlayerPrefs.SetInt("SceneCompleted_" + sceneName, 1);
+
+        PlayerPrefs.Save();
     }
 
     // ================= TERMINAL =================
     void AppendOutput(string line)
     {
         outputBuffer += line + "\n";
-        currentOutputLines++;
         RefreshTerminal();
     }
 
@@ -417,76 +367,39 @@ public class TerminalVariableExercise : MonoBehaviour
         waitingForAdvance = true;
         dialogueText.text = "";
 
-        // Type out the message
         foreach (char c in msg)
         {
             dialogueText.text += c;
             yield return new WaitForSeconds(dialogueSpeed);
         }
 
-        if (autoSkipDialogue)
-        {
-            yield return new WaitForSeconds(autoSkipDelay);
-        }
-        else
-        {
-            // Wait until the player presses the advance key
-            yield return new WaitUntil(() => !waitingForAdvance);
-        }
-
-        waitingForAdvance = false;
+        yield return new WaitUntil(() => !waitingForAdvance);
     }
 
     void HandleDialogueAdvance()
     {
-        if (!waitingForAdvance || autoSkipDialogue) return;
+        if (!waitingForAdvance) return;
 
-        // Check for mouse click OR the configured advance key
-        if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(advanceKey))
-        {
+        if (Input.GetKeyDown(advanceKey))
             waitingForAdvance = false;
-        }
     }
 
     void PlayTypingSound(char c)
     {
         if (!typingAudio) return;
-        if (c == '\b' && typeBackspace) typingAudio.PlayOneShot(typeBackspace);
-        else if (c == ' ' && typeSpace) typingAudio.PlayOneShot(typeSpace);
-        else if (typeLetter) typingAudio.PlayOneShot(typeLetter);
+        if (c == '\b') typingAudio.PlayOneShot(typeBackspace);
+        else if (c == ' ') typingAudio.PlayOneShot(typeSpace);
+        else typingAudio.PlayOneShot(typeLetter);
     }
 
     void SetFace(Sprite face)
     {
-        if (botFaceImage && face) botFaceImage.sprite = face;
+        if (botFaceImage && face)
+            botFaceImage.sprite = face;
     }
 
-    CompilerResult Error(string msg, string reference)
+    CompilerResult Error(string msg)
     {
-        return new CompilerResult { success = false, error = msg, reference = reference };
-    }
-
-    string GetReferenceCode(int s)
-    {
-        return s switch
-        {
-            1 => "name = \"Alex\"",
-            2 => "age = 25",
-            3 => "is_ready = True",
-            4 => "energy_level = 0.5",
-            _ => ""
-        };
-    }
-
-    // Mark the scene as completed
-    void MarkSceneCompleted()
-    {
-        // Example using PlayerPrefs
-        PlayerPrefs.SetInt("TerminalVariableExerciseCompleted", 1);
-        PlayerPrefs.Save();
-        Debug.Log("TerminalVariableExercise marked as completed.");
-
-        // Alternatively, call a GameManager:
-        // GameManager.Instance.CompleteExercise("TerminalVariable");
+        return new CompilerResult { success = false, error = msg };
     }
 }
