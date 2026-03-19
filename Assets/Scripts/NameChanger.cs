@@ -1,19 +1,28 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
 
 public class PlayerProfileManager : MonoBehaviour
 {
-    [Header("Display UI")]
+    [Header("Display UI (Profile Page)")]
     public TextMeshProUGUI nameDisplay;
     public TextMeshProUGUI ageDisplay;
 
+    [Header("Menu Display")]
+    public TextMeshProUGUI menuNameDisplay;
+
     [Header("Edit Panel")]
     public GameObject editPanel;
+    public Animator editPanelAnimator;
+
+    [Header("Input Fields")]
     public TMP_InputField nameInput;
     public TMP_InputField ageInput;
 
     const string NAME_KEY = "PlayerName";
     const string AGE_KEY = "PlayerAge";
+
+    bool panelOpen = false;
 
     [Header("Random Names")]
     public string[] randomNames =
@@ -27,18 +36,27 @@ public class PlayerProfileManager : MonoBehaviour
     {
         InitializePlayer();
         RefreshUI();
+
+        if (editPanel != null)
+            editPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (panelOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseEditPanel();
+        }
     }
 
     void InitializePlayer()
     {
-        // Give random name if first time
         if (!PlayerPrefs.HasKey(NAME_KEY))
         {
             string randomName = randomNames[Random.Range(0, randomNames.Length)];
             PlayerPrefs.SetString(NAME_KEY, randomName);
         }
 
-        // Default age if first time
         if (!PlayerPrefs.HasKey(AGE_KEY))
         {
             PlayerPrefs.SetInt(AGE_KEY, 18);
@@ -47,32 +65,53 @@ public class PlayerProfileManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    // Made this method public so it can be called from other scripts
+    // ================= REFRESH UI =================
+
     public void RefreshUI()
     {
         string playerName = PlayerPrefs.GetString(NAME_KEY);
         int age = PlayerPrefs.GetInt(AGE_KEY);
 
-        nameDisplay.text = playerName;
-        ageDisplay.text = "Age: " + age;
+        if (nameDisplay != null)
+            nameDisplay.text = playerName;
+
+        if (ageDisplay != null)
+            ageDisplay.text = "Age: " + age;
+
+        if (menuNameDisplay != null)
+            menuNameDisplay.text = playerName;
     }
 
-    // OPEN EDIT PANEL
+    // ================= OPEN PANEL =================
+
     public void OpenEditPanel()
     {
         editPanel.SetActive(true);
+        editPanelAnimator.SetTrigger("Open");
 
         nameInput.text = PlayerPrefs.GetString(NAME_KEY);
         ageInput.text = PlayerPrefs.GetInt(AGE_KEY).ToString();
+
+        panelOpen = true;
     }
 
-    // CLOSE PANEL
+    // ================= CLOSE PANEL =================
+
     public void CloseEditPanel()
     {
-        editPanel.SetActive(false);
+        editPanelAnimator.SetTrigger("Close");
+        StartCoroutine(HidePanelAfterAnim());
     }
 
-    // SAVE PROFILE
+    IEnumerator HidePanelAfterAnim()
+    {
+        yield return new WaitForSeconds(1f);
+        editPanel.SetActive(false);
+        panelOpen = false;
+    }
+
+    // ================= SAVE PROFILE =================
+
     public void SaveProfile()
     {
         string newName = nameInput.text.Trim();
@@ -100,6 +139,6 @@ public class PlayerProfileManager : MonoBehaviour
         PlayerPrefs.Save();
 
         RefreshUI();
-        editPanel.SetActive(false);
+        CloseEditPanel();
     }
 }

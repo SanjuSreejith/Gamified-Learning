@@ -2,7 +2,6 @@
 using TMPro;
 using UnityEngine.SceneManagement;
 using System.Collections;
-using System.Collections.Generic;
 
 public class DoorPrintf_TerminalSystem : MonoBehaviour
 {
@@ -10,15 +9,14 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     public Transform player;
     public float interactDistance = 2.5f;
 
-    // ================= BOARD =================
+    // ================= UI =================
     public GameObject boardPanel;
     public TextMeshProUGUI boardText;
+    public TMPTypewriter typewriter;
 
-    // ================= INPUT TERMINAL =================
     public GameObject inputTerminalPanel;
     public TextMeshProUGUI inputText;
 
-    // ================= OUTPUT TERMINAL =================
     public TextMeshPro outputTerminalText;
 
     // ================= FADE =================
@@ -27,94 +25,43 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     // ================= AUDIO =================
     public AudioSource audioSource;
-    public AudioClip typeLetter;
-    public AudioClip typeSymbol;
-    public AudioClip typeSpace;
+    public AudioClip selectSound;
+    public AudioClip executeSound;
+    public AudioClip errorSound;
     public AudioClip doorOpenSound;
 
     // ================= SCENE =================
     public string nextSceneName;
 
-    // ================= HINT SYSTEM =================
-    public BotHintSystem botHintSystem;
-
-    // ================= DIALOGUE BACKLOG =================
-    public DialogueBacklogManager backlogManager;
+    // ================= TUTORIAL =================
+    [Header("Tutorial Lock")]
+    public bool tutorialActive = true;
 
     // ================= STATE =================
     enum GameState
     {
         Idle,
-        IntroDialogue,
-        TeachingDialogue,
-        InputTerminal,
-        FeedbackDialogue,
-        SuccessDialogue,
+        Intro,
+        Input,
+        Feedback,
+        Success,
         Transition
     }
 
     GameState currentState = GameState.Idle;
 
+    // ================= INPUT =================
+    string[] wordOptions = { "\"Hello\"", "\"Welcome\"", "\"Open\"" };
+    int currentOptionIndex = 0;
+
+    // ================= DIALOGUE =================
+    string[] currentDialogue;
+    int dialogueIndex = 0;
+
     // ================= INTERNAL =================
-    int dialogueIndex;
-    int attemptCount;
-    string currentInput = "";
-    bool introCompleted;
-    string[] activeDialogue;
+    bool introPlayed = false;
+    bool blockNextInputFrame = false;
 
-    // ================= HINTS =================
-    string[] teachingHints = {
-        "Python uses print()",
-        "Text must be inside double quotes",
-        "No semicolons at the end"
-    };
-
-    string[] inputTerminalHints = {
-        "Type: print(\"Welcome\")",
-        "Remember double quotes",
-        "Press Enter to submit"
-    };
-
-    string[] feedbackHints = {
-        "Check your syntax",
-        "Use print with parentheses",
-        "Text must be exactly 'Welcome'"
-    };
-
-    string[] successHints = {
-        "Correct! The door will open",
-        "You can now proceed"
-    };
-
-    // ================= PYTHON DIALOGUES =================
-    string[] introDialogue =
-    {
-        "This door seems locked.",
-        "It reacts to Python programs.",
-        "Python prints text using print().",
-        "Let’s try a basic program.",
-        "Print:Welcome",
-        "Press 1 to begin."
-    };
-
-    string[] teachingDialogue =
-    {
-        "Python uses the print() function.",
-        "Text must be inside double quotes.",
-        "Python does NOT use semicolons."
-    };
-
-    string[] successDialogue =
-    {
-        "Perfect.",
-        "Your Python code executed successfully.",
-        "print() displayed the text.",
-        "The door accepted your program.",
-        "The door is opening.",
-        "Proceed."
-    };
-
-    // ================= START =================
     void Start()
     {
         boardPanel.SetActive(false);
@@ -124,31 +71,21 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         fadeCanvas.blocksRaycasts = false;
 
         outputTerminalText.text =
-            "PYTHON OUTPUT TERMINAL\n" +
-            "----------------------\n\n";
-
-        if (botHintSystem == null)
-            botHintSystem = FindObjectOfType<BotHintSystem>();
-
-        if (backlogManager == null)
-            backlogManager = FindObjectOfType<DialogueBacklogManager>();
+            "PYTHON TERMINAL\n" +
+            "----------------\n\n";
     }
 
-    // ================= UPDATE =================
     void Update()
     {
+        if (tutorialActive) return;
+
         HandleDistance();
 
-        if (currentState == GameState.InputTerminal)
-            HandleTyping();
+        if (currentState == GameState.Input)
+            HandleInput();
 
-        if (currentState == GameState.IntroDialogue ||
-            currentState == GameState.TeachingDialogue ||
-            currentState == GameState.FeedbackDialogue ||
-            currentState == GameState.SuccessDialogue)
-        {
+        if (currentState == GameState.Intro || currentState == GameState.Feedback)
             HandleDialogueAdvance();
-        }
     }
 
     // ================= DISTANCE =================
@@ -156,253 +93,225 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         float dist = Vector3.Distance(player.position, transform.position);
 
-        if (dist <= interactDistance && currentState == GameState.Idle)
+        if (dist <= interactDistance)
         {
-            boardPanel.SetActive(true);
+            if (currentState == GameState.Idle)
+            {
+                boardPanel.SetActive(true);
 
-            if (!introCompleted)
-                StartDialogue(introDialogue, GameState.IntroDialogue);
-            else
-                boardText.text = "Press 1 to try again.";
-        }
+                if (!introPlayed)
+                    StartIntro();
+                else
+                    ShowText("Press E to interact");
+            }
 
-        if (dist > interactDistance && currentState == GameState.Idle)
-            boardPanel.SetActive(false);
-
-        if (dist <= interactDistance && Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            if (!introCompleted)
-                StartDialogue(teachingDialogue, GameState.TeachingDialogue);
-            else
+            if (Input.GetKeyDown(KeyCode.E) && currentState == GameState.Idle)
+            {
                 OpenInputTerminal();
+            }
+        }
+        else
+        {
+            if (currentState == GameState.Idle)
+                boardPanel.SetActive(false);
         }
     }
 
-    // ================= DIALOGUE =================
-    void StartDialogue(string[] dialogue, GameState state)
+    // ================= TEXT =================
+    void ShowText(string text)
     {
-        activeDialogue = dialogue;
-        dialogueIndex = 0;
-        currentState = state;
-        boardText.text = activeDialogue[dialogueIndex];
+        if (typewriter != null)
+            typewriter.Play(text);
+        else
+            boardText.text = text;
+    }
 
-        // Add first line to backlog (speaker: Kuttan)
-        backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
+    // ================= INTRO =================
+    void StartIntro()
+    {
+        currentState = GameState.Intro;
+        introPlayed = true;
 
-        // Set hints for teaching dialogue
-        if (state == GameState.TeachingDialogue && botHintSystem != null)
+        currentDialogue = new string[]
         {
-            botHintSystem.SetHints(teachingHints);
-            botHintSystem.EnableHints();
-        }
+            "This door reacts to messages...",
+            "But it understands Python.",
+            "Try sending something.",
+            "Press Enter..."
+        };
+
+        dialogueIndex = 0;
+        ShowText(currentDialogue[dialogueIndex]);
     }
 
     void HandleDialogueAdvance()
     {
-        if (!Input.GetKeyDown(KeyCode.Return) && !Input.GetMouseButtonDown(0)) return;
+        if (!Input.GetKeyDown(KeyCode.Return)) return;
+
+        // Skip typing if still animating
+        if (typewriter != null && typewriter.IsTyping())
+        {
+            typewriter.Skip();
+            return;
+        }
 
         dialogueIndex++;
 
-        if (dialogueIndex < activeDialogue.Length)
+        if (dialogueIndex < currentDialogue.Length)
         {
-            boardText.text = activeDialogue[dialogueIndex];
-            backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
+            ShowText(currentDialogue[dialogueIndex]);
         }
         else
         {
-            if (currentState == GameState.IntroDialogue)
-                introCompleted = true;
-
-            if (currentState == GameState.TeachingDialogue ||
-                currentState == GameState.FeedbackDialogue)
-            {
-                // Disable hints before opening input terminal
-                botHintSystem?.DisableHints();
-                OpenInputTerminal();
-            }
-            else if (currentState == GameState.SuccessDialogue)
-            {
-                // Disable hints before fading
-                botHintSystem?.DisableHints();
-                StartCoroutine(FadeAndChangeScene());
-            }
+            OpenInputTerminal();
         }
     }
 
-    // ================= INPUT TERMINAL =================
+    // ================= INPUT =================
     void OpenInputTerminal()
     {
-        currentInput = "";
+        currentState = GameState.Input;
         inputTerminalPanel.SetActive(true);
-        inputText.text = "> ";
-        currentState = GameState.InputTerminal;
 
-        // Pause the game
-        Time.timeScale = 0f;
+        currentOptionIndex = 0;
+        UpdateInputDisplay();
 
-        // Set hints for input terminal
-        if (botHintSystem != null)
+        ShowText("A / D to change\nEnter to execute");
+
+        blockNextInputFrame = true;
+    }
+
+    void HandleInput()
+    {
+        if (blockNextInputFrame)
         {
-            botHintSystem.SetHints(inputTerminalHints);
-            botHintSystem.EnableHints();
+            blockNextInputFrame = false;
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            currentOptionIndex--;
+            if (currentOptionIndex < 0)
+                currentOptionIndex = wordOptions.Length - 1;
+
+            PlaySound(selectSound);
+            UpdateInputDisplay();
+        }
+
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            currentOptionIndex++;
+            if (currentOptionIndex >= wordOptions.Length)
+                currentOptionIndex = 0;
+
+            PlaySound(selectSound);
+            UpdateInputDisplay();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            StartCoroutine(ExecuteCode());
         }
     }
 
-    void HandleTyping()
+    void UpdateInputDisplay()
     {
-        foreach (char c in Input.inputString)
-        {
-            if (c == '\b' && currentInput.Length > 0)
-            {
-                currentInput = currentInput[..^1];
-                inputText.text = inputText.text[..^1];
-            }
-            else if (c == '\n' || c == '\r')
-            {
-                SubmitInput();
-            }
-            else
-            {
-                currentInput += c;
-                inputText.text += c;
-                PlayTypingSound(c);
-            }
-        }
+        inputText.text = "> print(" + wordOptions[currentOptionIndex] + ")";
     }
 
-    // ================= SUBMIT =================
-    void SubmitInput()
+    // ================= EXECUTION =================
+    IEnumerator ExecuteCode()
     {
+        currentState = GameState.Transition;
+
         inputTerminalPanel.SetActive(false);
 
-        // Unpause the game
-        Time.timeScale = 1f;
+        PlaySound(executeSound);
 
-        outputTerminalText.text += "> " + currentInput + "\n";
-        attemptCount++;
+        // 🔥 Clear old output first
+        ResetTerminal();
 
-        // Add player input to backlog (speaker: Kuttan)
-        backlogManager?.AddLine("Kuttan", currentInput);
+        // Show fresh execution
+        outputTerminalText.text += "> Executing...\n";
+        yield return new WaitForSeconds(1.2f);
 
-        List<string> errors = ValidatePythonPrint(currentInput);
+        string selected = wordOptions[currentOptionIndex];
+        string cleanText = selected.Replace("\"", "");
 
-        if (errors.Count == 0)
-            HandleSuccess();
+        // 🔥 Always show output
+        outputTerminalText.text += "Output: " + cleanText + "\n";
+
+        if (cleanText == "Welcome")
+        {
+            outputTerminalText.text += "Door: Accepted\n\n";
+            StartCoroutine(HandleSuccess());
+        }
         else
-            ShowErrors(errors);
+        {
+            outputTerminalText.text += "Door: No response\n\n";
+            HandleError(cleanText);
+        }
     }
 
-    // ================= PYTHON VALIDATION =================
-    List<string> ValidatePythonPrint(string raw)
+    // ================= ERROR =================
+    void HandleError(string input)
     {
-        List<string> errors = new List<string>();
-        string s = raw.Trim();
+        PlaySound(errorSound);
 
-        // Semicolon check
-        if (s.EndsWith(";"))
-            errors.Add("Python does not use semicolons.");
+        currentState = GameState.Feedback;
 
-        // print() existence & case
-        if (s.StartsWith("Print") || s.StartsWith("PRINT"))
-            errors.Add("Python is case-sensitive. Use `print`, not `Print`.");
-
-        if (!s.StartsWith("print"))
-            errors.Add("Use the `print()` function.");
-
-        // Parentheses
-        int open = s.IndexOf('(');
-        int close = s.LastIndexOf(')');
-        if (open == -1 || close == -1 || close < open)
-            errors.Add("print must use parentheses `()`.");
-
-        // Quotes
-        int quoteCount = 0;
-        foreach (char c in s)
-            if (c == '"') quoteCount++;
-
-        if (quoteCount == 0)
-            errors.Add("Text must be inside double quotes.");
-        else if (quoteCount == 1)
-            errors.Add("Missing one double quote `\"`.");
-
-        // Content
-        if (quoteCount >= 2)
+        if (input == "Hello")
         {
-            int q1 = s.IndexOf('"');
-            int q2 = s.LastIndexOf('"');
-            string inside = s.Substring(q1 + 1, q2 - q1 - 1);
-            if (inside != "Welcome")
-                errors.Add("The text must be exactly: Welcome!");
+            currentDialogue = new string[]
+            {
+                "It printed 'Hello'...",
+                "But door ignored it.",
+                "Maybe wrong message.",
+                "Try again."
+            };
+        }
+        else if (input == "Open")
+        {
+            currentDialogue = new string[]
+            {
+                "Command sent...",
+                "But nothing happened.",
+                "It expects a message.",
+                "Think again."
+            };
+        }
+        else
+        {
+            currentDialogue = new string[]
+            {
+                "No response...",
+                "That didn't work.",
+                "Try something else.",
+                "Press Enter..."
+            };
         }
 
-        return errors;
-    }
-
-    // ================= FEEDBACK =================
-    void ShowErrors(List<string> errors)
-    {
-        outputTerminalText.text += "Runtime Errors:\n\n";
-
-        List<string> dialogue = new List<string>
-        {
-            "The Python program failed.",
-            "Issues detected:"
-        };
-
-        foreach (string err in errors)
-            dialogue.Add("• " + err);
-
-        dialogue.Add("Fix them and try again.");
-
-        activeDialogue = dialogue.ToArray();
         dialogueIndex = 0;
-        currentState = GameState.FeedbackDialogue;
-        boardText.text = activeDialogue[dialogueIndex];
-
-        // Add first error line to backlog
-        backlogManager?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
-
-        // Set hints for feedback
-        if (botHintSystem != null)
-        {
-            botHintSystem.SetHints(feedbackHints);
-            botHintSystem.EnableHints();
-        }
+        ShowText(currentDialogue[dialogueIndex]);
     }
 
     // ================= SUCCESS =================
-    void HandleSuccess()
+    IEnumerator HandleSuccess()
     {
-        outputTerminalText.text += "Welcome\n\n";
+        currentState = GameState.Success;
 
-        // Set hints for success
-        if (botHintSystem != null)
-        {
-            botHintSystem.SetHints(successHints);
-            botHintSystem.EnableHints();
-        }
+        ShowText("Accepted...");
+        yield return new WaitForSeconds(1f);
 
-        StartDialogue(successDialogue, GameState.SuccessDialogue);
-    }
+        ShowText("Door unlocking...");
+        yield return new WaitForSeconds(1f);
 
-    // ================= SOUND =================
-    void PlayTypingSound(char c)
-    {
-        if (char.IsLetter(c))
-            audioSource.PlayOneShot(typeLetter);
-        else if (c == ' ')
-            audioSource.PlayOneShot(typeSpace);
-        else
-            audioSource.PlayOneShot(typeSymbol);
-    }
+        PlaySound(doorOpenSound);
 
-    // ================= SCENE COMPLETION =================
-    void MarkSceneCompleted()
-    {
-        string sceneName = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
-        PlayerPrefs.Save();
-        Debug.Log("Scene marked as completed: " + sceneName);
+        yield return new WaitForSeconds(1f);
+
+        StartCoroutine(FadeAndChangeScene());
     }
 
     // ================= FADE =================
@@ -410,12 +319,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         currentState = GameState.Transition;
         fadeCanvas.blocksRaycasts = true;
-
-        // Mark this scene as completed before leaving
-        MarkSceneCompleted();
-
-        // Ensure time is unpaused (in case something went wrong)
-        Time.timeScale = 1f;
 
         float t = 0;
         while (t < fadeDuration)
@@ -425,8 +328,19 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
             yield return null;
         }
 
-        audioSource.PlayOneShot(doorOpenSound);
-        yield return new WaitForSeconds(0.5f);
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    // ================= AUDIO =================
+    void PlaySound(AudioClip clip)
+    {
+        if (clip != null)
+            audioSource.PlayOneShot(clip);
+    }
+    void ResetTerminal()
+    {
+        outputTerminalText.text =
+            "PYTHON TERMINAL\n" +
+            "----------------\n\n";
     }
 }

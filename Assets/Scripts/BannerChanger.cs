@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,21 +7,38 @@ public class BannerEditor : MonoBehaviour
     [Header("Panel")]
     public GameObject bannerPanel;
 
-    [Header("Banner Display")]
+    [Header("Animation")]
+    public Animator bannerAnimator;
+    bool panelOpen = false;
+
+    [Header("Banner Display (Editor Panel)")]
     public Image bannerDisplay;
+
+    [Header("Banner Display (Menu)")]
+    public Image menuBannerDisplay;
 
     [Header("Available Banners")]
     public Sprite[] bannerSprites;
 
     [Header("Selection Ticks")]
     public GameObject[] selectionTicks;
-    // One tick for each banner button
 
     private const string BANNER_KEY = "SelectedBanner";
 
     void Start()
     {
         LoadBanner();
+
+        if (bannerPanel != null)
+            bannerPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        if (panelOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            CloseBannerPanel();
+        }
     }
 
     // ================= PANEL =================
@@ -28,11 +46,21 @@ public class BannerEditor : MonoBehaviour
     public void OpenBannerPanel()
     {
         bannerPanel.SetActive(true);
+        bannerAnimator.SetTrigger("Open");
+        panelOpen = true;
     }
 
     public void CloseBannerPanel()
     {
+        bannerAnimator.SetTrigger("Close");
+        StartCoroutine(HideBannerAfterAnim());
+    }
+
+    IEnumerator HideBannerAfterAnim()
+    {
+        yield return new WaitForSeconds(1f); // match animation length
         bannerPanel.SetActive(false);
+        panelOpen = false;
     }
 
     // ================= CHANGE BANNER =================
@@ -41,7 +69,15 @@ public class BannerEditor : MonoBehaviour
     {
         if (index < 0 || index >= bannerSprites.Length) return;
 
-        bannerDisplay.sprite = bannerSprites[index];
+        Sprite selected = bannerSprites[index];
+
+        // Update editor preview
+        if (bannerDisplay != null)
+            bannerDisplay.sprite = selected;
+
+        // Update menu banner
+        if (menuBannerDisplay != null)
+            menuBannerDisplay.sprite = selected;
 
         PlayerPrefs.SetInt(BANNER_KEY, index);
         PlayerPrefs.Save();
@@ -55,7 +91,8 @@ public class BannerEditor : MonoBehaviour
     {
         for (int i = 0; i < selectionTicks.Length; i++)
         {
-            selectionTicks[i].SetActive(i == selectedIndex);
+            if (selectionTicks[i] != null)
+                selectionTicks[i].SetActive(i == selectedIndex);
         }
     }
 
@@ -67,7 +104,14 @@ public class BannerEditor : MonoBehaviour
 
         if (savedBanner >= 0 && savedBanner < bannerSprites.Length)
         {
-            bannerDisplay.sprite = bannerSprites[savedBanner];
+            Sprite saved = bannerSprites[savedBanner];
+
+            if (bannerDisplay != null)
+                bannerDisplay.sprite = saved;
+
+            if (menuBannerDisplay != null)
+                menuBannerDisplay.sprite = saved;
+
             UpdateSelectionTick(savedBanner);
         }
     }

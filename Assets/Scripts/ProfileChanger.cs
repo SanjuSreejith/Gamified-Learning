@@ -6,9 +6,17 @@ public class ProfilePictureManager : MonoBehaviour
 {
     [Header("Panel")]
     public GameObject changeProfilePanel;
+    public Animator panelAnimator;
 
-    [Header("Profile Display")]
+    bool panelOpen = false;
+
+    [Header("Profile Display (Profile Page)")]
     public Image profileDisplay;
+
+    [Header("Menu Profile Images")]
+    public Image menuProfileDisplay;      // Final menu image
+    public Image menuProfileDummyImage;   // Dummy animation image
+    public Animator menuProfileAnimator;
 
     [Header("Default Profiles")]
     public Sprite[] defaultProfiles;
@@ -19,7 +27,6 @@ public class ProfilePictureManager : MonoBehaviour
 
     [Header("Selection Ticks")]
     public GameObject[] selectionTicks;
-    // Order: Default1, Default2, Default3... Custom1, Custom2
 
     const string PROFILE_KEY = "SelectedProfile";
     const string CUSTOM1_PATH = "CustomProfile1";
@@ -30,38 +37,117 @@ public class ProfilePictureManager : MonoBehaviour
 
     void Start()
     {
+        changeProfilePanel.SetActive(false);
+
         selectedProfile = PlayerPrefs.GetInt(PROFILE_KEY, 0);
 
         LoadSlot(0, CUSTOM1_PATH);
         LoadSlot(1, CUSTOM2_PATH);
 
+        // Load profile WITHOUT animation
         if (selectedProfile < 100)
         {
-            profileDisplay.sprite = defaultProfiles[selectedProfile];
+            SetProfileSpriteInstant(defaultProfiles[selectedProfile]);
             UpdateSelectionTick(selectedProfile);
         }
         else
         {
             int slot = selectedProfile - 100;
+            SetProfileSpriteInstant(customButtons[slot].image.sprite);
             UpdateSelectionTick(defaultProfiles.Length + slot);
         }
     }
 
+    void Update()
+    {
+        if (panelOpen && Input.GetKeyDown(KeyCode.Escape))
+        {
+            ClosePanel();
+        }
+    }
+
+    // ================= PANEL =================
+
     public void OpenPanel()
     {
         changeProfilePanel.SetActive(true);
+        panelAnimator.SetTrigger("Open");
+        panelOpen = true;
     }
 
     public void ClosePanel()
     {
-        changeProfilePanel.SetActive(false);
+        panelAnimator.SetTrigger("Close");
+        StartCoroutine(HidePanelAfterAnim());
     }
 
+    IEnumerator HidePanelAfterAnim()
+    {
+        yield return new WaitForSeconds(0.35f);
+        changeProfilePanel.SetActive(false);
+        panelOpen = false;
+    }
+
+    // ================= PROFILE SETTER =================
+
+    void SetProfileSpriteInstant(Sprite sprite)
+    {
+        if (profileDisplay != null)
+            profileDisplay.sprite = sprite;
+
+        if (menuProfileDisplay != null)
+            menuProfileDisplay.sprite = sprite;
+
+        if (menuProfileDummyImage != null)
+            menuProfileDummyImage.sprite = sprite;
+    }
+
+    void SetProfileSpriteAnimated(Sprite sprite)
+    {
+        // Update profile page instantly
+        if (profileDisplay != null)
+            profileDisplay.sprite = sprite;
+
+        StartCoroutine(MenuProfileChange(sprite));
+    }
+    IEnumerator AnimateMenuProfileChange(Sprite sprite)
+    {
+        // Set dummy sprite first
+        if (menuProfileDummyImage != null)
+            menuProfileDummyImage.sprite = sprite;
+
+        yield return new WaitForSeconds(0.55f);
+
+        // Trigger animation
+        if (menuProfileAnimator != null)
+            menuProfileAnimator.SetTrigger("Change");
+
+        // Apply to real image
+        if (menuProfileDisplay != null)
+            menuProfileDisplay.sprite = sprite;
+    }
+    IEnumerator MenuProfileChange(Sprite sprite)
+    {
+        // Step 1: Apply sprite to dummy image
+        if (menuProfileDummyImage != null)
+            menuProfileDummyImage.sprite = sprite;
+
+        // Step 2: Trigger animation immediately
+        if (menuProfileAnimator != null)
+            menuProfileAnimator.SetTrigger("Change");
+
+        // Step 3: Wait for animation reveal
+        yield return new WaitForSeconds(0.55f);
+
+        // Step 4: Apply sprite to real menu profile
+        if (menuProfileDisplay != null)
+            menuProfileDisplay.sprite = sprite;
+    }
     // ================= DEFAULT PROFILE =================
 
     public void SetDefaultProfile(int index)
     {
-        profileDisplay.sprite = defaultProfiles[index];
+        SetProfileSpriteAnimated(defaultProfiles[index]);
 
         PlayerPrefs.SetInt(PROFILE_KEY, index);
         PlayerPrefs.Save();
@@ -73,7 +159,9 @@ public class ProfilePictureManager : MonoBehaviour
 
     public void SetCustomProfile(int slot)
     {
-        profileDisplay.sprite = customButtons[slot].image.sprite;
+        Sprite sprite = customButtons[slot].image.sprite;
+
+        SetProfileSpriteAnimated(sprite);
 
         PlayerPrefs.SetInt(PROFILE_KEY, 100 + slot);
         PlayerPrefs.Save();
@@ -130,7 +218,7 @@ public class ProfilePictureManager : MonoBehaviour
 
         if (setAsProfile || selectedProfile == 100 + slot)
         {
-            profileDisplay.sprite = sprite;
+            SetProfileSpriteAnimated(sprite);
             UpdateSelectionTick(defaultProfiles.Length + slot);
         }
 
@@ -154,23 +242,4 @@ public class ProfilePictureManager : MonoBehaviour
             StartCoroutine(LoadImage(path, slot, false));
         }
     }
-
-#if UNITY_EDITOR
-    [ContextMenu("Clear Custom Images (Editor Test)")]
-    public void ClearCustomImages()
-    {
-        PlayerPrefs.DeleteKey(CUSTOM1_PATH);
-        PlayerPrefs.DeleteKey(CUSTOM2_PATH);
-        PlayerPrefs.DeleteKey(PROFILE_KEY);
-        PlayerPrefs.DeleteKey(NEXT_SLOT_KEY);
-
-        customBorders[0].SetActive(false);
-        customBorders[1].SetActive(false);
-
-        foreach (var tick in selectionTicks)
-            tick.SetActive(false);
-
-        Debug.Log("Custom images cleared.");
-    }
-#endif
 }
