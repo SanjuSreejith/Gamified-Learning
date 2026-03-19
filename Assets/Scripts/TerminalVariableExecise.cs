@@ -130,13 +130,27 @@ public class TerminalVariableExercise : MonoBehaviour
     void BuildTask()
     {
         taskBuffer = $"[ TASK {step}/{TOTAL_TASKS} ]\n";
-
         switch (step)
         {
-            case 1: taskBuffer += "Store name \"Arya\" → name\n"; break;
-            case 2: taskBuffer += "Store number 25 → age\n"; break;
-            case 3: taskBuffer += "Store state True → is_ready\n"; break;
-            case 4: taskBuffer += "Store decimal 10.5 → energy_level\n"; break;
+            case 1:
+                taskBuffer += "Create a variable called 'name'\n";
+                taskBuffer += "and set it to \"Arya\"\n";
+                break;
+
+            case 2:
+                taskBuffer += "Create a variable called 'age'\n";
+                taskBuffer += "and set it to 25\n";
+                break;
+
+            case 3:
+                taskBuffer += "Create a variable called 'is_ready'\n";
+                taskBuffer += "and set it to True\n";
+                break;
+
+            case 4:
+                taskBuffer += "Create a variable called 'energy_level'\n";
+                taskBuffer += "and set it to 10.5\n";
+                break;
         }
 
         taskBuffer += "\n";
@@ -279,7 +293,7 @@ public class TerminalVariableExercise : MonoBehaviour
         feedbackAudio?.PlayOneShot(correctSound);
         SetFace(happyFace);
 
-        AppendOutput("✔ Success");
+        AppendOutput("Success");
 
         yield return Say("Nice.");
 

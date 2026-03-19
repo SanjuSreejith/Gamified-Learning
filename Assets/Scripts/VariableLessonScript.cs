@@ -229,7 +229,7 @@ public class TerminalVariableLesson : MonoBehaviour
         }
 
         yield return AddSystemLine($"[Assigning] age = {playerAge}");
-        yield return AddSystemLine("✔ Stored");
+        yield return AddSystemLine(" Stored");
 
         UpdateIDCardAge(playerAge);
 
@@ -250,7 +250,7 @@ public class TerminalVariableLesson : MonoBehaviour
     {
         SetFace(proudFace);
 
-        yield return AddSystemLine("[CONFIRMED ✔]");
+        yield return AddSystemLine("[CONFIRMED]");
         yield return Speak("Nice. Saved.");
 
         SavePlayerProfile();
@@ -279,7 +279,7 @@ public class TerminalVariableLesson : MonoBehaviour
 
         terminalText.text = "";
 
-        yield return AddSystemLine("✔ Updated");
+        yield return AddSystemLine(" Updated");
         yield return AddSystemLine("Ready.");
     }
 

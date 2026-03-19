@@ -21460,7 +21460,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StartFadeOut
   fadeCanvasGroup: {fileID: 1931605195}
-  fadeDuration: 1
+  fadeDuration: 0.6
 --- !u!4 &909600269
 Transform:
   m_ObjectHideFlags: 0
