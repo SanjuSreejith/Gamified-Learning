@@ -483,7 +483,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         {
             case 1: return "Hint: " + question.hint;
             case 2: return "Detailed hint: " + question.detailedHint;
-            default: return "Think about the Python syntax.";
+            default: return "Think and Gain about the Python syntax.";
         }
     }
 
@@ -569,15 +569,15 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             switch (performance)
             {
                 case PlayerPerformance.Perfect:
-                    return "Excellent! You've mastered variables and output. Keep progressing!";
+                    return "Excellent Buddy ! You've mastered variables and output. Keep progressing!";
                 case PlayerPerformance.Average:
-                    return "Good work! You understand the basics. Practice will make you perfect.";
+                    return "Good work Mate! You understand the basics. Practice will make you perfect.";
                 case PlayerPerformance.Poor:
-                    return "Progress made! Remember: print() shows output, variables store data. Keep practicing!";
+                    return "Progress made 🏆! Remember: print() shows output, variables store data. Keep practicing!";
             }
         }
 
-        return "You need more practice with these fundamentals. Return when you're ready.";
+        return "You need more practice 🔁 with these fundamentals. Return when you're ready.";
     }
 
     IEnumerator HidePanelDelayed()
@@ -608,7 +608,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         return new AdvancedQuestion[]
         {
             new AdvancedQuestion(
-                "What prints: speed = 4; print('Platform speed:', speed)?",
+                "What will be output : if , speed = 4; print('Platform speed:', speed)?",
                 "platform speed: 4",
                 "print() can combine text and variables",
                 "The comma adds space automatically",
@@ -617,21 +617,21 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
                 "Perfect! You understand how to display variables with labels."
             ),
             new AdvancedQuestion(
-                "What prints: x = 10; y = 5; print('Total:', x + y)?",
+                "What will be output : x = 10; y = 5; print('Total:', x + y)?",
                 "total: 15",
                 "print() can show calculation results",
-                "x + y equals 15, print shows it with label",
+                "x is 10 and y is 5 then x + y equals 15, print shows it with label",
                 new string[] { "total:15", "total: 15" },
                 "The expression x + y is calculated first (10 + 5 = 15), then printed with the text",
                 "Excellent! You can combine calculations with print()."
             ),
             new AdvancedQuestion(
-                "What prints: is_active = True; print('Active status:', is_active)?",
-                "active status: true",
+                "What will be output : is_active = True; print('Active status:', is_active)?",
+                "active status: True",
                 "Boolean values can be printed too",
                 "True prints as 'True' (capital T)",
                 new string[] { "active status:true", "active status: true" },
-                "Boolean variables store True/False values, and print() displays them as text",
+                "Boolean variables store True/False values, and print() displays them as text , if you type  print(type(is_active)) then you can see <bool> as datatype",
                 "Correct! You understand printing boolean variables."
             )
         };
@@ -642,16 +642,16 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         return new AdvancedQuestion[]
         {
             new AdvancedQuestion(
-                "What prints: print('Platform', 7, 'enabled')?",
+                "What will be output : print('Platform', 7, 'enabled')?",
                 "platform 7 enabled",
                 "print() can show multiple items",
-                "Each item separated by space",
+                "Each item separated by space  and we can assign variables after them by puting a Comma after a string or variable",
                 new string[] { "platform 7 enabled" },
                 "print() with multiple arguments shows each one with spaces in between",
                 "Good! You understand print() with multiple items."
             ),
             new AdvancedQuestion(
-                "What prints: score = 100; print('Score:', score)?",
+                "What will be output : score = 100; print('Score:', score)?",
                 "score: 100",
                 "print() shows variable values",
                 "Variable 'score' has value 100",
@@ -660,9 +660,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
                 "Correct! You can display variable values with labels."
             ),
             new AdvancedQuestion(
-                "How would you create a variable 'health' with value 50?",
+                "Create a variable 'health' with value 50?",
                 "health = 50",
-                "Use = to assign values",
+                "Use \"=\" to assign values",
                 "No quotes around numbers",
                 new string[] { "health=50", "health =50", "health= 50" },
                 "To create a variable: variable_name = value. For numbers, don't use quotes.",

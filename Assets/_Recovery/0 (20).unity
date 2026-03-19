@@ -1451,33 +1451,31 @@ MonoBehaviour:
   wrong: {fileID: 8300000, guid: 2b092e8a171124e4290e875fa3f06168, type: 3}
   Answer: {fileID: 592519592}
   masterQuestions:
-  - questionText: Write code that asks for user's name . Ask question like "Enter
-      name".
-    correctAnswer: 'name = input(''Enter name: '')'
+  - questionText: Write code that asks for user's name .
+    correctAnswer: name = input('Enter name= ')
     hint: name=
     explanation: input() gets text from users
     acceptableVariations:
     - 'name=input(''Enter name: '')'
-    - name = input('Enter name= ')
-    - name=input('Enter name= ')
-    - name = input('Enter your name= ')
+    - 'name = input(''Enter name: '')'
     feedback: Excellent! You understand complex input/output operations.
-  - questionText: 'if x=6 and b=10 . write python code for adding and printing x
-      and b '
-    correctAnswer: print(x+b)
-    hint: add the two variables inside print   . guess what operator used for addition
-    explanation: '"+" is used for adding two variables together'
+  - questionText: 'Make the statue happy: hint - bool statueHappy;'
+    correctAnswer: statueHappy = True
+    hint: Assign True to the boolean variable
+    explanation: Boolean variables store True or False values
     acceptableVariations:
-    - print(x+b)
-    - print(b+x)
+    - statueHappy=True
+    - statueHappy = true
     feedback: Perfect! The statue is now happy.
-  - questionText: 'if  variable , t=10 , print a  line to  double its value  '
-    correctAnswer: print(t*2)
-    hint: wrap *2 inside the print with 2 then multiply
-    explanation: we can multiply any values or strings inside print
+  - questionText: 'Convert input to integer and double it: x = input(''Number: '')'
+    correctAnswer: 'x = int(input(''Number: '')) * 2'
+    hint: Wrap input() with int() to convert, then multiply
+    explanation: input() returns a string, int() converts it to a number for calculations
     acceptableVariations:
-    - print(2*t)
-    - print(t*2)
+    - 'x=int(input(''Number: ''))*2'
+    - 'num = int(input(''Number: ''))
+
+      x = num * 2'
     feedback: Great! You know how to process numerical input.
   competentQuestions:
   - questionText: Ask for user's name and print it

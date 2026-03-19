@@ -999,7 +999,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         {
             new FinalQuestion()
             {
-                questionText = "Write code that asks for user's name and age, then prints a greeting with both",
+                questionText = "Write code that asks for user's name and age, then prints a greeting with both (use variables name & age)",
                 correctAnswer = "name = input('Enter name: '); age = input('Enter age: '); print('Hello', name, 'you are', age, 'years old')",
                 hint = "Use two input() calls and one print() with multiple arguments",
                 explanation = "input() gets text from user, print() can show multiple values separated by spaces",
@@ -1011,7 +1011,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             },
             new FinalQuestion()
             {
-                questionText = "Make the statue happy: hint - bool statueHappy;",
+                questionText = "Make the statue happy: hint :- assign boolean values for making statueHappy ;",
                 correctAnswer = "statueHappy = True",
                 hint = "Assign True to the boolean variable",
                 explanation = "Boolean variables store True or False values",
@@ -1020,10 +1020,10 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             },
             new FinalQuestion()
             {
-                questionText = "Convert input to integer and double it: x = input('Number: ')",
-                correctAnswer = "x = int(input('Number: ')) * 2",
-                hint = "Wrap input() with int() to convert, then multiply",
-                explanation = "input() returns a string, int() converts it to a number for calculations",
+                questionText = "Convert input to integer and double the outpt using print(): x = input('Number: ')",
+                correctAnswer = "print(x * 2)",
+                hint = "Wrap 2 inside print() with *2, ",
+                explanation = "input() returns a string, In python we can multiply strings with number ",
                 acceptableVariations = new string[] {
                     "x=int(input('Number: '))*2",
                     "num = int(input('Number: '))\nx = num * 2"
@@ -1036,7 +1036,7 @@ public class FinalStatuePuzzle2D : MonoBehaviour
         {
             new FinalQuestion()
             {
-                questionText = "Ask for user's name and print it",
+                questionText = "Ask for user's name and print it , ask question as \"What is your name?\" " ,
                 correctAnswer = "name = input('What is your name? '); print(name)",
                 hint = "Use input() then print()",
                 explanation = "input() gets user input, print() displays it",
@@ -1050,15 +1050,15 @@ public class FinalStatuePuzzle2D : MonoBehaviour
             {
                 questionText = "Make a variable 'gameActive' and set it to True",
                 correctAnswer = "gameActive = True",
-                hint = "Use = to assign True to the variable",
+                hint = "Use \"=\" operater to assign True to the variable",
                 explanation = "Variable assignment uses = operator",
                 acceptableVariations = new string[] { "gameActive=True", "gameActive=true" },
                 feedback = "Correct! You can set boolean variables."
             },
             new FinalQuestion()
             {
-                questionText = "Print both text and a variable: score = 100",
-                correctAnswer = "print('Score:', score)",
+                questionText = "Print both text and a variable: \"score\" : 100",
+                correctAnswer = "print('score:', score)",
                 hint = "print() can show multiple items separated by commas",
                 explanation = "The comma in print() adds a space between items",
                 acceptableVariations = new string[] { "print('Score:',score)", "print('Score: '+str(score))" },

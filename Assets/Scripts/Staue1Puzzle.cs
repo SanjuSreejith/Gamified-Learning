@@ -173,35 +173,35 @@ public class StatueDialogueTriggerSystem2D : MonoBehaviour
         questions = new BasicQuestion[]
         {
             new BasicQuestion(
-                "If a user types Tarkya, what does input() return?",
-                "tarkya",
+                "Keyword used in python for taking input from User",
+                "input",
                 new string[]
                 {
-                    "Python does not change what the user types.",
+                    "Python uses inp_t keyword.",
                     "input() returns exactly what the user enters.",
-                    "If the user typed Tarkya, what would the result be?"
+                    "Opposite word of output?"
                 }
             ),
 
             new BasicQuestion(
-                "print(\"Hello\", name) where name = Alex. What prints?",
+                "print(\"hello\",name) where name = \"alex\". What will be output?",
                 "hello alex",
                 new string[]
                 {
                     "print() automatically adds a space.",
-                    "The output combines Hello and Alex.",
+                    "The output combines hello and alex.",
                     "Think: Hello + space + Alex."
                 }
             ),
 
             new BasicQuestion(
-                "Does input() return a number or text?",
-                "text",
+                "Does input() reads from user , as  a number or string?",
+                "string",
                 new string[]
                 {
                     "input() reads user input as a string.",
-                    "Even digits are treated as something else.",
-                    "Python considers input() result as text."
+                    "Even digits are treated as string firstly.",
+                    "Python considers input() contents as string."
                 }
             )
         };
