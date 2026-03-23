@@ -10607,7 +10607,7 @@ MonoBehaviour:
   dialogueText: {fileID: 515910337}
   speakerImage: {fileID: 962702068}
   abelPortrait: {fileID: 2609348718431745213, guid: 097d0c923d28bf04aab20ce1a6a928d1, type: 3}
-  kuttanPortrait: {fileID: 5638259562752074330, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  kuttanPortrait: {fileID: -1921216307, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
   hintSystem: {fileID: 1628652342}
   bridgeController: {fileID: 1925471770}
   friendlyNPCs: []
@@ -14781,7 +14781,7 @@ MonoBehaviour:
   terminalText: {fileID: 1813136762}
   hintSystem: {fileID: 1628652342}
   abelPortrait: {fileID: 2609348718431745213, guid: 097d0c923d28bf04aab20ce1a6a928d1, type: 3}
-  kuttanPortrait: {fileID: 17426746270384133, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  kuttanPortrait: {fileID: -1921216307, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
   friendlyNPCs:
   - {fileID: 52738575}
   - {fileID: 659620511}
@@ -22712,7 +22712,7 @@ MonoBehaviour:
   dialogueText: {fileID: 515910337}
   speakerImage: {fileID: 962702068}
   abelPortrait: {fileID: 2609348718431745213, guid: 097d0c923d28bf04aab20ce1a6a928d1, type: 3}
-  kuttanPortrait: {fileID: 5638259562752074330, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  kuttanPortrait: {fileID: -1921216307, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
   terminalPanel: {fileID: 778883833}
   terminalText: {fileID: 1813136762}
   jetpackPanel: {fileID: 124437985}
@@ -26610,7 +26610,7 @@ MonoBehaviour:
   dialogueText: {fileID: 515910337}
   speakerImage: {fileID: 962702068}
   abelPortrait: {fileID: 2609348718431745213, guid: 097d0c923d28bf04aab20ce1a6a928d1, type: 3}
-  kuttanPortrait: {fileID: 5638259562752074330, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
+  kuttanPortrait: {fileID: -1921216307, guid: 5ec87768f2ae36149bc3ea2399fb7aa8, type: 3}
   friendlyNPCs:
   - {fileID: 52738575}
   - {fileID: 659620511}
