@@ -25,7 +25,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     // ================= AUDIO =================
     public AudioSource audioSource;
-    public AudioClip selectSound;
     public AudioClip executeSound;
     public AudioClip errorSound;
     public AudioClip doorOpenSound;
@@ -34,7 +33,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     public string nextSceneName;
 
     // ================= TUTORIAL =================
-    [Header("Tutorial Lock")]
     public bool tutorialActive = true;
 
     // ================= STATE =================
@@ -42,6 +40,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         Idle,
         Intro,
+        Demo,
         Input,
         Feedback,
         Success,
@@ -51,8 +50,13 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     GameState currentState = GameState.Idle;
 
     // ================= INPUT =================
-    string[] wordOptions = { "\"Hello\"", "\"Welcome\"", "\"Open\"" };
-    int currentOptionIndex = 0;
+    string playerInput = "";
+    bool isTyping = false;
+
+    // ================= CURSOR =================
+    bool cursorVisible = true;
+    float cursorTimer = 0f;
+    float cursorBlinkSpeed = 0.5f;
 
     // ================= DIALOGUE =================
     string[] currentDialogue;
@@ -60,7 +64,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     // ================= INTERNAL =================
     bool introPlayed = false;
-    bool blockNextInputFrame = false;
 
     void Start()
     {
@@ -70,9 +73,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         fadeCanvas.alpha = 0;
         fadeCanvas.blocksRaycasts = false;
 
-        outputTerminalText.text =
-            "PYTHON TERMINAL\n" +
-            "----------------\n\n";
+        ResetTerminal();
     }
 
     void Update()
@@ -82,7 +83,10 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         HandleDistance();
 
         if (currentState == GameState.Input)
-            HandleInput();
+        {
+            HandleTyping();
+            HandleCursorBlink();
+        }
 
         if (currentState == GameState.Intro || currentState == GameState.Feedback)
             HandleDialogueAdvance();
@@ -134,9 +138,11 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         currentDialogue = new string[]
         {
-            "This door reacts to messages...",
-            "But it understands Python.",
-            "Try sending something.",
+            "This door is controlled by an AI system...",
+            "It listens to messages sent using Python.",
+            "print() sends a message into the system.",
+            "Only the correct message will trigger it.",
+            "Watch this example...",
             "Press Enter..."
         };
 
@@ -148,7 +154,6 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         if (!Input.GetKeyDown(KeyCode.Return)) return;
 
-        // Skip typing if still animating
         if (typewriter != null && typewriter.IsTyping())
         {
             typewriter.Skip();
@@ -163,8 +168,53 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         }
         else
         {
-            OpenInputTerminal();
+            StartCoroutine(PlayDemo());
         }
+    }
+
+    // ================= DEMO =================
+    IEnumerator PlayDemo()
+    {
+        currentState = GameState.Demo;
+
+        inputTerminalPanel.SetActive(true);
+
+        playerInput = "";
+        UpdateInputDisplay();
+
+        yield return new WaitForSeconds(0.5f);
+
+        string demoText = "Hello";
+
+        foreach (char c in demoText)
+        {
+            playerInput += c;
+            UpdateInputDisplay();
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(0.5f);
+
+        ResetTerminal();
+        outputTerminalText.text += "> Executing...\n";
+
+        yield return new WaitForSeconds(1f);
+
+        outputTerminalText.text += "Output: Hello\n";
+
+        yield return new WaitForSeconds(1.5f);
+
+        inputTerminalPanel.SetActive(false);
+
+        ShowText("See? print() sends a message.");
+
+        yield return new WaitForSeconds(2f);
+
+        ShowText("Now you try sending the correct message.");
+
+        yield return new WaitForSeconds(1.5f);
+
+        OpenInputTerminal();
     }
 
     // ================= INPUT =================
@@ -173,51 +223,55 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         currentState = GameState.Input;
         inputTerminalPanel.SetActive(true);
 
-        currentOptionIndex = 0;
+        playerInput = "";
+        isTyping = true;
+
         UpdateInputDisplay();
 
-        ShowText("A / D to change\nEnter to execute");
-
-        blockNextInputFrame = true;
+        ShowText("Type a message to the door AI\nPress Enter to send");
     }
 
-    void HandleInput()
+    void HandleTyping()
     {
-        if (blockNextInputFrame)
+        if (!isTyping) return;
+
+        foreach (char c in Input.inputString)
         {
-            blockNextInputFrame = false;
-            return;
+            if (c == '\b' && playerInput.Length > 0)
+            {
+                playerInput = playerInput.Remove(playerInput.Length - 1);
+            }
+            else if (c == '\n' || c == '\r')
+            {
+                isTyping = false;
+                StartCoroutine(ExecuteCode());
+                return;
+            }
+            else if (!char.IsControl(c))
+            {
+                playerInput += c;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            currentOptionIndex--;
-            if (currentOptionIndex < 0)
-                currentOptionIndex = wordOptions.Length - 1;
+        UpdateInputDisplay();
+    }
 
-            PlaySound(selectSound);
+    void HandleCursorBlink()
+    {
+        cursorTimer += Time.deltaTime;
+
+        if (cursorTimer >= cursorBlinkSpeed)
+        {
+            cursorVisible = !cursorVisible;
+            cursorTimer = 0f;
             UpdateInputDisplay();
-        }
-
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            currentOptionIndex++;
-            if (currentOptionIndex >= wordOptions.Length)
-                currentOptionIndex = 0;
-
-            PlaySound(selectSound);
-            UpdateInputDisplay();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            StartCoroutine(ExecuteCode());
         }
     }
 
     void UpdateInputDisplay()
     {
-        inputText.text = "> print(" + wordOptions[currentOptionIndex] + ")";
+        string cursor = cursorVisible ? "|" : "";
+        inputText.text = "> print(\"" + playerInput + cursor + "\")";
     }
 
     // ================= EXECUTION =================
@@ -229,27 +283,25 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         PlaySound(executeSound);
 
-        // 🔥 Clear old output first
         ResetTerminal();
-
-        // Show fresh execution
         outputTerminalText.text += "> Executing...\n";
+
         yield return new WaitForSeconds(1.2f);
 
-        string selected = wordOptions[currentOptionIndex];
-        string cleanText = selected.Replace("\"", "");
+        string cleanText = playerInput.Trim();
 
-        // 🔥 Always show output
         outputTerminalText.text += "Output: " + cleanText + "\n";
 
-        if (cleanText == "Welcome")
+        if (cleanText.ToLower().Contains("welcome"))
         {
-            outputTerminalText.text += "Door: Accepted\n\n";
+            outputTerminalText.text += "Door AI: Message recognized\n";
+            outputTerminalText.text += "Door AI: Opening access\n\n";
+
             StartCoroutine(HandleSuccess());
         }
         else
         {
-            outputTerminalText.text += "Door: No response\n\n";
+            outputTerminalText.text += "Door AI: No valid response\n\n";
             HandleError(cleanText);
         }
     }
@@ -258,39 +310,16 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     void HandleError(string input)
     {
         PlaySound(errorSound);
-
         currentState = GameState.Feedback;
 
-        if (input == "Hello")
+        currentDialogue = new string[]
         {
-            currentDialogue = new string[]
-            {
-                "It printed 'Hello'...",
-                "But door ignored it.",
-                "Maybe wrong message.",
-                "Try again."
-            };
-        }
-        else if (input == "Open")
-        {
-            currentDialogue = new string[]
-            {
-                "Command sent...",
-                "But nothing happened.",
-                "It expects a message.",
-                "Think again."
-            };
-        }
-        else
-        {
-            currentDialogue = new string[]
-            {
-                "No response...",
-                "That didn't work.",
-                "Try something else.",
-                "Press Enter..."
-            };
-        }
+            "The door AI did not accept that...",
+           
+          "This door responds to greetings.",
+"It opens only when it receives a proper welcome message.",
+            "Press Enter..."
+        };
 
         dialogueIndex = 0;
         ShowText(currentDialogue[dialogueIndex]);
@@ -301,7 +330,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         currentState = GameState.Success;
 
-        ShowText("Accepted...");
+        ShowText("Access granted...");
         yield return new WaitForSeconds(1f);
 
         ShowText("Door unlocking...");
@@ -337,6 +366,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         if (clip != null)
             audioSource.PlayOneShot(clip);
     }
+
     void ResetTerminal()
     {
         outputTerminalText.text =
