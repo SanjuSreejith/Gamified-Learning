@@ -59,10 +59,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     const int MAX_LOCK_LENGTH = 4;
     const int MAX_DISPLAY_LENGTH = 12;
-    const string LOCK_PLACEHOLDER = "Enter Code";
     string dynamicPlaceholder = "Enter Code";
 
-    // ================= HINT SETS =================
+    // ================= HINTS =================
 
     string[] teachingHints = {
         "Press Enter to continue",
@@ -196,7 +195,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void ShowLine()
     {
-        StopAllCoroutines(); // 🔥 prevents stacking
+        StopAllCoroutines();
 
         if (typewriter != null)
             typewriter.Play(activeDialogue[dialogueIndex]);
@@ -214,15 +213,10 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                // If typing → finish it
                 if (typewriter != null && typewriter.IsTyping())
-                {
                     typewriter.Skip();
-                }
                 else
-                {
                     break;
-                }
             }
         }
 
@@ -244,6 +238,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             }
         }
     }
+
     // ================= PYTHON =================
 
     void OpenPythonTerminal()
@@ -286,11 +281,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (IsValidPythonInput(pythonInput))
         {
             pythonConfigured = true;
-
-            // 🔥 Extract placeholder from input()
             dynamicPlaceholder = ExtractInputPlaceholder(pythonInput);
-            PlaySound(correctSound);
 
+            PlaySound(correctSound);
             hintSystem.SetHints(lockHints);
 
             StartCoroutine(OpenLockSequence());
@@ -306,7 +299,6 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     bool IsValidPythonInput(string input)
     {
         string s = input.Replace(" ", "").ToLower();
-
         return s.Contains("password=int(input(");
     }
 
@@ -359,10 +351,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             }
         }
 
-        if (lockInput.Length > 0)
-            lockText.text = LimitText(lockInput + "_");
-        else
-            lockText.text = LimitText(dynamicPlaceholder);
+        lockText.text = lockInput.Length > 0
+            ? LimitText(lockInput + "_")
+            : LimitText(dynamicPlaceholder);
     }
 
     void SubmitLock()
@@ -397,7 +388,20 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         PlaySound(doorOpenSound);
         yield return new WaitForSeconds(1f);
+
+        // ✅ MARK SCENE COMPLETED
+        MarkSceneCompleted();
+
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    // ================= SAVE =================
+
+    void MarkSceneCompleted()
+    {
+        string sceneName = SceneManager.GetActiveScene().name;
+        PlayerPrefs.SetInt("SceneCompleted_" + sceneName, 1);
+        PlayerPrefs.Save();
     }
 
     // ================= UTILS =================
@@ -416,11 +420,11 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     string LimitText(string text)
     {
-        if (text.Length > MAX_DISPLAY_LENGTH)
-            return text.Substring(0, MAX_DISPLAY_LENGTH);
-
-        return text;
+        return text.Length > MAX_DISPLAY_LENGTH
+            ? text.Substring(0, MAX_DISPLAY_LENGTH)
+            : text;
     }
+
     string ExtractInputPlaceholder(string input)
     {
         int start = input.IndexOf("input(");
@@ -432,7 +436,6 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (firstQuote != -1 && secondQuote != -1)
         {
             string extracted = input.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-
             if (!string.IsNullOrEmpty(extracted))
                 return extracted;
         }

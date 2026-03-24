@@ -2044,7 +2044,7 @@ MonoBehaviour:
   speedSlider: {fileID: 2117395368}
   speedText: {fileID: 138336009}
   typewriters: []
-  speedTextTypewriter: {fileID: 0}
+  speedTextTypewriter: {fileID: 138336006}
 --- !u!1 &1286218239 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5086093918874894918, guid: d07b61c9a0853824c81ba46a2b5f41af, type: 3}
@@ -3909,6 +3909,38 @@ PrefabInstance:
       propertyPath: progressSlider
       value: 
       objectReference: {fileID: 345299119}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: sceneNames.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[0]'
+      value: Start
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[1]'
+      value: Intro
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[2]'
+      value: Printf
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[3]'
+      value: World 2C
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[4]'
+      value: World 3C
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[5]'
+      value: World 4C
+      objectReference: {fileID: 0}
+    - target: {fileID: 1737852446402632011, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
+      propertyPath: 'sceneNames.Array.data[6]'
+      value: World 5C
+      objectReference: {fileID: 0}
     - target: {fileID: 4913791861326168032, guid: 4872235e2b7917b478027c59ce2341d0, type: 3}
       propertyPath: m_Name
       value: Progress Tester
