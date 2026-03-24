@@ -61,10 +61,11 @@ public class TerminalVariableExercise : MonoBehaviour
     string outputBuffer = "";
 
     bool waitingForAdvance;
+    private const string PREF_KEY = "TypeSpeed";
 
     // ================= START =================
     void Start()
-    {
+    {   dialogueSpeed = PlayerPrefs.GetFloat(PREF_KEY);
         terminalText.text = "";
         dialogueText.text = "";
         SetFace(neutralFace);

@@ -5,8 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(TextMeshProUGUI))]
 public class TMPTypewriter : MonoBehaviour
 {
-    [Tooltip("Delay between each visible character (seconds)")]
+    [Tooltip("Default delay (used if no saved value)")]
     public float letterDelay = 0.035f;
+
+    private const string PREF_KEY = "TypeSpeed";
 
     TextMeshProUGUI tmp;
     Coroutine typingRoutine;
@@ -14,21 +16,51 @@ public class TMPTypewriter : MonoBehaviour
     void Awake()
     {
         tmp = GetComponent<TextMeshProUGUI>();
+        LoadSpeed();
+    }
+
+    void OnDisable()
+    {
+        // 🔥 Prevent coroutine errors when object disables
+        StopTyping();
+    }
+
+    void LoadSpeed()
+    {
+        if (PlayerPrefs.HasKey(PREF_KEY))
+        {
+            letterDelay = PlayerPrefs.GetFloat(PREF_KEY);
+        }
     }
 
     /// <summary>
-    /// Plays typing animation by HIDING full text
-    /// and UNHIDING characters one by one
+    /// Plays typing animation safely
     /// </summary>
     public void Play(string text)
     {
+        // 🔥 Safety check
+        if (!isActiveAndEnabled || tmp == null)
+        {
+            // fallback → just set text instantly
+            if (tmp != null)
+                tmp.text = text;
+
+            return;
+        }
+
+        LoadSpeed();
+
         StopTyping();
 
-        tmp.text = text;                 // 1️⃣ Set full text ONCE
-        tmp.maxVisibleCharacters = 0;    // 2️⃣ Hide everything
-        tmp.ForceMeshUpdate();           // 3️⃣ Force TMP to calculate chars
+        tmp.text = text;
+        tmp.maxVisibleCharacters = 0;
+        tmp.ForceMeshUpdate();
 
-        typingRoutine = StartCoroutine(TypeRoutine());
+        // 🔥 Extra safety: only start coroutine if active
+        if (gameObject.activeInHierarchy)
+        {
+            typingRoutine = StartCoroutine(TypeRoutine());
+        }
     }
 
     /// <summary>
@@ -58,13 +90,20 @@ public class TMPTypewriter : MonoBehaviour
 
     IEnumerator TypeRoutine()
     {
-        // 🔑 REQUIRED: wait 1 frame so TMP updates textInfo
+        // 🔥 Wait one frame safely
         yield return null;
+
+        if (!isActiveAndEnabled || tmp == null)
+            yield break;
 
         int totalCharacters = tmp.textInfo.characterCount;
 
         for (int i = 1; i <= totalCharacters; i++)
         {
+            // 🔥 Stop if object disabled mid-typing
+            if (!isActiveAndEnabled)
+                yield break;
+
             tmp.maxVisibleCharacters = i;
             yield return new WaitForSecondsRealtime(letterDelay);
         }

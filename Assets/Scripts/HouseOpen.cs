@@ -19,7 +19,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     public TextMeshProUGUI lockText;
 
     [Header("ESC Hint Panel")]
-    public GameObject escPanel; // 👈 NEW
+    public GameObject escPanel;
 
     [Header("Hint System")]
     public BotHintSystem hintSystem;
@@ -55,42 +55,37 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     bool pythonConfigured = false;
 
-    const string CORRECT_CODE = "password = int(input())";
     const string LOCK_PASSWORD = "59";
 
-    readonly string[] teachingDialogue =
-    {
-        "Hey… this door isn’t a normal lock.",
-        "It’s controlled by a Python system.",
-        "To open it, we need to take input from the user.",
-        "But there’s a catch…",
-        "input() gives text, not numbers.",
-        "So we convert it using int().",
-        "Like this: password = int(input())",
-        "Press E to try it yourself."
+    const int MAX_LOCK_LENGTH = 4;
+    const int MAX_DISPLAY_LENGTH = 12;
+    const string LOCK_PLACEHOLDER = "Enter Code";
+    string dynamicPlaceholder = "Enter Code";
+
+    // ================= HINT SETS =================
+
+    string[] teachingHints = {
+        "Press Enter to continue",
+        "Follow the explanation carefully"
     };
 
-    readonly string[] wrongDialogue =
-    {
-        "Hmm… that’s not quite right.",
-        "Remember — input() gives text.",
-        "We must convert it using int().",
-        "Try again."
+    string[] waitingHints = {
+        "Press E to interact",
+        "Open the terminal"
     };
 
-    readonly string[] lockDialogue =
-    {
-        "Nice. The system accepted your code.",
-        "Now the lock can read numbers properly.",
-        "Let’s enter the password."
+    string[] pythonHints = {
+        "Use: password = int(input())",
+        "input() gives text",
+        "Convert it using int()"
     };
 
-    readonly string[] successDialogue =
-    {
-        "Perfect.",
-        "The system recognized the input.",
-        "Door unlocking..."
+    string[] lockHints = {
+        "Enter the password",
+        "Use numbers only"
     };
+
+    // ================= UNITY =================
 
     void Start()
     {
@@ -111,11 +106,23 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         state = State.Teaching;
 
+        hintSystem.SetHints(teachingHints);
+        hintSystem.EnableHints();
+
         StartDialogue(teachingDialogue);
+    }
+
+    void OnTriggerExit2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        playerInside = false;
+        hintSystem.DisableHints();
     }
 
     void Update()
     {
+        if (!playerInside) return;
         if (dialogueActive) return;
 
         if (state == State.TypingLock && Input.GetKeyDown(KeyCode.Escape))
@@ -124,13 +131,15 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             return;
         }
 
-        if (state == State.WaitingForTerminal)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1) && !pythonConfigured)
-                OpenPythonTerminal();
-
-            if (Input.GetKeyDown(KeyCode.E) && pythonConfigured)
-                OpenLockTerminal();
+            if (state == State.WaitingForTerminal)
+            {
+                if (!pythonConfigured)
+                    OpenPythonTerminal();
+                else
+                    OpenLockTerminal();
+            }
         }
 
         if (state == State.TypingPython)
@@ -145,6 +154,36 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     int dialogueIndex;
     string[] activeDialogue;
 
+    readonly string[] teachingDialogue =
+    {
+        "Hey… this door isn’t a normal lock.",
+        "It’s controlled by a Python system.",
+        "To open it, we need input from user.",
+        "But input() gives text.",
+        "So we use int(input()).",
+        "Like: password = int(input())",
+        "Press E to try."
+    };
+
+    readonly string[] wrongDialogue =
+    {
+        "Not correct.",
+        "Use int(input())",
+        "Try again."
+    };
+
+    readonly string[] lockDialogue =
+    {
+        "Nice. System accepted.",
+        "Now enter password."
+    };
+
+    readonly string[] successDialogue =
+    {
+        "Perfect.",
+        "Door unlocking..."
+    };
+
     void StartDialogue(string[] dialogue)
     {
         activeDialogue = dialogue;
@@ -157,25 +196,34 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void ShowLine()
     {
+        StopAllCoroutines(); // 🔥 prevents stacking
+
         if (typewriter != null)
             typewriter.Play(activeDialogue[dialogueIndex]);
         else
             boardText.text = activeDialogue[dialogueIndex];
-
-        DialogueBacklogManager.Instance?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
 
         StartCoroutine(WaitForNext());
     }
 
     IEnumerator WaitForNext()
     {
-        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
-
-        if (typewriter != null && typewriter.IsTyping())
+        while (true)
         {
-            typewriter.Skip();
-            StartCoroutine(WaitForNext());
-            yield break;
+            yield return null;
+
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                // If typing → finish it
+                if (typewriter != null && typewriter.IsTyping())
+                {
+                    typewriter.Skip();
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         dialogueIndex++;
@@ -190,10 +238,12 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             boardPanel.SetActive(false);
 
             if (state == State.Teaching)
+            {
                 state = State.WaitingForTerminal;
+                hintSystem.SetHints(waitingHints);
+            }
         }
     }
-
     // ================= PYTHON =================
 
     void OpenPythonTerminal()
@@ -202,6 +252,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
         pythonInput = "";
         terminalText.text = "> ";
+
+        hintSystem.SetHints(pythonHints);
 
         state = State.TypingPython;
         SetPaused(true);
@@ -231,10 +283,16 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         terminalPanel.SetActive(false);
         SetPaused(false);
 
-        if (RemoveSpaces(pythonInput) == RemoveSpaces(CORRECT_CODE))
+        if (IsValidPythonInput(pythonInput))
         {
             pythonConfigured = true;
+
+            // 🔥 Extract placeholder from input()
+            dynamicPlaceholder = ExtractInputPlaceholder(pythonInput);
             PlaySound(correctSound);
+
+            hintSystem.SetHints(lockHints);
+
             StartCoroutine(OpenLockSequence());
         }
         else
@@ -243,6 +301,13 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             StartDialogue(wrongDialogue);
             state = State.WaitingForTerminal;
         }
+    }
+
+    bool IsValidPythonInput(string input)
+    {
+        string s = input.Replace(" ", "").ToLower();
+
+        return s.Contains("password=int(input(");
     }
 
     // ================= LOCK =================
@@ -257,10 +322,10 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     void OpenLockTerminal()
     {
         lockPanel.SetActive(true);
-        if (escPanel) escPanel.SetActive(true); // 👈 SHOW ESC PANEL
+        if (escPanel) escPanel.SetActive(true);
 
         lockInput = "";
-        lockText.text = "Enter Password";
+        lockText.text = LimitText(dynamicPlaceholder);
 
         state = State.TypingLock;
         SetPaused(true);
@@ -288,10 +353,16 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
                 return;
             }
             else if (char.IsDigit(c))
-                lockInput += c;
+            {
+                if (lockInput.Length < MAX_LOCK_LENGTH)
+                    lockInput += c;
+            }
         }
 
-        lockText.text = lockInput.Length > 0 ? lockInput + "_" : "Enter Password";
+        if (lockInput.Length > 0)
+            lockText.text = LimitText(lockInput + "_");
+        else
+            lockText.text = LimitText(dynamicPlaceholder);
     }
 
     void SubmitLock()
@@ -307,8 +378,16 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         else
         {
             lockInput = "";
-            lockText.text = "Wrong Password";
+            lockText.text = LimitText("❌ Wrong");
+            StartCoroutine(ClearLockAfterDelay());
         }
+    }
+
+    IEnumerator ClearLockAfterDelay()
+    {
+        yield return new WaitForSeconds(1f);
+        lockInput = "";
+        lockText.text = LimitText(dynamicPlaceholder);
     }
 
     IEnumerator SuccessSequence()
@@ -317,7 +396,6 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         yield return new WaitUntil(() => !dialogueActive);
 
         PlaySound(doorOpenSound);
-
         yield return new WaitForSeconds(1f);
         SceneManager.LoadScene(nextSceneName);
     }
@@ -336,8 +414,29 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             audioSource.PlayOneShot(clip);
     }
 
-    string RemoveSpaces(string s)
+    string LimitText(string text)
     {
-        return s.Replace(" ", "");
+        if (text.Length > MAX_DISPLAY_LENGTH)
+            return text.Substring(0, MAX_DISPLAY_LENGTH);
+
+        return text;
+    }
+    string ExtractInputPlaceholder(string input)
+    {
+        int start = input.IndexOf("input(");
+        if (start == -1) return "Enter Code";
+
+        int firstQuote = input.IndexOf('"', start);
+        int secondQuote = input.IndexOf('"', firstQuote + 1);
+
+        if (firstQuote != -1 && secondQuote != -1)
+        {
+            string extracted = input.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
+
+            if (!string.IsNullOrEmpty(extracted))
+                return extracted;
+        }
+
+        return "Enter Code";
     }
 }

@@ -162,7 +162,7 @@ public class NPCSmartFollower2D : MonoBehaviour
     // ---------------- FOLLOW ----------------
     void FollowPlayer()
     {
-        // Forced hold logic (used by dialogues / cutscenes)
+        // HOLD SYSTEM
         if (forcedHold && holdPoint != null)
         {
             float dx = holdPoint.position.x - transform.position.x;
@@ -192,22 +192,24 @@ public class NPCSmartFollower2D : MonoBehaviour
         if (predictedPlayerSpeed < 0.3f && cachedAbsDistance < catchUpDistance)
             speed *= 0.55f;
 
-        // ---------- EDGE / GAP HANDLING ----------
+        // 🔥 FAIL-SAFE: if stuck too long → ignore safety
+        bool ignoreSafety = stuckTimer > 0.5f;
+
+        // ---------- EDGE / GAP ----------
         if (IsEdgeAhead(cachedDirection) && isGrounded)
         {
-            // Drop down if player is below and ahead
             if (ShouldDropDown(cachedDirection))
             {
                 SmoothMove(cachedDirection * baseMoveSpeed * 0.8f);
                 return;
             }
 
-            bool playerAhead = (cachedDirection == Mathf.Sign(player.position.x - transform.position.x))
-                               && cachedAbsDistance > currentStopDistance;
+            bool playerAhead = cachedAbsDistance > currentStopDistance;
 
             if (playerAhead && CanCrossGap(cachedDirection))
             {
                 gapStuckTimer += Time.fixedDeltaTime;
+
                 if (gapStuckTimer >= gapJumpDelay)
                 {
                     Jump();
@@ -215,21 +217,24 @@ public class NPCSmartFollower2D : MonoBehaviour
                 }
                 else
                 {
-                    // Creep forward slowly while preparing to jump
                     SmoothMove(cachedDirection * baseMoveSpeed * 0.3f);
                 }
                 return;
             }
 
-            // ❌ Otherwise, respect safety memory
-            if (!IsPathKnownSafe(cachedDirection))
+            // 🔥 FIX: Don't freeze forever
+            if (!ignoreSafety && !IsPathKnownSafe(cachedDirection))
             {
                 SmoothMove(0);
+
+                // 🔥 Try to recover instead of freezing
+                if (stuckTimer > 0.3f)
+                    Jump();
+
                 return;
             }
         }
 
-        // Reset gap timer if not in a gap situation
         gapStuckTimer = 0f;
 
         float separation = GetSeparationOffset();
@@ -240,7 +245,6 @@ public class NPCSmartFollower2D : MonoBehaviour
 
         TrySmartJump(cachedDirection);
     }
-
     // ---------------- SMOOTH MOVE ----------------
     void SmoothMove(float targetX)
     {
@@ -373,7 +377,7 @@ public class NPCSmartFollower2D : MonoBehaviour
 
         foreach (float x in safeXMemory)
         {
-            if (Mathf.Abs(x - checkX) < memorySpacing)
+            if (Mathf.Abs(x - checkX) < memorySpacing * 1.5f) // 🔥 relaxed
                 return true;
         }
 
@@ -425,10 +429,21 @@ public class NPCSmartFollower2D : MonoBehaviour
     {
         float x = transform.position.x;
 
-        if (Mathf.Abs(x - lastX) < 0.001f && Mathf.Abs(rb.linearVelocity.x) > 0.1f)
+        if (Mathf.Abs(x - lastX) < 0.01f && Mathf.Abs(rb.linearVelocity.x) > 0.1f)
+        {
             stuckTimer += Time.fixedDeltaTime;
+
+            // 🔥 HARD RECOVERY
+            if (stuckTimer > 0.7f)
+            {
+                Jump(); // force escape
+                stuckTimer = 0.2f;
+            }
+        }
         else
+        {
             stuckTimer = 0f;
+        }
 
         lastX = x;
     }

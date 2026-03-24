@@ -65,9 +65,10 @@ public class TerminalVariableLesson : MonoBehaviour
 
     bool waitingForConfirmation;
     bool waitingForCorrectionChoice;
+    private const string PREF_KEY = "TypeSpeed";
 
     void Start()
-    {
+    {   dialogueSpeed= PlayerPrefs.GetFloat(PREF_KEY);
         terminalText.text = "";
         dialogueText.text = "";
         SetFace(idleFace);
