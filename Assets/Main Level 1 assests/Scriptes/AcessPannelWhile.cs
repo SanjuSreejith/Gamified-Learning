@@ -12,6 +12,7 @@ public class AccessPanelWhile : MonoBehaviour
     bool playerNear;
     bool terminalOpen;
     bool terminalBusy;
+    bool waitingAfterError;
 
     string playerInput = "";
 
@@ -35,18 +36,33 @@ public class AccessPanelWhile : MonoBehaviour
         terminalOpen = true;
         terminalUI.SetActive(true);
         Time.timeScale = 0;
+
         waterAnimator.SetBool("WaterDown", false);
+
+        playerInput = "";
+        waitingAfterError = false;
+
         terminalText.text =
         "Water Control Terminal\n\n" +
         "Drain the tank using a while loop.\n\n" +
+        "WL = Water Level\n\n" +
         "Example:\n" +
-        "while(WL<=5){drain();}\n\n> ";
+        "while(WL<=5)\n\n> ";
     }
 
     void ReadKeyboard()
     {
         foreach (char c in Input.inputString)
         {
+            if (waitingAfterError)
+            {
+                if (c == '\n' || c == '\r')
+                {
+                    OpenTerminal();
+                }
+                return;
+            }
+
             if (c == '\b' && playerInput.Length > 0)
             {
                 playerInput = playerInput.Substring(0, playerInput.Length - 1);
@@ -75,27 +91,24 @@ public class AccessPanelWhile : MonoBehaviour
     {
         string code = playerInput.Replace(" ", "");
 
+        // must start with while
         if (!code.StartsWith("while"))
         {
             ShowError("Unknown keyword. Did you mean 'while'?");
             return;
         }
 
+        // must contain parentheses
+        if (!code.Contains("(") || !code.Contains(")"))
+        {
+            ShowError("Missing parentheses ()");
+            return;
+        }
+
+        // must use WL<=
         if (!code.Contains("WL<="))
         {
             ShowError("Condition must use WL<=number");
-            return;
-        }
-
-        if (!code.Contains("{") || !code.Contains("}"))
-        {
-            ShowError("Missing { } block");
-            return;
-        }
-
-        if (!code.Contains("drain();"))
-        {
-            ShowError("Missing drain(); command");
             return;
         }
 
@@ -139,18 +152,17 @@ public class AccessPanelWhile : MonoBehaviour
         {
             Debug.Log("Drain cycle " + WL);
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSecondsRealtime(1f);
 
             WL++;
         }
-
-        waterAnimator.SetBool("WaterDown", false);
     }
 
     void ShowError(string msg)
     {
         terminalText.text += "\nERROR: " + msg + "\nPress Enter to try again.";
         playerInput = "";
+        waitingAfterError = true;
     }
 
     void CloseTerminal()
