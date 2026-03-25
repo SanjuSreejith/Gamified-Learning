@@ -36,6 +36,9 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     [Header("Player Control")]
     public MonoBehaviour playerMovementScript;
 
+    [Header("Completion Save")]
+    public bool markSceneCompleted = true;
+
     enum State
     {
         Idle,
@@ -55,44 +58,90 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     bool pythonConfigured = false;
 
+    const string CORRECT_CODE = "password = int(input())";
     const string LOCK_PASSWORD = "59";
 
     const int MAX_LOCK_LENGTH = 4;
     const int MAX_DISPLAY_LENGTH = 12;
-    string dynamicPlaceholder = "Enter Code";
+    string dynamicPlaceholder = "Enter Password";
 
-    // ================= HINTS =================
-
-    string[] teachingHints = {
-        "Press Enter to continue",
-        "Follow the explanation carefully"
+    string[] lockHints =
+    {
+        "Look at the platforms carefully.",
+        "Each platform group represents a number.",
+        "First platform set = first digit.",
+        "Second platform set = second digit."
     };
 
-    string[] waitingHints = {
-        "Press E to interact",
-        "Open the terminal"
+    string[] pythonHints =
+    {
+        "input() reads what the user types.",
+        "input() returns text.",
+        "Convert text to number using int().",
+        "Example: password = int(input())"
     };
 
-    string[] pythonHints = {
-        "Use: password = int(input())",
-        "input() gives text",
-        "Convert it using int()"
+    readonly string[] teachingDialogue =
+    {
+        "Hey… this door isn’t a normal lock.",
+        "It’s controlled by a Python system.",
+        "To open it, we need to take input from the user.",
+        "But there’s a catch…",
+        "input() gives text, not numbers.",
+        "So we convert it using int().",
+        "Like this: password = int(input())",
+        "Press E to try it yourself."
     };
 
-    string[] lockHints = {
-        "Enter the password",
-        "Use numbers only"
+    readonly string[] wrongDialogue =
+    {
+        "Hmm… that’s not quite right.",
+        "Remember — input() gives text.",
+        "We must convert it using int().",
+        "Try again."
     };
 
-    // ================= UNITY =================
+    readonly string[] lockDialogue =
+    {
+        "Nice. The system accepted your code.",
+        "Now the lock can read numbers properly.",
+        "Let’s enter the password."
+    };
+
+    readonly string[] botLockHints =
+    {
+        "Hmm… the password isn't written anywhere.",
+        "Maybe the platforms around us mean something.",
+        "Count the first platform group carefully.",
+        "Then check the second one."
+    };
+
+    readonly string[] successDialogue =
+    {
+        "Perfect.",
+        "The system recognized the input.",
+        "Door unlocking..."
+    };
 
     void Start()
     {
         boardPanel.SetActive(false);
         terminalPanel.SetActive(false);
-        lockPanel.SetActive(false);
+
+        // CRITICAL: Ensure lock panel starts disabled
+        if (lockPanel != null)
+        {
+            lockPanel.SetActive(false);
+            Debug.Log("[DoorTrigger] Lock panel initialized as disabled");
+        }
+        else
+        {
+            Debug.LogError("[DoorTrigger] LOCK PANEL IS NOT ASSIGNED in Inspector!");
+        }
 
         if (escPanel) escPanel.SetActive(false);
+
+        Debug.Log("[DoorTrigger] System initialized. State: " + state);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -100,13 +149,22 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         playerInside = true;
+        Debug.Log("[DoorTrigger] Player entered trigger");
 
-        if (state != State.Idle) return;
+        if (state != State.Idle)
+        {
+            Debug.Log("[DoorTrigger] State not idle: " + state);
+            return;
+        }
 
         state = State.Teaching;
+        Debug.Log("[DoorTrigger] State changed to: Teaching");
 
-        hintSystem.SetHints(teachingHints);
-        hintSystem.EnableHints();
+        if (hintSystem)
+        {
+            hintSystem.SetHints(pythonHints);
+            hintSystem.EnableHints();
+        }
 
         StartDialogue(teachingDialogue);
     }
@@ -116,7 +174,23 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (!other.CompareTag("Player")) return;
 
         playerInside = false;
-        hintSystem.DisableHints();
+        Debug.Log("[DoorTrigger] Player exited trigger");
+
+        StopAllCoroutines();
+
+        if (boardPanel) boardPanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
+        if (lockPanel) lockPanel.SetActive(false);
+        if (escPanel) escPanel.SetActive(false);
+
+        dialogueActive = false;
+
+        SetPaused(false);
+
+        if (pythonConfigured)
+            state = State.WaitingForTerminal;
+        else
+            state = State.Idle;
     }
 
     void Update()
@@ -124,20 +198,30 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (!playerInside) return;
         if (dialogueActive) return;
 
+        // Handle ESC key for closing lock panel
         if (state == State.TypingLock && Input.GetKeyDown(KeyCode.Escape))
         {
+            Debug.Log("[DoorTrigger] ESC pressed - closing lock panel");
             CloseLockTerminal();
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (state == State.WaitingForTerminal)
         {
-            if (state == State.WaitingForTerminal)
+            if (Input.GetKeyDown(KeyCode.E))
             {
+                Debug.Log("[DoorTrigger] E pressed. PythonConfigured: " + pythonConfigured);
+
                 if (!pythonConfigured)
+                {
+                    Debug.Log("[DoorTrigger] Opening Python terminal");
                     OpenPythonTerminal();
+                }
                 else
+                {
+                    Debug.Log("[DoorTrigger] Opening Lock terminal");
                     OpenLockTerminal();
+                }
             }
         }
 
@@ -153,71 +237,37 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
     int dialogueIndex;
     string[] activeDialogue;
 
-    readonly string[] teachingDialogue =
-    {
-        "Hey… this door isn’t a normal lock.",
-        "It’s controlled by a Python system.",
-        "To open it, we need input from user.",
-        "But input() gives text.",
-        "So we use int(input()).",
-        "Like: password = int(input())",
-        "Press E to try."
-    };
-
-    readonly string[] wrongDialogue =
-    {
-        "Not correct.",
-        "Use int(input())",
-        "Try again."
-    };
-
-    readonly string[] lockDialogue =
-    {
-        "Nice. System accepted.",
-        "Now enter password."
-    };
-
-    readonly string[] successDialogue =
-    {
-        "Perfect.",
-        "Door unlocking..."
-    };
-
     void StartDialogue(string[] dialogue)
     {
         activeDialogue = dialogue;
         dialogueIndex = 0;
         dialogueActive = true;
 
-        boardPanel.SetActive(true);
+        if (boardPanel) boardPanel.SetActive(true);
         ShowLine();
     }
 
     void ShowLine()
     {
-        StopAllCoroutines();
-
         if (typewriter != null)
             typewriter.Play(activeDialogue[dialogueIndex]);
         else
             boardText.text = activeDialogue[dialogueIndex];
+
+        DialogueBacklogManager.Instance?.AddLine("Kuttan", activeDialogue[dialogueIndex]);
 
         StartCoroutine(WaitForNext());
     }
 
     IEnumerator WaitForNext()
     {
-        while (true)
-        {
-            yield return null;
+        yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Return));
 
-            if (Input.GetKeyDown(KeyCode.Return))
-            {
-                if (typewriter != null && typewriter.IsTyping())
-                    typewriter.Skip();
-                else
-                    break;
-            }
+        if (typewriter != null && typewriter.IsTyping())
+        {
+            typewriter.Skip();
+            StartCoroutine(WaitForNext());
+            yield break;
         }
 
         dialogueIndex++;
@@ -229,12 +279,12 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         else
         {
             dialogueActive = false;
-            boardPanel.SetActive(false);
+            if (boardPanel) boardPanel.SetActive(false);
 
             if (state == State.Teaching)
             {
                 state = State.WaitingForTerminal;
-                hintSystem.SetHints(waitingHints);
+                Debug.Log("[DoorTrigger] Teaching complete. State: WaitingForTerminal");
             }
         }
     }
@@ -243,15 +293,19 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void OpenPythonTerminal()
     {
-        terminalPanel.SetActive(true);
+        if (terminalPanel)
+        {
+            terminalPanel.SetActive(true);
+            Debug.Log("[DoorTrigger] Python terminal opened");
+        }
 
         pythonInput = "";
         terminalText.text = "> ";
-
-        hintSystem.SetHints(pythonHints);
-
         state = State.TypingPython;
+
         SetPaused(true);
+
+        DialogueBacklogManager.Instance?.AddLine("System", "Python terminal opened.");
     }
 
     void HandlePythonTyping()
@@ -275,61 +329,160 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     void SubmitPython()
     {
-        terminalPanel.SetActive(false);
+        if (terminalPanel) terminalPanel.SetActive(false);
         SetPaused(false);
 
-        if (IsValidPythonInput(pythonInput))
+        Debug.Log("[DoorTrigger] Python submitted: " + pythonInput);
+
+        if (RemoveSpaces(pythonInput) == RemoveSpaces(CORRECT_CODE))
         {
             pythonConfigured = true;
-            dynamicPlaceholder = ExtractInputPlaceholder(pythonInput);
+            Debug.Log("[DoorTrigger] ✅ Python code accepted!");
 
+            DialogueBacklogManager.Instance?.AddLine("System", "Python code accepted.");
             PlaySound(correctSound);
-            hintSystem.SetHints(lockHints);
-
             StartCoroutine(OpenLockSequence());
         }
         else
         {
+            Debug.Log("[DoorTrigger] ❌ Python code rejected");
+            DialogueBacklogManager.Instance?.AddLine("System", "Python code rejected.");
             PlaySound(wrongSound);
             StartDialogue(wrongDialogue);
             state = State.WaitingForTerminal;
         }
     }
 
-    bool IsValidPythonInput(string input)
+    string RemoveSpaces(string s)
     {
-        string s = input.Replace(" ", "").ToLower();
-        return s.Contains("password=int(input(");
+        return s.Replace(" ", "").ToLower();
     }
 
     // ================= LOCK =================
 
     IEnumerator OpenLockSequence()
     {
+        Debug.Log("[DoorTrigger] Starting lock sequence");
+
         StartDialogue(lockDialogue);
         yield return new WaitUntil(() => !dialogueActive);
+
+        if (hintSystem)
+        {
+            hintSystem.SetHints(lockHints);
+            hintSystem.EnableHints();
+        }
+
+        StartDialogue(botLockHints);
+        yield return new WaitUntil(() => !dialogueActive);
+
+        // Small delay to ensure UI is ready
+        yield return new WaitForSeconds(0.1f);
+
         OpenLockTerminal();
     }
 
     void OpenLockTerminal()
     {
+        Debug.Log("=========================================");
+        Debug.Log("[DoorTrigger] ⚡ OPENING LOCK TERMINAL ⚡");
+
+        // CRITICAL CHECK
+        if (lockPanel == null)
+        {
+            Debug.LogError("[DoorTrigger] ❌❌❌ LOCK PANEL IS NULL! Please assign in Inspector! ❌❌❌");
+            return;
+        }
+
+        // Check if lock panel is in a Canvas
+        Canvas canvas = lockPanel.GetComponentInParent<Canvas>();
+        if (canvas == null)
+        {
+            Debug.LogError("[DoorTrigger] ❌ Lock Panel is not under a Canvas! UI won't be visible!");
+        }
+        else
+        {
+            Debug.Log("[DoorTrigger] Lock Panel Canvas: " + canvas.name);
+            Debug.Log("[DoorTrigger] Canvas Render Mode: " + canvas.renderMode);
+        }
+
+        // Enable lock panel
         lockPanel.SetActive(true);
-        if (escPanel) escPanel.SetActive(true);
+        Debug.Log("[DoorTrigger] Lock Panel SetActive(true) - Active: " + lockPanel.activeSelf);
+        Debug.Log("[DoorTrigger] Lock Panel Active in Hierarchy: " + lockPanel.activeInHierarchy);
+
+        // Check if parent objects are enabled
+        if (!lockPanel.activeInHierarchy)
+        {
+            Debug.LogWarning("[DoorTrigger] Lock Panel not active in hierarchy! Checking parents...");
+            Transform parent = lockPanel.transform.parent;
+            while (parent != null)
+            {
+                if (!parent.gameObject.activeSelf)
+                {
+                    Debug.LogWarning("[DoorTrigger] Parent '" + parent.name + "' is disabled. Enabling...");
+                    parent.gameObject.SetActive(true);
+                }
+                parent = parent.parent;
+            }
+
+            // Try again
+            lockPanel.SetActive(true);
+            Debug.Log("[DoorTrigger] After fix - Active in Hierarchy: " + lockPanel.activeInHierarchy);
+        }
+
+        if (escPanel)
+        {
+            escPanel.SetActive(true);
+            Debug.Log("[DoorTrigger] ESC Panel activated");
+        }
 
         lockInput = "";
-        lockText.text = LimitText(dynamicPlaceholder);
+        lockText.text = dynamicPlaceholder;
+        Debug.Log("[DoorTrigger] Lock text set to: " + lockText.text);
 
         state = State.TypingLock;
         SetPaused(true);
+
+        Debug.Log("[DoorTrigger] State changed to: TypingLock");
+        Debug.Log("=========================================");
+
+        // Force focus on lock panel input
+        StartCoroutine(ForceLockPanelFocus());
+    }
+
+    IEnumerator ForceLockPanelFocus()
+    {
+        yield return new WaitForEndOfFrame();
+
+        if (lockPanel != null && lockPanel.activeInHierarchy)
+        {
+            // Try to find and focus input field
+            TMP_InputField inputField = lockPanel.GetComponentInChildren<TMP_InputField>();
+            if (inputField != null)
+            {
+                inputField.Select();
+                inputField.ActivateInputField();
+                Debug.Log("[DoorTrigger] Input field focused");
+            }
+            else
+            {
+                Debug.Log("[DoorTrigger] No input field found, using text-based input");
+            }
+        }
     }
 
     void CloseLockTerminal()
     {
-        lockPanel.SetActive(false);
+        Debug.Log("[DoorTrigger] Closing lock terminal");
+
+        if (lockPanel) lockPanel.SetActive(false);
         if (escPanel) escPanel.SetActive(false);
 
         SetPaused(false);
         state = State.WaitingForTerminal;
+
+        Debug.Log("[DoorTrigger] State changed to: WaitingForTerminal");
     }
 
     void HandleLockTyping()
@@ -337,8 +490,10 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         foreach (char c in Input.inputString)
         {
             if (c == '\b' && lockInput.Length > 0)
+            {
                 lockInput = lockInput.Remove(lockInput.Length - 1);
-
+                Debug.Log("[DoorTrigger] Backspace - Input: " + lockInput);
+            }
             else if (c == '\n' || c == '\r')
             {
                 SubmitLock();
@@ -347,20 +502,29 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             else if (char.IsDigit(c))
             {
                 if (lockInput.Length < MAX_LOCK_LENGTH)
+                {
                     lockInput += c;
+                    Debug.Log("[DoorTrigger] Digit entered: " + c + " - Current: " + lockInput);
+                }
             }
         }
 
-        lockText.text = lockInput.Length > 0
-            ? LimitText(lockInput + "_")
-            : LimitText(dynamicPlaceholder);
+        if (lockInput.Length > 0)
+            lockText.text = lockInput + "_";
+        else
+            lockText.text = dynamicPlaceholder;
     }
 
     void SubmitLock()
     {
+        Debug.Log("[DoorTrigger] Lock submitted: " + lockInput);
+
         if (lockInput == LOCK_PASSWORD)
         {
-            lockPanel.SetActive(false);
+            Debug.Log("[DoorTrigger] ✅ Correct password!");
+            DialogueBacklogManager.Instance?.AddLine("System", "Password accepted.");
+
+            if (lockPanel) lockPanel.SetActive(false);
             if (escPanel) escPanel.SetActive(false);
 
             SetPaused(false);
@@ -368,17 +532,22 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         }
         else
         {
+            Debug.Log("[DoorTrigger] ❌ Incorrect password. Expected: " + LOCK_PASSWORD);
+            DialogueBacklogManager.Instance?.AddLine("System", "Incorrect password.");
+
             lockInput = "";
-            lockText.text = LimitText("❌ Wrong");
-            StartCoroutine(ClearLockAfterDelay());
+            lockText.text = "❌ Wrong Password";
+            StartCoroutine(ClearWrongMessage());
         }
     }
 
-    IEnumerator ClearLockAfterDelay()
+    IEnumerator ClearWrongMessage()
     {
         yield return new WaitForSeconds(1f);
-        lockInput = "";
-        lockText.text = LimitText(dynamicPlaceholder);
+        if (state == State.TypingLock)
+        {
+            lockText.text = dynamicPlaceholder;
+        }
     }
 
     IEnumerator SuccessSequence()
@@ -386,22 +555,31 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         StartDialogue(successDialogue);
         yield return new WaitUntil(() => !dialogueActive);
 
+        if (hintSystem)
+            hintSystem.DisableHints();
+
         PlaySound(doorOpenSound);
+
+        DialogueBacklogManager.Instance?.AddLine("System", "Door opened.");
+
         yield return new WaitForSeconds(1f);
 
-        // ✅ MARK SCENE COMPLETED
         MarkSceneCompleted();
 
         SceneManager.LoadScene(nextSceneName);
     }
 
-    // ================= SAVE =================
-
     void MarkSceneCompleted()
     {
+        if (!markSceneCompleted) return;
+
         string sceneName = SceneManager.GetActiveScene().name;
-        PlayerPrefs.SetInt("SceneCompleted_" + sceneName, 1);
+        string key = "SceneCompleted_" + sceneName;
+
+        PlayerPrefs.SetInt(key, 1);
         PlayerPrefs.Save();
+
+        Debug.Log("[DoorTrigger] Scene marked as completed: " + sceneName);
     }
 
     // ================= UTILS =================
@@ -418,28 +596,13 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             audioSource.PlayOneShot(clip);
     }
 
-    string LimitText(string text)
+    public bool IsInUIState()
     {
-        return text.Length > MAX_DISPLAY_LENGTH
-            ? text.Substring(0, MAX_DISPLAY_LENGTH)
-            : text;
-    }
-
-    string ExtractInputPlaceholder(string input)
-    {
-        int start = input.IndexOf("input(");
-        if (start == -1) return "Enter Code";
-
-        int firstQuote = input.IndexOf('"', start);
-        int secondQuote = input.IndexOf('"', firstQuote + 1);
-
-        if (firstQuote != -1 && secondQuote != -1)
-        {
-            string extracted = input.Substring(firstQuote + 1, secondQuote - firstQuote - 1);
-            if (!string.IsNullOrEmpty(extracted))
-                return extracted;
-        }
-
-        return "Enter Code";
+        return state == State.TypingPython ||
+               state == State.TypingLock ||
+               dialogueActive ||
+               (boardPanel != null && boardPanel.activeSelf) ||
+               (terminalPanel != null && terminalPanel.activeSelf) ||
+               (lockPanel != null && lockPanel.activeSelf);
     }
 }
