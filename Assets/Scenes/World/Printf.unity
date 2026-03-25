@@ -6915,6 +6915,7 @@ MonoBehaviour:
   inputTerminalPanel: {fileID: 1931740489}
   inputText: {fileID: 1363643115}
   outputTerminalText: {fileID: 1094274898}
+  hintSystem: {fileID: 1009821969}
   fadeCanvas: {fileID: 710693078}
   fadeDuration: 1.2
   audioSource: {fileID: 1199435467}
@@ -8251,7 +8252,8 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6000684324274539983, guid: 63c197acb57f4ad4aaefb65c3db2980f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

@@ -19,6 +19,9 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     public TextMeshPro outputTerminalText;
 
+    // ================= HINT SYSTEM =================
+    public BotHintSystem hintSystem;
+
     // ================= FADE =================
     public CanvasGroup fadeCanvas;
     public float fadeDuration = 1.2f;
@@ -34,6 +37,37 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     // ================= TUTORIAL =================
     public bool tutorialActive = true;
+
+    // ================= HINT SETS =================
+    string[] introHints = new string[]
+    {
+        "Press H for hints at any time",
+        "This door uses Python's print() function",
+        "print() sends messages to the system"
+    };
+
+    string[] inputHints = new string[]
+    {
+        "Type a message inside the quotes",
+        "Try sending 'welcome' to open the door",
+        "The AI responds to greetings",
+        "Use print(\"your message\")",
+        "Remember: messages go inside quotes"
+    };
+
+    string[] errorHints = new string[]
+    {
+        "The door expects a greeting",
+        "Try typing: welcome",
+        "The message should be in lowercase",
+        "No spaces needed, just the word"
+    };
+
+    string[] successHints = new string[]
+    {
+        "You did it! The door is opening",
+        "The AI recognized your greeting"
+    };
 
     // ================= STATE =================
     enum GameState
@@ -64,7 +98,7 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
     // ================= INTERNAL =================
     bool introPlayed = false;
-    bool demoPlayed = false;  // NEW: Track if demo has been played
+    bool demoPlayed = false;
     bool isExecuting = false;
     int errorCount = 0;
 
@@ -122,6 +156,14 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
         }
 
         ResetTerminal();
+
+        // Initialize hint system if available
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(introHints);
+            hintSystem.EnableHints();
+            AddToBacklog("System", "Hint system activated - Press H for hints");
+        }
 
         // Add to backlog when scene starts
         AddToBacklog("System", "Door terminal system initialized");
@@ -192,6 +234,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         currentState = GameState.Intro;
         introPlayed = true;
+
+        // Update hints for intro phase
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(introHints);
+        }
 
         if (!demoPlayed)
         {
@@ -319,6 +367,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         ShowText("Type a message to the door AI\nPress Enter to send");
 
+        // Update hints for input phase
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(inputHints);
+        }
+
         AddToBacklog("System", "Input terminal opened - waiting for message");
     }
 
@@ -430,6 +484,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
 
         errorCount++;
 
+        // Update hints for error phase
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(errorHints);
+        }
+
         // Select dialogue based on error count
         if (errorCount == 1)
         {
@@ -468,6 +528,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     {
         currentState = GameState.Success;
 
+        // Update hints for success
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(successHints);
+        }
+
         AddToBacklog("System", "Success! Access granted to door");
 
         ShowText("Access granted...");
@@ -487,6 +553,12 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
     IEnumerator FadeAndChangeScene()
     {
         currentState = GameState.Transition;
+
+        // Disable hints during transition
+        if (hintSystem != null)
+        {
+            hintSystem.DisableHints();
+        }
 
         if (fadeCanvas != null)
         {
@@ -568,5 +640,30 @@ public class DoorPrintf_TerminalSystem : MonoBehaviour
                currentState == GameState.Feedback ||
                (boardPanel != null && boardPanel.activeSelf) ||
                (inputTerminalPanel != null && inputTerminalPanel.activeSelf);
+    }
+
+    // ================= HINT SYSTEM CONTROL =================
+    public void EnableHintSystem()
+    {
+        if (hintSystem != null)
+        {
+            hintSystem.EnableHints();
+        }
+    }
+
+    public void DisableHintSystem()
+    {
+        if (hintSystem != null)
+        {
+            hintSystem.DisableHints();
+        }
+    }
+
+    public void SetHintSet(string[] hints)
+    {
+        if (hintSystem != null)
+        {
+            hintSystem.SetHints(hints);
+        }
     }
 }
