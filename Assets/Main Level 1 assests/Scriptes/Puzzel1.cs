@@ -77,11 +77,11 @@ public class ForLoopTerminal : MonoBehaviour
         yield return TypeText("for i in range(start, end, step)\n\n");
 
         yield return TypeText("start → where the loop begins\n");
-        yield return TypeText("end → stopping point (NOT included)\n");
+        yield return TypeText("end → stopping point\n");
         yield return TypeText("step → how much i increases each loop\n\n");
 
         yield return TypeText("Example:\n");
-        yield return TypeText("for i in range(1," + (stepCount + 1) + ",1)\n\n");
+        yield return TypeText("for i in range(1," + (stepCount + 1) + ",2)\n\n");
 
         terminalText.text += "> ";
         AutoScroll();

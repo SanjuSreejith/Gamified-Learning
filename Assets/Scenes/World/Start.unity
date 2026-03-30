@@ -354,7 +354,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   videoPlayer: {fileID: 713921163}
-  nextSceneName: printf
+  nextSceneName: Intro
 --- !u!4 &1468597085
 Transform:
   m_ObjectHideFlags: 0

@@ -15,8 +15,6 @@ public class CheckpointReward : MonoBehaviour
     [Header("UI")]
     public CoinUIController coinUI;
 
-    const string COIN_KEY = "PlayerCoins";
-
     bool collected = false;
 
     void Awake()
@@ -24,7 +22,6 @@ public class CheckpointReward : MonoBehaviour
         if (childAnimator == null)
             childAnimator = GetComponentInChildren<Animator>();
 
-        // Check if already collected before
         if (PlayerPrefs.GetInt("Checkpoint_" + checkpointID, 0) == 1)
         {
             collected = true;
@@ -38,21 +35,27 @@ public class CheckpointReward : MonoBehaviour
 
         collected = true;
 
-        // Load current coins
-        int coins = PlayerPrefs.GetInt(COIN_KEY, 0);
+        // Add coins
+        if (CoinManager.Instance != null)
+        {
+            CoinManager.Instance.AddCoins(rewardCoins);
+        }
+        else
+        {
+            // Fallback if CoinManager not in scene
+            int coins = PlayerPrefs.GetInt("Coins", 0);
+            coins += rewardCoins;
+            PlayerPrefs.SetInt("Coins", coins);
+            PlayerPrefs.Save();
 
-        // Add reward
-        coins += rewardCoins;
-
-        // Save coins
-        PlayerPrefs.SetInt(COIN_KEY, coins);
+            Debug.Log("Coins Added (fallback). Total: " + coins);
+        }
 
         // Mark checkpoint collected
         PlayerPrefs.SetInt("Checkpoint_" + checkpointID, 1);
-
         PlayerPrefs.Save();
 
-        // Show UI animation
+        // UI animation
         if (coinUI != null)
             coinUI.ShowAndAdd(rewardCoins);
 

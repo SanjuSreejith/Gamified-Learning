@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -20,10 +20,21 @@ public class MainMenuManager : MonoBehaviour
 
     void Start()
     {
+        // Ensure references are restored when coming back to menu
+        if (progressManager == null)
+            progressManager = FindObjectOfType<SceneProgressManager>();
+
+        if (coinText == null)
+            coinText = GetComponentInChildren<TextMeshProUGUI>();
+
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
 
         UpdateCoinText();
+
+        // Refresh progress bar when menu loads
+        if (progressManager != null)
+            progressManager.UpdateProgress();
     }
 
     void Update()
@@ -40,12 +51,12 @@ public class MainMenuManager : MonoBehaviour
     // -------------------------
     public void UpdateCoinText()
     {
-      
-            // fallback if CoinManager not loaded yet
-            coinText.text = PlayerPrefs.GetInt("PlayerCoins", 0).ToString();
-        
+        if (coinText == null) return;
 
+        PlayerPrefs.Save(); // ensure latest save
 
+        int coins = PlayerPrefs.GetInt("Coins", 0);
+        coinText.text = coins.ToString();
     }
 
     // -------------------------
@@ -66,14 +77,15 @@ public class MainMenuManager : MonoBehaviour
             string key1 = "Scene_" + scene + "_Completed";
             string key2 = "SceneCompleted_" + scene;
 
-            if (PlayerPrefs.GetInt(key1, 0) == 0 && PlayerPrefs.GetInt(key2, 0) == 0)
+            if (PlayerPrefs.GetInt(key1, 0) == 0 &&
+                PlayerPrefs.GetInt(key2, 0) == 0)
             {
                 SceneManager.LoadScene(scene);
                 return;
             }
         }
 
-        // If all levels completed restart from first
+        // If all levels completed restart
         if (scenes.Count > 0)
             SceneManager.LoadScene(scenes[0]);
     }
@@ -106,6 +118,35 @@ public class MainMenuManager : MonoBehaviour
         yield return new WaitForSeconds(0.35f);
         settingsPanel.SetActive(false);
         settingsOpen = false;
+    }
+
+    // -------------------------
+    // RESET PROGRESS
+    // -------------------------
+    public void ResetPlayerPrefsOnly(bool halfCoins = true)
+    {
+        Debug.Log("Resetting progress...");
+
+        //int currentCoins = PlayerPrefs.GetInt("Coins", 0);
+        //int newCoins = halfCoins ? currentCoins / 2 : 0;
+
+        //PlayerPrefs.SetInt("Coins", newCoins);
+
+        if (progressManager != null)
+        {
+            foreach (string scene in progressManager.sceneNames)
+            {
+                PlayerPrefs.DeleteKey("Scene_" + scene + "_Completed");
+                PlayerPrefs.DeleteKey("SceneCompleted_" + scene);
+            }
+        }
+
+        PlayerPrefs.Save();
+
+        //UpdateCoinText();
+
+        if (progressManager != null)
+            progressManager.UpdateProgress();
     }
 
     // -------------------------

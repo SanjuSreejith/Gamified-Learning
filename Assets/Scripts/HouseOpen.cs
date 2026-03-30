@@ -38,6 +38,7 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
 
     [Header("Completion Save")]
     public bool markSceneCompleted = true;
+    int pythonMistakes = 0;
 
     enum State
     {
@@ -324,9 +325,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
                 pythonInput += c;
         }
 
-        terminalText.text = "> " + pythonInput + "_";
+        terminalText.text = GetPythonDisplayText();
     }
-
     void SubmitPython()
     {
         if (terminalPanel) terminalPanel.SetActive(false);
@@ -337,6 +337,8 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         if (RemoveSpaces(pythonInput) == RemoveSpaces(CORRECT_CODE))
         {
             pythonConfigured = true;
+            pythonMistakes = 0; // reset
+
             Debug.Log("[DoorTrigger] ✅ Python code accepted!");
 
             DialogueBacklogManager.Instance?.AddLine("System", "Python code accepted.");
@@ -345,9 +347,12 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
         }
         else
         {
+            pythonMistakes++; // 🔥 track mistakes
+
             Debug.Log("[DoorTrigger] ❌ Python code rejected");
             DialogueBacklogManager.Instance?.AddLine("System", "Python code rejected.");
             PlaySound(wrongSound);
+
             StartDialogue(wrongDialogue);
             state = State.WaitingForTerminal;
         }
@@ -471,7 +476,34 @@ public class DoorPythonInputLesson_Trigger : MonoBehaviour
             }
         }
     }
+    string GetPythonDisplayText()
+    {
+        string display = "> " + pythonInput + "_\n";
 
+        // 🔥 Progressive hint system
+        if (pythonMistakes == 0)
+        {
+            display += "\n# use a variable";
+            display += "\n# read input from user";
+        }
+        else if (pythonMistakes == 1)
+        {
+            display += "\n# use a variable (like password)";
+            display += "\n# input() reads user input";
+        }
+        else if (pythonMistakes == 2)
+        {
+            display += "\n# input() gives text";
+            display += "\n# convert it to number";
+        }
+        else
+        {
+            display += "\n# use int() to convert input";
+            display += "\n# assign it to a variable";
+        }
+
+        return display;
+    }
     void CloseLockTerminal()
     {
         Debug.Log("[DoorTrigger] Closing lock terminal");

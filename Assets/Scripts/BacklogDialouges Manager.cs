@@ -41,10 +41,10 @@ public class DialogueBacklogManager : MonoBehaviour
 
     void Update()
     {
+        // 🔥 Works even when game is paused (timeScale = 0)
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleBacklog();
-            return; // Optional: prevents other inputs this frame
         }
     }
 
@@ -82,7 +82,7 @@ public class DialogueBacklogManager : MonoBehaviour
 
     Color GetTextColor()
     {
-        return useDifferentSpeakerColors ? commonTextColor : commonTextColor;
+        return commonTextColor;
     }
 
     string ColorToHex(Color color)
@@ -100,6 +100,8 @@ public class DialogueBacklogManager : MonoBehaviour
     {
         isOpen = !isOpen;
         backlogPanel.SetActive(isOpen);
-        Time.timeScale = isOpen ? 0f : 1f;
+
+        // ❌ DO NOT touch Time.timeScale here
+        // Let other systems control pause
     }
 }

@@ -1168,7 +1168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8933766763255678634, guid: 63c197acb57f4ad4aaefb65c3db2980f, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 164
+      value: 611
       objectReference: {fileID: 0}
     - target: {fileID: 8933766763255678634, guid: 63c197acb57f4ad4aaefb65c3db2980f, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1246,7 +1246,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   pausePanel: {fileID: 295881530}
-  menuSceneName: GameMenu
+  menuSceneName: MainMenu
 --- !u!4 &679449848
 Transform:
   m_ObjectHideFlags: 0

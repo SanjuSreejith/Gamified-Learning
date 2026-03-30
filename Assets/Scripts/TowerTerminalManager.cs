@@ -63,6 +63,9 @@ public class TowerController : MonoBehaviour
     public float cinematicDuration = 3f;
     public int cinematicPriority = 20;
     public bool enableCinematicForNonButtonTowers = true; // Master toggle
+    [Header("Story Progression")]
+    public int towerIndex = 0; // Set this in Inspector (1,2,3,4...)
+    public AbelDeathCutscene abelDeathCutscene; // Assign in Inspector
 
     // State Management
     private enum TowerState
@@ -607,6 +610,18 @@ public class TowerController : MonoBehaviour
         {
             ChangeState(TowerState.Completed);
             ClearLesson(); // Deactivate collider immediately
+                           // 🔥 Trigger Abel death after Tower 4
+            if (towerIndex == 4 && abelDeathCutscene != null)
+            {
+                Debug.Log("Tower 4 completed - triggering Abel death cutscene");
+
+                // Stop gameplay effects
+                StopMachineLoop();
+                StopMachineSound();
+
+                // Optional: small delay feels better
+                StartCoroutine(TriggerAbelCutsceneDelayed());
+            }
 
             // Only play cinematic for non-button towers if enabled
             if (!isButtonTower && enableCinematicForNonButtonTowers)
@@ -832,7 +847,14 @@ public class TowerController : MonoBehaviour
             // Machine will stop when condition evaluates to false in the next loop iteration
         }
     }
+    IEnumerator TriggerAbelCutsceneDelayed()
+    {
+        // Small cinematic delay
+        yield return new WaitForSeconds(1f);
 
+        // 🔥 Play cutscene
+        abelDeathCutscene.PlayCutscene();
+    }
     IEnumerator DelayedCompleteTower()
     {
         yield return new WaitForSeconds(0.5f);

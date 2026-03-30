@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using TMPro;
-using Unity.AppUI.UI;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using static UnityEngine.Rendering.VolumeComponent;
 
 [RequireComponent(typeof(Collider2D))]
 public class RiverIfElseLessonController2D : MonoBehaviour
@@ -16,7 +14,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     public Image speakerImage;
     public Sprite abelPortrait;
     public Sprite kuttanPortrait;
-    TMPTypewriter typewriter;
+    private TMPTypewriter typewriter;
 
     public GameObject terminalPanel;
     public TextMeshProUGUI terminalText;
@@ -30,35 +28,43 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
     /* ================= DATA ================= */
     public int[] riverDistances = { 10, 2, 6 };
-    int currentRiverIndex = 0;
+    private int currentRiverIndex = 0;
 
     public int playerEnergy = 100;
-    const int ENERGY_RATE = 4;
+    private const int ENERGY_RATE = 4;
+
     [Header("Fade System")]
     public StartFadeOut fadeController;
-    string WithCursor(string text, bool active)
+
+    private string WithCursor(string text, bool active)
     {
         return active ? text + "<color=#FFD54F>|</color>" : text;
     }
 
     /* ================= TERMINAL INPUT ================= */
-    string ifLine = "";
-    string ifBody = "";
-    string elifLine = "";
-    string elifBody = "";
-    string elseBody = "";
+    private string ifLine = "";
+    private string ifBody = "";
+    private string elifLine = "";
+    private string elifBody = "";
+    private string elseBody = "";
 
-    const string ELSE_LINE = "else:";
+    private const string ELSE_LINE = "else:";
+    private const string INDENT = "    ";
+    private const string USER_COLOR = "#4FC3F7";
 
-    int currentLine = 0;
-    bool editing = false;
-    bool active = false;
-    bool conceptTaught = false;
+    private int currentLine = 0;
+    private bool editing = false;
+    private bool active = false;
+    private bool conceptTaught = false;
 
     /* ================= FLOW CONTROL ================= */
-    bool logicLocked = false;
-    bool canFly = false;
-    bool isFlying = false;
+    private bool logicLocked = false;
+    private bool canFly = false;
+    private bool isFlying = false;
+
+    /* ================= PROTECTION SYSTEM ================= */
+    private bool isCorrectLogic = false;
+    private bool gameOverTriggered = false;
 
     /* ================= DEBUG/AUTOFILL ================= */
     [Header("Debug/AutoFill")]
@@ -68,8 +74,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     [Header("NPCs")]
     public Transform[] npcTransforms;
     public Transform npcFinalPoint;
-    const string INDENT = "    ";
-    const string USER_COLOR = "#4FC3F7";   // blue for player input
 
     /* ================= SCENE TRANSITION ================= */
     [Header("Scene Transition")]
@@ -80,39 +84,86 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip sceneEndSound;
 
-    void Reset() => GetComponent<Collider2D>().isTrigger = true;
+    /* ================= GAME OVER ================= */
+    [Header("Game Over")]
+    public GameObject gameOverPanel; // Fallback panel if GameOverManager doesn't exist
+    public int maxAttempts = 3;
+    private int failCount = 0;
+    public float gameOverDelay = 2f;
 
-    void Start()
+    private void Reset() => GetComponent<Collider2D>().isTrigger = true;
+
+    private void Start()
     {
         dialoguePanel.SetActive(false);
         terminalPanel.SetActive(false);
         jetpackPanel.SetActive(false);
 
-        jetpack.OnFlightEnd += OnFlightEnded;
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+
+        if (jetpack != null)
+            jetpack.OnFlightEnd += OnFlightEnded;
+
         UpdateEnergyUI();
-        typewriter = dialogueText.GetComponent<TMPTypewriter>();
+
+        if (dialogueText != null)
+            typewriter = dialogueText.GetComponent<TMPTypewriter>();
+
+        // Ensure GameOverManager is active in the scene
+        EnsureGameOverManagerExists();
+    }
+
+    private void EnsureGameOverManagerExists()
+    {
+        // Try to find GameOverManager if it exists but might be inactive
+        if (GameOverManager.Instance == null)
+        {
+            GameOverManager existingManager = FindObjectOfType<GameOverManager>(true);
+            if (existingManager != null)
+            {
+                // If found but Instance is null, manually set it
+                if (GameOverManager.Instance == null)
+                {
+                    // This is a workaround - in a proper setup, the manager should initialize itself
+                    Debug.Log("GameOverManager found but Instance was null. It should initialize itself.");
+                }
+            }
+            else
+            {
+                Debug.LogWarning("No GameOverManager found in scene. Game over functionality will use fallback.");
+            }
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (jetpack != null)
+            jetpack.OnFlightEnd -= OnFlightEnded;
     }
 
     /* ================= FLIGHT HANDLING ================= */
-    void OnFlightEnded(bool success)
+    private void OnFlightEnded(bool success)
     {
         isFlying = false;
 
         if (!success)
         {
-            // ❌ Wrong logic → player falls, but lesson continues
-            Speak("Abel", "Hmm… looks like your logic didn’t give enough energy.");
-            StartCoroutine(FallDialogue());
+            // If correct logic is entered, protect from failure
+            if (isCorrectLogic)
+            {
+                Debug.Log("PROTECTED: Correct logic detected - Preventing failure consequences");
+                StartCoroutine(ProtectedFallDialogue());
+                canFly = true;
+                return;
+            }
 
-            // Allow retry / progression
-            canFly = true;
+            HandleFailure();
             return;
         }
 
-
         currentRiverIndex++;
 
-        // 🔹 FIRST CHECKPOINT: teleport NPCs ONLY
         if (currentRiverIndex == 1)
         {
             StartCoroutine(TeleportNPCsToFinalPoint());
@@ -121,7 +172,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             return;
         }
 
-        // 🔹 FINAL CHECKPOINT: dialogue + jetpack removal
         if (currentRiverIndex >= riverDistances.Length)
         {
             StartCoroutine(FinalArrivalDialogue());
@@ -129,11 +179,53 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             return;
         }
 
-        // 🔹 MIDDLE CHECKPOINTS
         Speak("Abel", "Press F to cross the next river.");
         canFly = true;
     }
-    IEnumerator FinalArrivalDialogue()
+
+    private IEnumerator ProtectedFallDialogue()
+    {
+        yield return Wait();
+
+        Speak("System", "⚠️ PROTECTION ACTIVE ⚠️");
+        yield return Wait();
+
+        Speak("Abel", "Your logic is correct, but something went wrong with the flight system.");
+        yield return Wait();
+
+        Speak("Kuttan", "Don't worry! The protection system will keep you safe.");
+        yield return Wait();
+
+        Speak("Abel", "Let's try that crossing again.");
+        yield return Wait();
+
+        ResetEnergyToCorrectValue();
+        canFly = true;
+    }
+
+    private void ResetEnergyToCorrectValue()
+    {
+        int expectedEnergy = 100;
+
+        for (int i = 0; i < currentRiverIndex; i++)
+        {
+            int riverLength = riverDistances[i];
+            int requiredEnergy = riverLength * ENERGY_RATE;
+
+            if (i == 0)
+                expectedEnergy -= 40;
+            else if (i == 1)
+                expectedEnergy -= 8;
+            else if (i == 2)
+                expectedEnergy -= 24;
+        }
+
+        playerEnergy = Mathf.Max(expectedEnergy, 0);
+        UpdateEnergyUI();
+        Debug.Log($"Energy reset to correct value: {playerEnergy}");
+    }
+
+    private IEnumerator FinalArrivalDialogue()
     {
         yield return new WaitForSeconds(0.4f);
 
@@ -148,13 +240,12 @@ public class RiverIfElseLessonController2D : MonoBehaviour
 
         MarkSceneCompleted();
         DisableJetpack();
-        // 🔊 Play sound
+
         if (audioSource != null && sceneEndSound != null)
         {
             audioSource.PlayOneShot(sceneEndSound);
         }
 
-        // 🌑 Fade to black
         if (fadeController != null)
         {
             yield return StartCoroutine(fadeController.FadeIn());
@@ -164,20 +255,20 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             yield return new WaitForSeconds(sceneDelay);
         }
 
-        // 🎬 Load next scene
         if (!string.IsNullOrEmpty(nextSceneName))
         {
             SceneManager.LoadScene(nextSceneName);
         }
     }
-    IEnumerator FallDialogue()
+
+    private IEnumerator FallDialogue()
     {
         yield return Wait();
 
-        Speak("Kuttan", "You didn’t calculate enough energy for that river.");
+        Speak("Kuttan", "You didn't calculate enough energy for that river.");
         yield return Wait();
 
-        Speak("Abel", "In programming, wrong conditions don’t stop the program...");
+        Speak("Abel", "In programming, wrong conditions don't stop the program...");
         yield return Wait();
 
         Speak("Abel", "They just lead to wrong results.");
@@ -186,47 +277,43 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         Speak("Abel", "Try again. Fix the logic.");
     }
 
-    IEnumerator TeleportNPCsToFinalPoint()
+    private IEnumerator TeleportNPCsToFinalPoint()
     {
         if (npcTransforms == null || npcFinalPoint == null)
             yield break;
 
-        // 🧊 Pause NPC logic so nothing fights the teleport
         PauseNPCs(true);
-
-        // Small delay so pause fully applies (important)
         yield return null;
 
         foreach (var npc in npcTransforms)
         {
-            npc.position = npcFinalPoint.position;
+            if (npc != null)
+                npc.position = npcFinalPoint.position;
         }
 
         Debug.Log("NPCs teleported");
-
-        // 🟢 Unpause AFTER teleport
         yield return null;
         PauseNPCs(false);
     }
 
-    void PauseNPCs(bool paused)
+    private void PauseNPCs(bool paused)
     {
         if (npcTransforms == null) return;
 
         foreach (var npc in npcTransforms)
         {
+            if (npc == null) continue;
+
             var behaviours = npc.GetComponents<MonoBehaviour>();
             foreach (var b in behaviours)
             {
-                // Don't disable this controller itself if attached
                 if (b != this)
                     b.enabled = !paused;
             }
         }
     }
 
-
-    IEnumerator FirstPointDialogue()
+    private IEnumerator FirstPointDialogue()
     {
         yield return new WaitForSeconds(0.4f);
 
@@ -239,16 +326,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         Speak("Abel", "Press F when you're ready for the next one.");
     }
 
-    IEnumerator EndDialogue()
-    {
-        Speak("Abel", "Good thinking. You learned how logic saves energy.");
-        yield return Wait();
-
-        Speak("Kuttan", "That's how programming works too.");
-        yield return Wait();
-    }
-
-    void DisableJetpack()
+    private void DisableJetpack()
     {
         if (animatorController != null)
             animatorController.SetJetpack(false);
@@ -258,28 +336,25 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= TRIGGER ================= */
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (active || !other.CompareTag("Player")) return;
         active = true;
         StartCoroutine(IntroSequence());
     }
-    void AddIndent()
+
+    private void AddIndent()
     {
-        // Only allow indent on body lines
         if (currentLine == 1 || currentLine == 3 || currentLine == 5)
         {
             string line = GetLineText(currentLine);
-
-            // Prevent double-indent
             if (!line.StartsWith(INDENT))
                 AddTextToLine(currentLine, INDENT);
         }
     }
 
-
     /* ================= INTRO SEQUENCE ================= */
-    IEnumerator IntroSequence()
+    private IEnumerator IntroSequence()
     {
         Speak("Abel", "No bridge ahead.");
         yield return Wait();
@@ -321,13 +396,12 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= TERMINAL LOGIC ================= */
-    void OpenTerminal()
+    private void OpenTerminal()
     {
         editing = true;
         currentLine = 0;
         ifLine = ifBody = elifLine = elifBody = elseBody = "";
 
-        // Auto-fill correct values if enabled
         if (autoFillCorrect)
         {
             ifLine = "if river_length >= 10:";
@@ -353,14 +427,14 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         UpdateTerminal();
     }
 
-    void FinishTerminal()
+    private void FinishTerminal()
     {
         editing = false;
         terminalPanel.SetActive(false);
         ValidateLogic();
     }
 
-    void Update()
+    private void Update()
     {
         if (editing)
         {
@@ -375,27 +449,25 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         }
     }
 
-    void HandleTyping()
+    private void HandleTyping()
     {
         foreach (char c in Input.inputString)
         {
-           
-                // TAB (Unity-safe)
-                if (Input.GetKeyDown(KeyCode.Tab))
-                {
-                    AddIndent();
-                    return;
-                }
+            if (Input.GetKeyDown(KeyCode.Tab))
+            {
+                AddIndent();
+                return;
+            }
 
-
-            // ENTER
             if (c == '\n' || c == '\r')
             {
-                if (currentLine == 3) currentLine = 5;
-                else currentLine++;
+                if (currentLine == 3)
+                    currentLine = 5;
+                else
+                    currentLine++;
 
                 if (currentLine == 1 || currentLine == 3 || currentLine == 5)
-                    AddTextToLine(currentLine, "    ");
+                    AddTextToLine(currentLine, INDENT);
 
                 if (currentLine > 5)
                 {
@@ -406,29 +478,27 @@ public class RiverIfElseLessonController2D : MonoBehaviour
                 return;
             }
 
-            // BACKSPACE ⭐ FIXED
             if (c == '\b')
             {
                 HandleBackspace();
             }
-            else
+            else if (c >= ' ' && c <= '~')
             {
                 AddText(c.ToString());
             }
         }
     }
-    void HandleBackspace()
+
+    private void HandleBackspace()
     {
         string lineText = GetLineText(currentLine);
 
-        // Normal delete
         if (!string.IsNullOrEmpty(lineText))
         {
             RemoveCharFromLine(currentLine);
             return;
         }
 
-        // Jump to previous editable line
         int prevLine = GetPreviousEditableLine(currentLine);
         if (prevLine != -1)
         {
@@ -437,17 +507,14 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         }
     }
 
-    void RemoveCharFromLine(int line)
+    private void RemoveCharFromLine(int line)
     {
-        const string INDENT = "    ";
         string text = GetLineText(line);
 
         if (string.IsNullOrEmpty(text))
             return;
 
-        // 🔒 Protect indentation (first 4 spaces)
-        if ((line == 1 || line == 3 || line == 5) &&
-            text.Length <= INDENT.Length)
+        if ((line == 1 || line == 3 || line == 5) && text.Length <= INDENT.Length)
             return;
 
         switch (line)
@@ -460,8 +527,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         }
     }
 
-
-    string GetLineText(int line)
+    private string GetLineText(int line)
     {
         switch (line)
         {
@@ -474,18 +540,16 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         return "";
     }
 
-
-    int GetPreviousEditableLine(int line)
+    private int GetPreviousEditableLine(int line)
     {
         if (line == 5) return 3;
         if (line == 3) return 1;
         return -1;
     }
 
+    private void AddText(string t) => AddTextToLine(currentLine, t);
 
-    void AddText(string t) => AddTextToLine(currentLine, t);
-
-    void AddTextToLine(int line, string t)
+    private void AddTextToLine(int line, string t)
     {
         switch (line)
         {
@@ -497,38 +561,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         }
     }
 
-    void RemoveChar()
-    {
-        switch (currentLine)
-        {
-            case 0:
-                if (ifLine.Length > 0)
-                    ifLine = ifLine.Substring(0, ifLine.Length - 1);
-                break;
-
-            case 1:
-                if (ifBody.Length > 0)
-                    ifBody = ifBody.Substring(0, ifBody.Length - 1);
-                break;
-
-            case 2:
-                if (elifLine.Length > 0)
-                    elifLine = elifLine.Substring(0, elifLine.Length - 1);
-                break;
-
-            case 3:
-                if (elifBody.Length > 0)
-                    elifBody = elifBody.Substring(0, elifBody.Length - 1);
-                break;
-
-            case 5:
-                if (elseBody.Length > 0)
-                    elseBody = elseBody.Substring(0, elseBody.Length - 1);
-                break;
-        }
-    }
-
-    void UpdateTerminal()
+    private void UpdateTerminal()
     {
         terminalText.text =
             "<color=#9CDCFE>river_length = ?</color>\n" +
@@ -573,8 +606,7 @@ public class RiverIfElseLessonController2D : MonoBehaviour
     }
 
     /* ================= VALIDATION ================= */
-
-    void ValidateLogic()
+    private void ValidateLogic()
     {
         string ifL = ifLine.Trim().ToLower();
         string elifL = elifLine.Trim().ToLower();
@@ -583,7 +615,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         string elifB = elifBody.Trim().ToLower();
         string elseB = elseBody.Trim().ToLower();
 
-        // ---------- IF ----------
         if (!IsValidConditionalLine(ifL, "if"))
         {
             Speak("Abel", "The IF line is wrong. Use: if <condition>:");
@@ -598,7 +629,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             return;
         }
 
-        // ---------- ELIF ----------
         if (!IsValidConditionalLine(elifL, "elif"))
         {
             Speak("Abel", "The ELIF line is wrong. Use: elif <condition>:");
@@ -613,7 +643,6 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             return;
         }
 
-        // ---------- ELSE ----------
         if (!IsValidEnergyReduction(elseB))
         {
             Speak("Abel", "Inside ELSE, you must reduce energy using '-='.");
@@ -621,95 +650,223 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             return;
         }
 
-        // ---------- SUCCESS ----------
-        logicLocked = true;
-        EquipJetpack();
-        canFly = true;
+        // Check if logic is mathematically correct
+        if (IsMathematicallyCorrect())
+        {
+            isCorrectLogic = true;
+            logicLocked = true;
+            EquipJetpack();
+            canFly = true;
 
+            Speak("Abel", "✅ PERFECT! Your logic is mathematically correct!");
+            StartCoroutine(ShowProtectionActivation());
+        }
+        else
+        {
+            isCorrectLogic = false;
+            Speak("Abel", "Your logic is syntactically correct but mathematically wrong.");
+            StartCoroutine(ShowMathErrorAndReopen());
+            return;
+        }
+    }
+
+    private IEnumerator ShowProtectionActivation()
+    {
+        yield return new WaitForSeconds(1f);
+        Speak("Kuttan", "The protection system is now active. No failure will stop you!");
+        yield return new WaitForSeconds(1f);
         Speak("Abel", "Logic locked. Press F to fly across the first river.");
     }
 
-
-    bool IsValidConditionalLine(string line, string keyword)
+    private IEnumerator ShowMathErrorAndReopen()
     {
-        // Must start with keyword (if / elif)
-        if (!line.StartsWith(keyword)) return false;
+        yield return Wait();
+        Speak("Kuttan", "Check your conditions and energy values again.");
+        yield return Wait();
+        OpenTerminal();
+    }
 
-        // Must end with colon
+    private bool IsMathematicallyCorrect()
+    {
+        // Test all three river distances
+        int[] testDistances = { 10, 2, 6 };
+        int[] expectedEnergy = { 40, 8, 24 };
+
+        for (int i = 0; i < testDistances.Length; i++)
+        {
+            int calculatedEnergy = EvaluateEnergyCost(testDistances[i]);
+            Debug.Log($"Testing River {i + 1}: Distance={testDistances[i]}m, Expected={expectedEnergy[i]}, Calculated={calculatedEnergy}");
+
+            if (calculatedEnergy != expectedEnergy[i])
+            {
+                Debug.LogError($"Math check FAILED! River {testDistances[i]}m should cost {expectedEnergy[i]} but calculated {calculatedEnergy}");
+                return false;
+            }
+        }
+
+        Debug.Log("✅ Math check PASSED! All river calculations are correct.");
+        return true;
+    }
+
+    private bool IsValidConditionalLine(string line, string keyword)
+    {
+        if (!line.StartsWith(keyword)) return false;
         if (!line.EndsWith(":")) return false;
 
-        // Remove keyword and colon safely
         string condition = line
             .Substring(keyword.Length)
             .Trim()
             .TrimEnd(':')
             .Trim();
 
-        // Condition must exist
         return condition.Length > 0;
     }
 
-    bool IsValidEnergyReduction(string body)
+    private bool IsValidEnergyReduction(string body)
     {
-        // Accepts: energy-=40, energy -= 40, energy  -=40, etc.
         return body.Contains("energy") && body.Contains("-=");
     }
-    string ColorUserText(string text)
+
+    private string ColorUserText(string text)
     {
         return $"<color={USER_COLOR}>{text}</color>";
     }
 
-
     /* ================= ENERGY EVALUATION ================= */
-    int EvaluateEnergyCost(int riverLength)
+    private int EvaluateEnergyCost(int riverLength)
     {
-        // ---------- IF ----------
-        if (ifLine.Contains("==") && riverLength == ExtractNumber(ifLine))
+        // Check IF condition
+        if (EvaluateCondition(ifLine, riverLength))
             return ExtractNumber(ifBody);
 
-        if (ifLine.Contains(">=") && riverLength >= ExtractNumber(ifLine))
-            return ExtractNumber(ifBody);
-
-        if (ifLine.Contains(">") && riverLength > ExtractNumber(ifLine))
-            return ExtractNumber(ifBody);
-
-        if (ifLine.Contains("<=") && riverLength <= ExtractNumber(ifLine))
-            return ExtractNumber(ifBody);
-
-        if (ifLine.Contains("<") && riverLength < ExtractNumber(ifLine))
-            return ExtractNumber(ifBody);
-
-        // ---------- ELIF ----------
-        if (elifLine.Contains("==") && riverLength == ExtractNumber(elifLine))
+        // Check ELIF condition
+        if (EvaluateCondition(elifLine, riverLength))
             return ExtractNumber(elifBody);
 
-        if (elifLine.Contains(">=") && riverLength >= ExtractNumber(elifLine))
-            return ExtractNumber(elifBody);
-
-        if (elifLine.Contains(">") && riverLength > ExtractNumber(elifLine))
-            return ExtractNumber(elifBody);
-
-        if (elifLine.Contains("<=") && riverLength <= ExtractNumber(elifLine))
-            return ExtractNumber(elifBody);
-
-        if (elifLine.Contains("<") && riverLength < ExtractNumber(elifLine))
-            return ExtractNumber(elifBody);
-
-        // ---------- ELSE ----------
+        // ELSE fallback
         return ExtractNumber(elseBody);
     }
 
-    int ExtractNumber(string line)
+    private bool EvaluateCondition(string conditionLine, int riverLength)
     {
-        string digits = "";
-        foreach (char c in line)
-            if (char.IsDigit(c)) digits += c;
+        if (string.IsNullOrEmpty(conditionLine))
+            return false;
 
-        return int.Parse(digits);
+        // Remove 'if' or 'elif' keyword and colon
+        string condition = conditionLine
+            .Replace("if", "")
+            .Replace("elif", "")
+            .Trim()
+            .TrimEnd(':')
+            .Trim();
+
+        Debug.Log($"Parsing condition: '{condition}' for river length: {riverLength}");
+
+        // Find operator
+        string[] operators = { ">=", "<=", "==", ">", "<" };
+        string foundOperator = "";
+        int operatorIndex = -1;
+
+        foreach (string op in operators)
+        {
+            int idx = condition.IndexOf(op);
+            if (idx != -1)
+            {
+                foundOperator = op;
+                operatorIndex = idx;
+                break;
+            }
+        }
+
+        if (operatorIndex == -1)
+        {
+            Debug.LogError($"No valid operator found in condition: {condition}");
+            return false;
+        }
+
+        // Get the right side (the number)
+        string rightSide = condition.Substring(operatorIndex + foundOperator.Length).Trim();
+
+        // Parse the number
+        if (!int.TryParse(rightSide, out int threshold))
+        {
+            string digits = "";
+            foreach (char c in rightSide)
+            {
+                if (char.IsDigit(c))
+                    digits += c;
+            }
+            if (!int.TryParse(digits, out threshold))
+            {
+                Debug.LogError($"Failed to parse number from: {rightSide}");
+                return false;
+            }
+        }
+
+        // Evaluate based on operator
+        bool result = foundOperator switch
+        {
+            ">=" => riverLength >= threshold,
+            "<=" => riverLength <= threshold,
+            "==" => riverLength == threshold,
+            ">" => riverLength > threshold,
+            "<" => riverLength < threshold,
+            _ => false
+        };
+
+        Debug.Log($"Condition: {riverLength} {foundOperator} {threshold} = {result}");
+        return result;
+    }
+
+    private int ExtractNumber(string line)
+    {
+        if (string.IsNullOrEmpty(line))
+            return 0;
+
+        // Look for pattern like "energy -= 40" or "energy-=40"
+        string cleanedLine = line.Replace(" ", "").ToLower();
+
+        int index = cleanedLine.IndexOf("-=");
+        if (index != -1 && index + 2 < cleanedLine.Length)
+        {
+            string numberPart = cleanedLine.Substring(index + 2);
+
+            string digits = "";
+            foreach (char c in numberPart)
+            {
+                if (char.IsDigit(c))
+                    digits += c;
+                else
+                    break;
+            }
+
+            if (!string.IsNullOrEmpty(digits))
+            {
+                int result = int.Parse(digits);
+                Debug.Log($"Extracted number: {result} from line: {line}");
+                return result;
+            }
+        }
+
+        // Fallback: extract all digits
+        string allDigits = "";
+        foreach (char c in line)
+        {
+            if (char.IsDigit(c))
+                allDigits += c;
+        }
+
+        if (string.IsNullOrEmpty(allDigits))
+        {
+            Debug.LogError($"No number found in line: {line}");
+            return 0;
+        }
+
+        return int.Parse(allDigits);
     }
 
     /* ================= FLIGHT ATTEMPT ================= */
-    void TryFly()
+    private void TryFly()
     {
         if (!canFly || isFlying || currentRiverIndex >= riverDistances.Length)
             return;
@@ -717,40 +874,165 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         int riverLength = riverDistances[currentRiverIndex];
         int requiredEnergy = riverLength * ENERGY_RATE;
 
-        int usedEnergy = EvaluateEnergyCost(riverLength);
+        Debug.Log($"\n=== Attempting to cross River {currentRiverIndex + 1} ===");
+        Debug.Log($"River Length: {riverLength}m, Required Energy: {requiredEnergy}");
+        Debug.Log($"Current Player Energy: {playerEnergy}");
 
-        float travelPercent = Mathf.Clamp(
-            (float)usedEnergy / requiredEnergy,
-            0f,
-            1.2f
-        );
+        int usedEnergy = EvaluateEnergyCost(riverLength);
+        usedEnergy = Mathf.Clamp(usedEnergy, 0, requiredEnergy);
+
+        Debug.Log($"Used Energy: {usedEnergy}");
 
         if (usedEnergy > playerEnergy)
         {
-            jetpack.FailFall();
-            Speak("Kuttan", "You don't have enough energy!");
+            Debug.Log($"FAIL: Not enough energy! Need {usedEnergy}, have {playerEnergy}");
+
+            if (isCorrectLogic)
+            {
+                Debug.Log("PROTECTED: Correct logic detected - Preventing energy failure");
+                StartCoroutine(ProtectedEnergyFailure());
+                return;
+            }
+
+            if (jetpack != null)
+                jetpack.FailFall();
+            HandleFailure();
             return;
         }
 
         playerEnergy -= usedEnergy;
         UpdateEnergyUI();
 
+        Debug.Log($"SUCCESS: Energy used: {usedEnergy}, Remaining: {playerEnergy}");
+
         isFlying = true;
         canFly = false;
 
-        // 🚀 ONLY start flight — DO NOT TOUCH EVENTS
-        jetpack.FlyToNextPoint(travelPercent);
+        float travelPercent = usedEnergy > 0 ? (float)usedEnergy / requiredEnergy : 0f;
+        travelPercent = Mathf.Clamp(travelPercent, 0f, 1.2f);
+
+        if (jetpack != null)
+            jetpack.FlyToNextPoint(travelPercent);
     }
 
+    private IEnumerator ProtectedEnergyFailure()
+    {
+        Speak("System", "⚠️ PROTECTION ACTIVE ⚠️");
+        yield return Wait();
+
+        Speak("Abel", "Your logic is correct, but you don't have enough energy stored.");
+        yield return Wait();
+
+        Speak("Kuttan", "Let me restore your energy to the correct amount!");
+        yield return Wait();
+
+        ResetEnergyToCorrectValue();
+
+        Speak("Abel", "Energy restored! Try flying again.");
+        canFly = true;
+    }
+
+    /* ================= GAME OVER HANDLING ================= */
+    private void HandleFailure()
+    {
+        if (isCorrectLogic)
+        {
+            Debug.Log("PROTECTED: Correct logic prevents game over!");
+            StartCoroutine(ProtectedRecovery());
+            return;
+        }
+
+        failCount++;
+
+        if (failCount >= maxAttempts)
+        {
+            GameOver();
+        }
+        else
+        {
+            Speak("Kuttan", $"You have {maxAttempts - failCount} attempts remaining.");
+            StartCoroutine(ResetForRetry());
+        }
+    }
+
+    private IEnumerator ProtectedRecovery()
+    {
+        Speak("System", "🛡️ PROTECTION SYSTEM ENGAGED 🛡️");
+        yield return Wait();
+
+        Speak("Abel", "Your logic is mathematically correct!");
+        yield return Wait();
+
+        Speak("Kuttan", "The system will automatically recover you from any failure.");
+        yield return Wait();
+
+        Speak("Abel", "Let's continue from where we left off.");
+        yield return Wait();
+
+        ResetEnergyToCorrectValue();
+        canFly = true;
+    }
+
+    private IEnumerator ResetForRetry()
+    {
+        yield return new WaitForSeconds(1f);
+
+        playerEnergy = 100;
+        UpdateEnergyUI();
+        canFly = true;
+
+        Speak("Abel", "Energy restored. Try again with the correct logic.");
+    }
+
+    private void GameOver()
+    {
+        if (gameOverTriggered) return;
+        gameOverTriggered = true;
+
+        canFly = false;
+        logicLocked = false;
+
+        // Try to find GameOverManager if it exists but might be inactive
+        GameOverManager manager = GameOverManager.Instance;
+
+        if (manager == null)
+        {
+            // Try to find it in the scene even if inactive
+            manager = FindObjectOfType<GameOverManager>(true);
+        }
+
+        // Use the centralized GameOverManager
+        if (manager != null)
+        {
+            manager.ShowGameOver();
+        }
+        else
+        {
+            // Fallback if GameOverManager doesn't exist in the scene
+            Debug.LogWarning("GameOverManager not found in scene. Using fallback game over panel.");
+            if (gameOverPanel != null)
+                gameOverPanel.SetActive(true);
+
+            Speak("Abel", "You've failed too many times.");
+            StartCoroutine(FallbackRestart());
+        }
+    }
+
+    // Fallback restart coroutine in case GameOverManager doesn't exist
+    private IEnumerator FallbackRestart()
+    {
+        yield return new WaitForSeconds(gameOverDelay);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
 
     /* ================= HELPER METHODS ================= */
-    void UpdateEnergyUI()
+    private void UpdateEnergyUI()
     {
         if (energyText != null)
             energyText.text = $"Energy: {playerEnergy}";
     }
 
-    void EquipJetpack()
+    private void EquipJetpack()
     {
         if (jetpack != null)
             jetpack.Equip();
@@ -762,34 +1044,37 @@ public class RiverIfElseLessonController2D : MonoBehaviour
             jetpackPanel.SetActive(true);
     }
 
-    void Speak(string who, string text)
+    private void Speak(string who, string text)
     {
         if (dialoguePanel == null) return;
 
         dialoguePanel.SetActive(true);
         speakerText.text = who;
-        speakerImage.sprite = who == "Abel" ? abelPortrait : kuttanPortrait;
+
+        if (who == "Abel")
+            speakerImage.sprite = abelPortrait;
+        else if (who == "Kuttan")
+            speakerImage.sprite = kuttanPortrait;
 
         if (typewriter != null)
             typewriter.Play(text);
-        else
+        else if (dialogueText != null)
             dialogueText.text = text;
+
 
         DialogueBacklogManager.Instance?.AddLine(who, text);
     }
 
-    IEnumerator Wait()
+    private IEnumerator Wait()
     {
         while (true)
         {
             if (Input.GetKeyDown(KeyCode.Return))
             {
-                // First Enter → finish typing
                 if (typewriter != null && typewriter.IsTyping())
                 {
                     typewriter.Skip();
                 }
-                // Second Enter → continue
                 else
                 {
                     break;
@@ -801,11 +1086,11 @@ public class RiverIfElseLessonController2D : MonoBehaviour
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
     }
-    void MarkSceneCompleted()
+
+    private void MarkSceneCompleted()
     {
         string sceneName = SceneManager.GetActiveScene().name;
         PlayerPrefs.SetInt("Scene_" + sceneName + "_Completed", 1);
-        // or use the other pattern: "SceneCompleted_" + sceneName
         PlayerPrefs.Save();
         Debug.Log("Scene marked as completed: " + sceneName);
     }

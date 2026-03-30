@@ -172,6 +172,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 05 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -196,6 +200,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -372,6 +380,10 @@ PrefabInstance:
       value: PF Village Props - Bush 01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -533,6 +545,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 04
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -597,6 +613,10 @@ PrefabInstance:
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 04 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -707,6 +727,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -893,6 +917,10 @@ PrefabInstance:
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 04
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1419,6 +1447,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (11)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -1443,6 +1475,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1523,6 +1559,10 @@ PrefabInstance:
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wood Logs (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -1717,7 +1757,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.035848916, g: 0.95013165, b: 1, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2075,6 +2115,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 05
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2123,6 +2167,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &173887653
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2260,6 +2305,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &230942098
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2370,6 +2416,10 @@ PrefabInstance:
       value: PF Village Props - Wood Logs
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2436,6 +2486,10 @@ PrefabInstance:
       value: PF Village Props - Barrel
       objectReference: {fileID: 0}
     - target: {fileID: 2018365450437254144, guid: 1509360826d6bb34587310ad4949fdd5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2018365450437254144, guid: 1509360826d6bb34587310ad4949fdd5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2500,6 +2554,10 @@ PrefabInstance:
     - target: {fileID: 7529635343020985361, guid: 8dab7379f6c67d9448d4c24d1eace61b, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 7529635343020985361, guid: 8dab7379f6c67d9448d4c24d1eace61b, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7529635343020985361, guid: 8dab7379f6c67d9448d4c24d1eace61b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2652,6 +2710,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2815,6 +2877,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -2839,6 +2905,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2909,6 +2979,10 @@ PrefabInstance:
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3151,7 +3225,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 301691677}
-  - component: {fileID: 301691676}
+  - component: {fileID: 301691678}
   m_Layer: 0
   m_Name: GameOverManager
   m_TagString: Untagged
@@ -3159,7 +3233,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &301691676
+--- !u!4 &301691677
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 301691675}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.19766235, y: -2.430481, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &301691678
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -3173,21 +3262,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   gameOverCanvas: {fileID: 1401626841}
   fadeDuration: 0.6
---- !u!4 &301691677
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 301691675}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19767, y: -2.4305, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  audioSource: {fileID: 0}
+  gameOverSound: {fileID: 0}
+  pauseGameOnGameOver: 1
+  restartOnTap: 1
 --- !u!1 &311856940
 GameObject:
   m_ObjectHideFlags: 0
@@ -3368,6 +3446,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -3546,6 +3628,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (12)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -3570,6 +3656,10 @@ PrefabInstance:
     - target: {fileID: 3564026850829729313, guid: b51901e6748833e4695e0c1db509dcd4, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Grass 02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564026850829729313, guid: b51901e6748833e4695e0c1db509dcd4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3564026850829729313, guid: b51901e6748833e4695e0c1db509dcd4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -3924,6 +4014,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -3948,6 +4042,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4352,6 +4450,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -4416,6 +4518,10 @@ PrefabInstance:
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4488,6 +4594,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -4556,6 +4666,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -4938,6 +5052,10 @@ PrefabInstance:
       value: PF Village Props - Sunflower 03
       objectReference: {fileID: 0}
     - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5004,6 +5122,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5068,6 +5190,10 @@ PrefabInstance:
     - target: {fileID: 3151412129623190758, guid: 4c7668f32ddf4c843bc8d57bf6b43000, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Pumpkin A
+      objectReference: {fileID: 0}
+    - target: {fileID: 3151412129623190758, guid: 4c7668f32ddf4c843bc8d57bf6b43000, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3151412129623190758, guid: 4c7668f32ddf4c843bc8d57bf6b43000, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5140,6 +5266,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5204,6 +5334,10 @@ PrefabInstance:
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5300,6 +5434,10 @@ PrefabInstance:
       value: PF Village Props - Rock 03 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5368,6 +5506,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (10)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5609,6 +5751,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 02 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5680,6 +5826,10 @@ PrefabInstance:
       value: PF Village Props - Stump
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -5749,6 +5899,10 @@ PrefabInstance:
     - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Sunflower 03
+      objectReference: {fileID: 0}
+    - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -5866,11 +6020,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 656534736169644676, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 471.3936
+      value: 535.828
       objectReference: {fileID: 0}
     - target: {fileID: 656534736169644676, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -4.264802
+      value: 1.6284
       objectReference: {fileID: 0}
     - target: {fileID: 1371084544877609403, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_Sprite
@@ -6042,7 +6196,35 @@ PrefabInstance:
       objectReference: {fileID: 2609348718431745213, guid: 097d0c923d28bf04aab20ce1a6a928d1, type: 3}
     - target: {fileID: 5199038236905277375, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.1778717
+      value: -0.17785645
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 36.70401
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 161
+      objectReference: {fileID: 0}
+    - target: {fileID: 5284442680344978794, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -59.449997
       objectReference: {fileID: 0}
     - target: {fileID: 5300961565219626793, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_IsActive
@@ -6083,6 +6265,22 @@ PrefabInstance:
     - target: {fileID: 5849716638610350404, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122404461265949484, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122404461265949484, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122404461265949484, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 59.204407
+      objectReference: {fileID: 0}
+    - target: {fileID: 6122404461265949484, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 85
       objectReference: {fileID: 0}
     - target: {fileID: 6443273068993854568, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_IsActive
@@ -6136,6 +6334,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8605202364292627083, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9151654450443430857, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -6152,8 +6354,14 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 77770551509109922, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
-      insertIndex: 5
+      insertIndex: 1
+      addedObject: {fileID: 1573623560}
+    - targetCorrespondingSourceObject: {fileID: 77770551509109922, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      insertIndex: 6
       addedObject: {fileID: 1011200111}
+    - targetCorrespondingSourceObject: {fileID: 77770551509109922, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
+      insertIndex: 12
+      addedObject: {fileID: 808636178}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 3479467144966247760, guid: edeed5ec843624a47bcbb75a3f4fcf94, type: 3}
       insertIndex: -1
@@ -6216,6 +6424,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 05 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -6240,6 +6452,10 @@ PrefabInstance:
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 04 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6348,6 +6564,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -6414,8 +6634,16 @@ PrefabInstance:
       value: PF Village Props - Stump (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6442,6 +6670,10 @@ PrefabInstance:
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6497,6 +6729,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3284380142945954006, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
   m_PrefabInstance: {fileID: 587190127}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &613884918
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 613884920}
+  - component: {fileID: 613884919}
+  m_Layer: 0
+  m_Name: PauseManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &613884919
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613884918}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9841e485bf53f1442bd8ccf6b0ae7a33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PauseMenuController
+  pausePanel: {fileID: 808636177}
+  menuSceneName: MainMenu
+--- !u!4 &613884920
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613884918}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 68.57183, y: 76.84213, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &614550432
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6552,6 +6830,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6618,6 +6900,10 @@ PrefabInstance:
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 02 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -6946,6 +7232,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (8)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -6994,6 +7284,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &688599116
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7144,6 +7435,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 02
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7168,6 +7463,10 @@ PrefabInstance:
     - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Sunflower 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7278,6 +7577,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7458,6 +7761,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7522,6 +7829,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7590,6 +7901,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7614,6 +7929,10 @@ PrefabInstance:
     - target: {fileID: 2593891206015117072, guid: ef2b6e3a0904d0a488fb7a1bd47ce073, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Scarecrow 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593891206015117072, guid: ef2b6e3a0904d0a488fb7a1bd47ce073, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2593891206015117072, guid: ef2b6e3a0904d0a488fb7a1bd47ce073, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -7813,6 +8132,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &723577067
 AudioSource:
   m_ObjectHideFlags: 0
@@ -7923,6 +8243,10 @@ PrefabInstance:
       value: PF Village Props - Tree 01 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -7987,6 +8311,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8434,6 +8762,10 @@ PrefabInstance:
       value: PF Village Props - Crate Small
       objectReference: {fileID: 0}
     - target: {fileID: 5789200093759024974, guid: ab9278aa8a6f856468c48e893720a765, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5789200093759024974, guid: ab9278aa8a6f856468c48e893720a765, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -8552,6 +8884,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8719,7 +9055,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8775,6 +9111,133 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
   m_PrefabInstance: {fileID: 792312838}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &808636176
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 543537085}
+    m_Modifications:
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 247
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 262.99
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0.0030556
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.00048733
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2204230277277239905, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 613884919}
+    - target: {fileID: 2204230277277239905, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ExitToMenu
+      objectReference: {fileID: 0}
+    - target: {fileID: 5249425927492782854, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 613884919}
+    - target: {fileID: 5249425927492782854, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RestartScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585027738664906238, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_Name
+      value: PausePanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7585027738664906238, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+--- !u!1 &808636177 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7585027738664906238, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+  m_PrefabInstance: {fileID: 808636176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &808636178 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1328075077806606988, guid: 04a9c0d48c8efe247bd07c8d5300e816, type: 3}
+  m_PrefabInstance: {fileID: 808636176}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &815875983
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8828,6 +9291,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 02
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -8852,6 +9319,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -8974,6 +9445,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9280,6 +9755,10 @@ PrefabInstance:
       value: PF Village Props - Tree 02
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -9494,6 +9973,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 05 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -9616,6 +10099,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 01
       objectReference: {fileID: 0}
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -9724,6 +10211,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -9925,6 +10416,10 @@ PrefabInstance:
       value: PF Village Props - Bush 01
       objectReference: {fileID: 0}
     - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10086,6 +10581,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 04 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10192,6 +10691,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10227,6 +10730,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -10484,6 +10991,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -10582,8 +11093,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -4.264802}
-  m_SizeDelta: {x: 1154.8728, y: 471.3936}
+  m_AnchoredPosition: {x: 0, y: 1.6284}
+  m_SizeDelta: {x: 1154.8728, y: 535.828}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1022426310
 GameObject:
@@ -11086,6 +11597,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -11215,6 +11730,10 @@ PrefabInstance:
       value: PF Village Props - Tree 02 (7)
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -11283,6 +11802,10 @@ PrefabInstance:
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 01 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11439,6 +11962,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -11963,6 +12490,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 02 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -12029,6 +12560,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 05 (7)
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -12053,6 +12588,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12264,6 +12803,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (5)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -12312,6 +12855,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &1189310621
 AudioSource:
   m_ObjectHideFlags: 0
@@ -12462,6 +13006,10 @@ PrefabInstance:
       value: PF Village Props - Barricade
       objectReference: {fileID: 0}
     - target: {fileID: 5373330553216305747, guid: e0868e2099f22704cb8f4781f4dffe5f, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5373330553216305747, guid: e0868e2099f22704cb8f4781f4dffe5f, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -12486,6 +13034,10 @@ PrefabInstance:
     - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Sunflower 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4390910328609920032, guid: 295bb10ead83a4d44b8a1398a7f16c99, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12552,6 +13104,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -12662,6 +13218,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13071,7 +13631,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1281766022}
   - component: {fileID: 1281766023}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Spot Light 2D
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13349,6 +13909,10 @@ PrefabInstance:
       value: PF Village Props - Stump
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -13377,7 +13941,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13490,6 +14054,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -13514,6 +14082,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -13706,6 +14278,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!1001 &1336253771
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13759,8 +14332,16 @@ PrefabInstance:
       value: PF Village Props - Stump (3)
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14015,6 +14596,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -14079,6 +14664,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14416,6 +15005,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -14440,6 +15033,10 @@ PrefabInstance:
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wood Logs
+      objectReference: {fileID: 0}
+    - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14506,6 +15103,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14705,6 +15306,10 @@ PrefabInstance:
       value: PF Village Props - Rock 03
       objectReference: {fileID: 0}
     - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -14769,6 +15374,10 @@ PrefabInstance:
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 05 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -14958,11 +15567,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.81
+      value: -1.69
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.871
+      value: -3.09
       objectReference: {fileID: 0}
     - target: {fileID: 8081430407566229030, guid: 1656db72904a04b47825cea0af393486, type: 3}
       propertyPath: m_LocalPosition.z
@@ -15425,6 +16034,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &1485504313
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15665,6 +16275,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -15731,6 +16345,10 @@ PrefabInstance:
       value: PF Village Props - Sunflower 02
       objectReference: {fileID: 0}
     - target: {fileID: 2581226205637218567, guid: d5f7066e247357149b9a778fcd53e819, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2581226205637218567, guid: d5f7066e247357149b9a778fcd53e819, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -15744,76 +16362,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2581226205637218566, guid: d5f7066e247357149b9a778fcd53e819, type: 3}
   m_PrefabInstance: {fileID: 1527401191}
   m_PrefabAsset: {fileID: 0}
---- !u!1001 &1529315532
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 2057521268}
-    m_Modifications:
-    - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_Name
-      value: PF Village Props - Wood Log 01 (1)
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_Layer
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 2147483647
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 220.02936
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 10.757654
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
---- !u!4 &1529315533 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 982056747370159615, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
-  m_PrefabInstance: {fileID: 1529315532}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1542956828
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15825,6 +16373,10 @@ PrefabInstance:
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wood Logs (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: d0bde9a42898be64ab7372c560194d8d, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -15904,6 +16456,10 @@ PrefabInstance:
       value: PF Village Props - Tree 02 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -15956,6 +16512,16 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 5260572382779035084, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
   m_PrefabInstance: {fileID: 1558670257}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1573623559 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1253314563626712817, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+  m_PrefabInstance: {fileID: 1679961799}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &1573623560 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+  m_PrefabInstance: {fileID: 1679961799}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1582151030
 GameObject:
@@ -16059,6 +16625,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -16171,6 +16741,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -16198,7 +16772,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -16412,6 +16986,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -16665,6 +17243,7 @@ GameObject:
   - component: {fileID: 1630200515}
   - component: {fileID: 1630200514}
   - component: {fileID: 1630200516}
+  - component: {fileID: 1630200517}
   m_Layer: 8
   m_Name: GameOver
   m_TagString: Untagged
@@ -22495,6 +23074,52 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!61 &1630200517
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630200512}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 141, y: -8.859739}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 282.76, y: 6.9605217}
+  m_EdgeRadius: 0
 --- !u!1001 &1644503757
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22548,6 +23173,10 @@ PrefabInstance:
       value: PF Village Props - Rock 03 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -22572,6 +23201,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -23014,7 +23647,7 @@ MonoBehaviour:
   riverDistances: 0a0000000200000006000000
   playerEnergy: 100
   fadeController: {fileID: 1674815353}
-  autoFillCorrect: 1
+  autoFillCorrect: 0
   autoFillFalse: 0
   npcTransforms:
   - {fileID: 52738574}
@@ -23024,6 +23657,9 @@ MonoBehaviour:
   sceneDelay: 4
   audioSource: {fileID: 1782236829}
   sceneEndSound: {fileID: 8300000, guid: 893cd3270cdaec74498b903be2a28bee, type: 3}
+  gameOverPanel: {fileID: 1573623559}
+  maxAttempts: 3
+  gameOverDelay: 2
 --- !u!61 &1675764364
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -23201,6 +23837,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -23214,6 +23854,115 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 880520027387217216, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
   m_PrefabInstance: {fileID: 1677577598}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1679961799
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 543537085}
+    m_Modifications:
+    - target: {fileID: 1253314563626712817, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_Name
+      value: GameOver (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -181.76
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -73.585
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 4.5979004
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -0.17785645
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1488979825198918827, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 643935978d9b9514ca8a363f6d45bad4, type: 3}
 --- !u!1001 &1692307089
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -23265,6 +24014,10 @@ PrefabInstance:
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 03 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -23337,6 +24090,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -23403,6 +24160,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -23430,7 +24191,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_Layer
-      value: 12
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 982056747370159609, guid: 86d38be4937d1c344b9c7f22912685eb, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -23541,6 +24302,10 @@ PrefabInstance:
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24024,6 +24789,7 @@ MonoBehaviour:
   stuckTimeBeforeJump: 0.2
   groundRadius: 0.5
   gameOverLayerName: GameOver
+  gameOverDistance: 0.7
 --- !u!82 &1729062432
 AudioSource:
   m_ObjectHideFlags: 0
@@ -24174,6 +24940,10 @@ PrefabInstance:
       value: PF Village Props - Pumpkin A
       objectReference: {fileID: 0}
     - target: {fileID: 3151412129623190758, guid: 4c7668f32ddf4c843bc8d57bf6b43000, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3151412129623190758, guid: 4c7668f32ddf4c843bc8d57bf6b43000, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -24238,6 +25008,10 @@ PrefabInstance:
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 05 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24306,6 +25080,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (9)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -24327,6 +25105,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2057521268}
     m_Modifications:
+    - target: {fileID: 4978010613249228750, guid: 55e220e9324021f4aba5a837610ec52e, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4978010613249228750, guid: 55e220e9324021f4aba5a837610ec52e, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
@@ -24374,6 +25156,10 @@ PrefabInstance:
     - target: {fileID: 4978010614504130162, guid: 55e220e9324021f4aba5a837610ec52e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Archery Target 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4978010614504130162, guid: 55e220e9324021f4aba5a837610ec52e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4978010614504130162, guid: 55e220e9324021f4aba5a837610ec52e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24446,6 +25232,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -24510,6 +25300,10 @@ PrefabInstance:
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24849,6 +25643,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (13)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -24873,6 +25671,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -24981,6 +25783,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -25045,6 +25851,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -25354,6 +26164,10 @@ PrefabInstance:
       value: PF Village Props - Tree 02
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -25483,6 +26297,10 @@ PrefabInstance:
       value: PF Village Props - Sunflower 03
       objectReference: {fileID: 0}
     - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6470441644502814734, guid: ab2f44b99adf358449c83b74c274b97b, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -25507,6 +26325,10 @@ PrefabInstance:
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 01 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3284380142945954000, guid: fc9968c4dc5d5264b89413cdfe5d303e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -25638,6 +26460,10 @@ PrefabInstance:
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -25781,6 +26607,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02 (6)
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -25849,6 +26679,10 @@ PrefabInstance:
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Bush 03 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -25921,6 +26755,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -25945,6 +26783,10 @@ PrefabInstance:
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4653831799294361312, guid: 7903d081236f2304396572efb80b5f8f, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -26053,6 +26895,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -26077,6 +26923,10 @@ PrefabInstance:
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 04 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1224392861243821740, guid: e25962a23b0ae06459d988ce85f4476e, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -26183,6 +27033,10 @@ PrefabInstance:
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 03 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -26300,6 +27154,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -26710,6 +27568,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03 (2)
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -26818,6 +27680,10 @@ PrefabInstance:
     - target: {fileID: 3564026850829729313, guid: 406ae01b7bf025d478da7b57dfe1715c, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Grass 04
+      objectReference: {fileID: 0}
+    - target: {fileID: 3564026850829729313, guid: 406ae01b7bf025d478da7b57dfe1715c, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3564026850829729313, guid: 406ae01b7bf025d478da7b57dfe1715c, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -27101,6 +27967,10 @@ PrefabInstance:
       value: PF Village Props - Tree 02 (4)
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -27211,6 +28081,10 @@ PrefabInstance:
       value: PF Village Props - Bush 03 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 880520027387217230, guid: de570bfbf1a49ba4c9575930f7db6bae, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -27233,8 +28107,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 2057521268}
     m_Modifications:
     - target: {fileID: 335476072309450296, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 335476072309450296, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 3226521009140389271, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3226521009140389271, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -27243,6 +28125,10 @@ PrefabInstance:
     - target: {fileID: 3226521009676847256, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Road Lamp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3226521009676847256, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3226521009676847256, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -27289,20 +28175,40 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3693432273548653689, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3693432273548653689, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 4093598472609808602, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4093598472609808602, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 4095109695023904825, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4095109695023904825, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 7793038299900132495, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7793038299900132495, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 8314471940821381325, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8314471940821381325, guid: c13263f1f05170f4e849875cee5c46d0, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -27385,8 +28291,16 @@ PrefabInstance:
       value: PF Village Props - Stump (1)
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -27610,6 +28524,10 @@ PrefabInstance:
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8012655433164689462, guid: c3b86686583e114479cc11b139a8a401, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -69705,6 +70623,10 @@ PrefabInstance:
       value: PF Village Props - Bush 01
       objectReference: {fileID: 0}
     - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2719227801452879220, guid: 0a84f54077193d3489d0de133048df37, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -69893,6 +70815,10 @@ PrefabInstance:
       value: PF Village Props - Bush 02 (3)
       objectReference: {fileID: 0}
     - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4815235850804891613, guid: e3ef72d9f2a941b479a3bda87147db32, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -69959,8 +70885,16 @@ PrefabInstance:
       value: PF Village Props - Stump (2)
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -69985,7 +70919,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2057521268}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Probes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70105,7 +71039,6 @@ Transform:
   - {fileID: 711571282}
   - {fileID: 1107871600}
   - {fileID: 614550433}
-  - {fileID: 1529315533}
   - {fileID: 1610678543}
   - {fileID: 1542956829}
   - {fileID: 2054205746}
@@ -70211,6 +71144,10 @@ PrefabInstance:
       value: PF Village Props - Wheat 03
       objectReference: {fileID: 0}
     - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8110126698356207190, guid: 924118ea6eca18f459f67d54f8640858, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -70275,6 +71212,10 @@ PrefabInstance:
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70343,6 +71284,10 @@ PrefabInstance:
       value: PF Village Props - Rock 02 (1)
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
@@ -70367,6 +71312,10 @@ PrefabInstance:
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Tree 02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5260572382779035082, guid: c5f8f079905bce04f945cd8ff4ba545a, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70431,12 +71380,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 2057521268}
     m_Modifications:
     - target: {fileID: 2225699740878207581, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2225699740878207581, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
       objectReference: {fileID: 0}
     - target: {fileID: 3199234433168532602, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheelbarrow
+      objectReference: {fileID: 0}
+    - target: {fileID: 3199234433168532602, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3199234433168532602, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70481,6 +71438,10 @@ PrefabInstance:
     - target: {fileID: 3199234433168532604, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3199234433696566346, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3199234433696566346, guid: 4c09aa47d6e0e954f899cb8efe5a6816, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70549,8 +71510,16 @@ PrefabInstance:
       value: PF Village Props - Stump
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342338198345, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
+      objectReference: {fileID: 0}
+    - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2934803342795420246, guid: 64cddfc21e04a9c408921968b73a68ad, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70617,6 +71586,10 @@ PrefabInstance:
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Wheat 05 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4747694866668042363, guid: 0cde5280cb0df5240bf5cc2866248e08, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70719,6 +71692,10 @@ PrefabInstance:
     - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 2183321564951531335, guid: 2f54e7022d76f09478e2e1124e212cc5, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -70868,6 +71845,10 @@ PrefabInstance:
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_Name
       value: PF Village Props - Rock 02
+      objectReference: {fileID: 0}
+    - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4973302571607540863, guid: b076c268235cb7348a5d9a036ec254c4, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -71112,6 +72093,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CoinReward
       objectReference: {fileID: 0}
+    - target: {fileID: 6643889136891007219, guid: e8f1c0a3da494e24b8b8480918b535d4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8954737806087078580, guid: e8f1c0a3da494e24b8b8480918b535d4, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.26
@@ -71152,6 +72137,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9169016260889963013, guid: e8f1c0a3da494e24b8b8480918b535d4, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -71170,6 +72159,7 @@ SceneRoots:
   - {fileID: 2199012497589965851}
   - {fileID: 552734225}
   - {fileID: 1659707842}
+  - {fileID: 301691677}
   - {fileID: 75078171}
   - {fileID: 1954689040}
   - {fileID: 318447589}
@@ -71194,9 +72184,9 @@ SceneRoots:
   - {fileID: 1237527565}
   - {fileID: 1604175562}
   - {fileID: 790844699}
-  - {fileID: 301691677}
   - {fileID: 442386884}
   - {fileID: 457263752509940209}
   - {fileID: 1628652343}
   - {fileID: 1674815354}
   - {fileID: 1782236828}
+  - {fileID: 613884920}

@@ -44,7 +44,8 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         StatueTalking,
         WaitingForContinue,
         WaitingForAnswer,
-        ReviewingAnswer
+        ReviewingAnswer,
+        ShowingMessage    // <-- NEW STATE for temporary messages
     }
 
     enum PlayerPerformance
@@ -77,7 +78,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         switch (state)
         {
             case State.StatueTalking:
-                CheckSkipTyping();                  // <-- NEW
+                CheckSkipTyping();
                 break;
             case State.WaitingForContinue:
                 CheckContinueInput();
@@ -90,6 +91,9 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
                 {
                     NextQuestionOrConclude();
                 }
+                break;
+            case State.ShowingMessage:
+                // Do nothing while showing temporary message
                 break;
         }
     }
@@ -157,7 +161,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         foreach (string line in assessmentLines)
         {
             yield return StartCoroutine(TypeLine(line));
-            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
@@ -207,7 +211,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         foreach (string line in teachingLines)
         {
             yield return StartCoroutine(TypeLine(line));
-            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(0.5f);
             state = State.WaitingForContinue;
             yield return new WaitUntil(() => state == State.StatueTalking);
         }
@@ -228,7 +232,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         if (performance == PlayerPerformance.Poor)
         {
             yield return StartCoroutine(TypeLine("Let me explain each concept carefully:"));
-            yield return new WaitForSecondsRealtime(0.5f);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(0.5f);
 
             yield return StartCoroutine(TypeLine("1. print() - displays text on screen"));
             yield return new WaitForSecondsRealtime(0.3f);
@@ -333,7 +337,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         // Show question with hint in the same panel
         dialogueText.text = question.questionText + "\n(Hint: " + question.hint + ")\n> ";
 
-        // --- NEW: Set hints for the BotHintSystem ---
+        // Set hints for the BotHintSystem
         if (hintSystem)
         {
             string[] hints = new string[] { question.hint, question.detailedHint };
@@ -375,7 +379,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     void UpdateAnswerDisplay()
     {
-        if (currentQuestionIndex < currentQuestions.Length)
+        if (currentQuestionIndex < currentQuestions.Length && state == State.WaitingForAnswer)
         {
             AdvancedQuestion question = currentQuestions[currentQuestionIndex];
             dialogueText.text = question.questionText + "\n(Hint: " + question.hint + ")\n> " + typedInput;
@@ -391,7 +395,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
         if (string.IsNullOrEmpty(input))
         {
-            StartStatueLine("Please provide an answer.");
+            ShowTemporaryMessage("Please provide an answer.", 1.5f);
             return;
         }
 
@@ -460,9 +464,10 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         if (currentAttempt < maxAttemptsPerQuestion)
         {
             string hint = GetProgressiveHint(question, currentAttempt);
-            StartStatueLine($"Try again. {hint}\n> ");
-            typedInput = "";
-            state = State.WaitingForAnswer;
+            // Show hint temporarily and stay in answer mode
+            ShowTemporaryMessage($"Try again. {hint}", 2f);
+            typedInput = ""; // Clear input for next attempt
+            // State remains WaitingForAnswer
         }
         else
         {
@@ -483,7 +488,37 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         {
             case 1: return "Hint: " + question.hint;
             case 2: return "Detailed hint: " + question.detailedHint;
-            default: return "Think and Gain about the Python syntax.";
+            default: return "Think about the Python syntax.";
+        }
+    }
+
+    // ---------------- TEMPORARY MESSAGE SYSTEM ---------------- <-- NEW
+    void ShowTemporaryMessage(string message, float duration)
+    {
+        StartCoroutine(ShowTemporaryMessageCoroutine(message, duration));
+    }
+
+    IEnumerator ShowTemporaryMessageCoroutine(string message, float duration)
+    {
+        State previousState = state;
+        string previousText = dialogueText.text;
+
+        // Set to showing message state to prevent input
+        state = State.ShowingMessage;
+        dialogueText.text = message;
+
+        yield return new WaitForSecondsRealtime(duration);
+
+        // Restore previous state and text
+        if (previousState == State.WaitingForAnswer && currentQuestionIndex < currentQuestions.Length)
+        {
+            state = State.WaitingForAnswer;
+            UpdateAnswerDisplay();
+        }
+        else
+        {
+            state = previousState;
+            dialogueText.text = previousText;
         }
     }
 
@@ -511,7 +546,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             }
 
             dialogueText.text += c;
-            yield return new WaitForSecondsRealtime(typeSpeed);   // <-- CHANGED
+            yield return new WaitForSecondsRealtime(typeSpeed);
         }
 
         isTyping = false;
@@ -522,7 +557,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         }
     }
 
-    void CheckSkipTyping()   // <-- NEW
+    void CheckSkipTyping()
     {
         if (allowTypingSkip && Input.GetKeyDown(skipKey) && isTyping)
             isTyping = false;
@@ -569,7 +604,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
             switch (performance)
             {
                 case PlayerPerformance.Perfect:
-                    return "Excellent Buddy ! You've mastered variables and output. Keep progressing!";
+                    return "Excellent Buddy! You've mastered variables and output. Keep progressing!";
                 case PlayerPerformance.Average:
                     return "Good work Mate! You understand the basics. Practice will make you perfect.";
                 case PlayerPerformance.Poor:
@@ -582,7 +617,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
 
     IEnumerator HidePanelDelayed()
     {
-        yield return new WaitForSecondsRealtime(2.2f);   // <-- CHANGED
+        yield return new WaitForSecondsRealtime(2.2f);
 
         while (isTyping)
             yield return null;
@@ -596,7 +631,7 @@ public class AdaptiveStatuePuzzle2D : MonoBehaviour
         state = State.Idle;
     }
 
-    // ---------------- PAUSE CONTROL ----------------   // <-- NEW
+    // ---------------- PAUSE CONTROL ----------------
     void SetGamePaused(bool paused)
     {
         Time.timeScale = paused ? 0f : 1f;

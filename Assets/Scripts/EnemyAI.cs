@@ -27,9 +27,13 @@ public class EnemyAI2D_Smart : MonoBehaviour
     [Header("Ground Check")]
     public float groundRadius = 0.15f;
 
-    /* ================= GAME OVER ================= */
-    [Header("Game Over")]
+    /* ================= GAME OVER (LAYER) ================= */
+    [Header("Game Over (Layer)")]
     public string gameOverLayerName = "GameOver";
+
+    /* ================= GAME OVER (DISTANCE) ================= */
+    [Header("Game Over (Distance)")]
+    public float gameOverDistance = 0.7f;
 
     Rigidbody2D rb;
     Animator anim;
@@ -104,6 +108,9 @@ public class EnemyAI2D_Smart : MonoBehaviour
 
         HandleAnimations();
         DetectStuck();
+
+        // ✅ NEW: Check distance-based Game Over
+        CheckGameOverDistance();
     }
 
     /* ================= AI BEHAVIOUR ================= */
@@ -208,7 +215,33 @@ public class EnemyAI2D_Smart : MonoBehaviour
         transform.localScale = scale;
     }
 
-    /* ================= GAME OVER (LAKE) ================= */
+    /* ================= GAME OVER (DISTANCE) ================= */
+
+    void CheckGameOverDistance()
+    {
+        if (player == null || isDisabled) return;
+
+        float distance = Vector2.Distance(transform.position, player.position);
+
+        if (distance <= gameOverDistance)
+        {
+            TriggerGameOver();
+        }
+    }
+
+    void TriggerGameOver()
+    {
+        Debug.Log("GAME OVER!");
+
+        DisableEnemy();
+
+        // ✅ Use your manager instead of stopping time directly
+        if (GameOverManager.Instance != null)
+        {
+            GameOverManager.Instance.ShowGameOver();
+        }
+    }
+    /* ================= GAME OVER (LAYER) ================= */
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -218,22 +251,22 @@ public class EnemyAI2D_Smart : MonoBehaviour
         }
     }
 
+    /* ================= DISABLE ================= */
+
     void DisableEnemy()
     {
         if (isDisabled) return;
         isDisabled = true;
 
-        // Stop AI & physics
         state = AIState.Idle;
+
         rb.linearVelocity = Vector2.zero;
         rb.angularVelocity = 0f;
         rb.bodyType = RigidbodyType2D.Static;
 
-        // Animation
         anim.SetBool("isWalking", false);
-        anim.SetTrigger("Fall"); // optional animation
+        anim.SetTrigger("Fall");
 
-        // Disable collisions
         col.enabled = false;
     }
 
@@ -252,6 +285,9 @@ public class EnemyAI2D_Smart : MonoBehaviour
         col.enabled = true;
 
         gameObject.SetActive(true);
+
+        // Reset time if game was stopped
+        Time.timeScale = 1f;
     }
 
     /* ================= DEBUG ================= */
@@ -270,5 +306,9 @@ public class EnemyAI2D_Smart : MonoBehaviour
             Gizmos.DrawRay(frontCheck.position, Vector2.right * wallCheckDistance);
             Gizmos.DrawRay(frontCheck.position, Vector2.left * wallCheckDistance);
         }
+
+        // 🔴 Show game over distance
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, gameOverDistance);
     }
 }
