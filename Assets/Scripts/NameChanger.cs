@@ -21,6 +21,13 @@ public class PlayerProfileManager : MonoBehaviour
 
     const string NAME_KEY = "PlayerName";
     const string AGE_KEY = "PlayerAge";
+    [Header("Name Change Settings")]
+    public int nameChangeCost = 10;
+    public TextMeshProUGUI nameChangeButtonText;
+
+    const string NAME_CHANGE_USED_KEY = "NameChangeUsed";
+    public CoinUIController coinUI;
+
 
     bool panelOpen = false;
 
@@ -36,7 +43,7 @@ public class PlayerProfileManager : MonoBehaviour
     {
         InitializePlayer();
         RefreshUI();
-
+        UpdateNameChangeButton();
         if (editPanel != null)
             editPanel.SetActive(false);
     }
@@ -48,7 +55,18 @@ public class PlayerProfileManager : MonoBehaviour
             CloseEditPanel();
         }
     }
+    void UpdateNameChangeButton()
+    {
+        bool used = PlayerPrefs.GetInt(NAME_CHANGE_USED_KEY, 0) == 1;
 
+        if (nameChangeButtonText != null)
+        {
+            if (!used)
+                nameChangeButtonText.text = "Free";
+            else
+                nameChangeButtonText.text = ""+ nameChangeCost ;
+        }
+    }
     void InitializePlayer()
     {
         if (!PlayerPrefs.HasKey(NAME_KEY))
@@ -71,6 +89,7 @@ public class PlayerProfileManager : MonoBehaviour
     {
         string playerName = PlayerPrefs.GetString(NAME_KEY);
         int age = PlayerPrefs.GetInt(AGE_KEY);
+        UpdateNameChangeButton();
 
         if (nameDisplay != null)
             nameDisplay.text = playerName;
@@ -115,12 +134,41 @@ public class PlayerProfileManager : MonoBehaviour
     public void SaveProfile()
     {
         string newName = nameInput.text.Trim();
+        string currentName = PlayerPrefs.GetString(NAME_KEY);
 
-        if (!string.IsNullOrEmpty(newName))
+        bool nameChangeUsed = PlayerPrefs.GetInt(NAME_CHANGE_USED_KEY, 0) == 1;
+
+        // ================= NAME CHANGE =================
+        if (!string.IsNullOrEmpty(newName) && newName != currentName)
         {
-            PlayerPrefs.SetString(NAME_KEY, newName);
+            if (!nameChangeUsed)
+            {
+                // First name change is FREE
+                PlayerPrefs.SetString(NAME_KEY, newName);
+                PlayerPrefs.SetInt(NAME_CHANGE_USED_KEY, 1);
+
+                Debug.Log("First name change is FREE!");
+            }
+            else
+            {
+                // Require coins for next changes
+                if (CoinManager.Instance != null && CoinManager.Instance.coins >= nameChangeCost)
+                {
+                    CoinManager.Instance.coins -= nameChangeCost;
+
+                    PlayerPrefs.SetInt("Coins", CoinManager.Instance.coins);
+                    PlayerPrefs.SetString(NAME_KEY, newName);
+
+                    // Animate coin decrease
+                    if (coinUI != null)
+                        coinUI.ShowAndRemove(nameChangeCost);
+
+                    Debug.Log("Name changed! -" + nameChangeCost + " coins");
+                }
+            }
         }
 
+        // ================= AGE UPDATE =================
         int age;
 
         if (int.TryParse(ageInput.text, out age))
@@ -138,7 +186,11 @@ public class PlayerProfileManager : MonoBehaviour
 
         PlayerPrefs.Save();
 
+        // Refresh UI
         RefreshUI();
+        UpdateNameChangeButton();
+
+        // Close panel
         CloseEditPanel();
     }
 }

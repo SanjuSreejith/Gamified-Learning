@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9737ddaedbe0d0847b9f7f5b9670f926
+guid: ef644281c935eff4b90405da6c0739e7
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3338749442709606003
-    second: Coin_0
+      213: -4175840688924297612
+    second: challenge tarkya btn_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Coin_0
+      name: challenge tarkya btn_0
       rect:
         serializedVersion: 2
-        x: 356
-        y: 48
-        width: 601
-        height: 605
+        x: 44
+        y: 36
+        width: 1205
+        height: 405
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d81b24142116aa1d0800000000000000
-      internalID: -3338749442709606003
+      spriteID: 4767b0a940f6c06c0800000000000000
+      internalID: -4175840688924297612
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Coin_0: -3338749442709606003
+      challenge tarkya btn_0: -4175840688924297612
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

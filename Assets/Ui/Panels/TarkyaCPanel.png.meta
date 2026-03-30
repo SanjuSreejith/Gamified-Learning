@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 9737ddaedbe0d0847b9f7f5b9670f926
+guid: 1bf55bd07e10fd24bbea893d643c4795
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3338749442709606003
-    second: Coin_0
+      213: 3962707764519640201
+    second: TarkyaCPanel_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Coin_0
+      name: TarkyaCPanel_0
       rect:
         serializedVersion: 2
-        x: 356
-        y: 48
-        width: 601
-        height: 605
+        x: 374
+        y: 129
+        width: 571
+        height: 412
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d81b24142116aa1d0800000000000000
-      internalID: -3338749442709606003
+      spriteID: 98c10ec67bd5ef630800000000000000
+      internalID: 3962707764519640201
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: f3085977d07daa144af6fa3bdd08536b
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Coin_0: -3338749442709606003
+      TarkyaCPanel_0: 3962707764519640201
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

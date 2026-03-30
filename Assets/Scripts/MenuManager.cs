@@ -15,6 +15,7 @@ public class MainMenuManager : MonoBehaviour
 
     [Header("Coin UI")]
     public TextMeshProUGUI coinText;
+    public string challengeSceneName = "ChallengeScene";
 
     bool settingsOpen = false;
 
@@ -119,6 +120,10 @@ public class MainMenuManager : MonoBehaviour
             settingsPanel.SetActive(false);
 
         settingsOpen = false;
+    }
+    public void ChallegeScene()
+    {
+                SceneManager.LoadScene(challengeSceneName);
     }
 
     // -------------------------
