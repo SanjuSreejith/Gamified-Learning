@@ -20,26 +20,26 @@ public class MainMenuManager : MonoBehaviour
 
     void Start()
     {
-        // Ensure references are restored when coming back to menu
+        // Find progress manager if missing
         if (progressManager == null)
             progressManager = FindObjectOfType<SceneProgressManager>();
 
+        // Find coin text safely
         if (coinText == null)
-            coinText = GetComponentInChildren<TextMeshProUGUI>();
+            coinText = GetComponentInChildren<TextMeshProUGUI>(true);
 
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
 
         UpdateCoinText();
 
-        // Refresh progress bar when menu loads
+        // Refresh progress bar
         if (progressManager != null)
             progressManager.UpdateProgress();
     }
 
     void Update()
     {
-        // ESC closes settings
         if (settingsOpen && Input.GetKeyDown(KeyCode.Escape))
         {
             CloseSettings();
@@ -52,8 +52,6 @@ public class MainMenuManager : MonoBehaviour
     public void UpdateCoinText()
     {
         if (coinText == null) return;
-
-        PlayerPrefs.Save(); // ensure latest save
 
         int coins = PlayerPrefs.GetInt("Coins", 0);
         coinText.text = coins.ToString();
@@ -85,7 +83,7 @@ public class MainMenuManager : MonoBehaviour
             }
         }
 
-        // If all levels completed restart
+        // If all completed restart first level
         if (scenes.Count > 0)
             SceneManager.LoadScene(scenes[0]);
     }
@@ -116,21 +114,19 @@ public class MainMenuManager : MonoBehaviour
     IEnumerator HideSettings()
     {
         yield return new WaitForSeconds(0.35f);
-        settingsPanel.SetActive(false);
+
+        if (settingsPanel != null)
+            settingsPanel.SetActive(false);
+
         settingsOpen = false;
     }
 
     // -------------------------
     // RESET PROGRESS
     // -------------------------
-    public void ResetPlayerPrefsOnly(bool halfCoins = true)
+    public void ResetPlayerPrefsOnly()
     {
         Debug.Log("Resetting progress...");
-
-        //int currentCoins = PlayerPrefs.GetInt("Coins", 0);
-        //int newCoins = halfCoins ? currentCoins / 2 : 0;
-
-        //PlayerPrefs.SetInt("Coins", newCoins);
 
         if (progressManager != null)
         {
@@ -142,8 +138,6 @@ public class MainMenuManager : MonoBehaviour
         }
 
         PlayerPrefs.Save();
-
-        //UpdateCoinText();
 
         if (progressManager != null)
             progressManager.UpdateProgress();
